@@ -1,24 +1,81 @@
-// Your bot's behaviour. Add commands here; grammY's docs (grammy.dev) cover
-// keyboards, sessions, files, inline queries and everything else.
-
 import { InlineKeyboard } from "grammy"
 
 export function registerCommands(bot) {
+  // START
   bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
+    ctx.reply(
+      `🌸 HTZ FASHION မှ ကြိုဆိုပါတယ် 🌸
+
+🎓 သင်တန်းအပ်ရန် - "သင်တန်းအပ်မယ်" လို့ ပို့ပေးပါ။
+
+👗 အဝတ်အထည် အော်ဒါမှာရန် - "အော်ဒါမှာမယ်" လို့ ပို့ပေးပါ။`,
+      {
+        reply_markup: new InlineKeyboard().text("Ping me", "ping"),
+      },
+    ),
   )
 
+  // HELP
   bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
+    ctx.reply(
+      `🌸 HTZ FASHION
+
+🎓 သင်တန်းအပ်ရန် - သင်တန်းအပ်မယ်
+👗 အော်ဒါမှာရန် - အော်ဒါမှာမယ်
+
+/start - စတင်ရန်
+/help - အကူအညီ
+/ping - Bot စမ်းရန်
+/id - ID ကြည့်ရန်`,
+    ),
   )
 
+  // PING
   bot.command("ping", (ctx) => ctx.reply("pong"))
 
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
+  // ID
+  bot.command("id", (ctx) =>
+    ctx.reply(
+      `Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`,
+    ),
+  )
 
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
+  // BUTTON
+  bot.callbackQuery("ping", (ctx) =>
+    ctx.answerCallbackQuery({ text: "pong" }),
+  )
 
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
+  // AUTO REPLY
+  bot.on("message:text", (ctx) => {
+    const text = ctx.message.text.trim()
+
+    if (text.includes("သင်တန်းအပ်မယ်")) {
+      return ctx.reply(
+        `🎓 HTZ FASHION သင်တန်းအပ်ရန်
+
+အမည် -
+ဖုန်းနံပါတ် -
+တက်ရောက်လိုသော သင်တန်း -
+
+အချက်အလက်များကို ဖြည့်ပြီး ပို့ပေးပါ။`,
+      )
+    }
+
+    if (text.includes("အော်ဒါမှာမယ်")) {
+      return ctx.reply(
+        `👗 HTZ FASHION အော်ဒါမှာရန်
+
+အမည် -
+ဖုန်းနံပါတ် -
+လိုချင်သော အဝတ်အထည် -
+အရောင် -
+အရွယ်အစား -
+အရေအတွက် -
+
+အချက်အလက်များကို ဖြည့်ပြီး ပို့ပေးပါ။`,
+      )
+    }
+
+    // မသိတဲ့စာကို ပြန်မပို့ပါ
+  })
 }
