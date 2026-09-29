@@ -1,5 +1,7 @@
 # Telegram starter bot
 
+[![Deploy to FadeHost](https://fadehost.com/deploy-button.svg)](https://laplace.fadehost.com/register?intent=bot&repo=https://github.com/FadeHost/telegram-starter-bot)
+
 A small Telegram bot to deploy in one click and then make your own: `/start`,
 `/help`, `/ping`, `/id`, an inline button and an echo. Node.js and
 [grammY](https://grammy.dev). Runs in polling mode by default, so it needs no
