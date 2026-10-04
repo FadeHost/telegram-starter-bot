@@ -77,7 +77,59 @@ async function main() {
 
   // Polling: make sure no webhook is left over from an earlier webhook run.
   await bot.api.deleteWebhook().catch(() => {})
-  await bot.start({ onStart: () => console.log("[bot] polling for updates") })
+
+  // Telegram gives a bot's updates to one poller at a time. When the same
+  // token is already running somewhere else (your own computer, another
+  // host, a second copy of this app), Telegram answers 409 and this copy
+  // loses. It does not crash over that: it waits, asks again less and less
+  // often, and takes over by itself once the other copy has stopped.
+  let wait = 20
+  let waitingForOther = false
+  for (;;) {
+    const began = Date.now()
+    let settled
+    try {
+      await bot.start({
+        onStart: () => {
+          if (!waitingForOther) {
+            console.log("[bot] polling for updates")
+            return
+          }
+          // The library reports a start before the first poll is answered,
+          // so only a poll that survives a while means the other copy is gone.
+          settled = setTimeout(() => {
+            waitingForOther = false
+            wait = 20
+            console.log("[bot] the other copy has stopped, this one is receiving updates now")
+          }, 45_000)
+        },
+      })
+      return
+    } catch (err) {
+      clearTimeout(settled)
+      const code = err?.error_code ?? err?.response?.error_code
+      if (code === 401 || code === 404) {
+        explain(err)
+        process.exit(1)
+      }
+      // It had been running fine for a while: this is a new episode.
+      if (Date.now() - began > 120_000) {
+        wait = 20
+        waitingForOther = false
+      }
+      if (code === 409) {
+        if (!waitingForOther) {
+          console.error("[bot] another copy of this bot is running with the same token, and Telegram allows one at a time. Stop the other copy and this one takes over by itself. Nothing else needs to change here.")
+          waitingForOther = true
+        }
+      } else {
+        console.error("[bot] polling stopped:", err?.message ?? err)
+      }
+      console.error(`[bot] trying again in ${wait} seconds`)
+      await new Promise((resolve) => setTimeout(resolve, wait * 1000))
+      wait = Math.min(wait * 2, 300)
+    }
+  }
 }
 
 for (const signal of ["SIGINT", "SIGTERM"]) {
