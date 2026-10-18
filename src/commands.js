@@ -1,24 +1,53 @@
-// Your bot's behaviour. Add commands here; grammY's docs (grammy.dev) cover
-// keyboards, sessions, files, inline queries and everything else.
 
 import { InlineKeyboard } from "grammy"
 
 export function registerCommands(bot) {
   bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
+    ctx.reply(
+      "📌 BIENVENUE CHEZ LATECH !\n\n" +
+      "Bienvenue sur le bot officiel LATECH 👋\n\n" +
+      "Découvre notre guide pour apprendre à mieux vendre sur Vinted et développer ton activité.\n\n" +
+      "📚 Utilise les commandes ci-dessous pour naviguer :",
+      {
+        reply_markup: new InlineKeyboard()
+          .text("📚 Découvrir le guide Vinted", "ebook")
+          .row()
+          .text("ℹ️ Aide et commandes", "help"),
+      }
+    )
+  )
+
+  bot.command("ebook", (ctx) =>
+    ctx.reply(
+      "📚 LE GUIDE VINTED LATECH\n\n" +
+      "Découvre notre guide pour apprendre à optimiser tes ventes sur Vinted !\n\n" +
+      "👉 Pour obtenir le guide, consulte le lien d'achat que tu as prévu de partager."
+    )
   )
 
   bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
+    ctx.reply(
+      "📌 COMMANDES LATECH\n\n" +
+      "/start - Accueil\n" +
+      "/ebook - Découvrir le guide Vinted\n" +
+      "/help - Afficher l'aide"
+    )
   )
 
-  bot.command("ping", (ctx) => ctx.reply("pong"))
+  bot.callbackQuery("ebook", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await ctx.reply(
+      "📚 Pour découvrir le guide Vinted LATECH, utilise la commande /ebook."
+    )
+  })
 
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
-
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
-
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
+  bot.callbackQuery("help", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await ctx.reply(
+      "📌 COMMANDES LATECH\n\n" +
+      "/start - Accueil\n" +
+      "/ebook - Découvrir le guide Vinted\n" +
+      "/help - Afficher l'aide"
+    )
+  })
 }
