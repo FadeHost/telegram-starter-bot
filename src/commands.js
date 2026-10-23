@@ -1,24 +1,50 @@
-// Your bot's behaviour. Add commands here; grammY's docs (grammy.dev) cover
-// keyboards, sessions, files, inline queries and everything else.
-
-import { InlineKeyboard } from "grammy"
-
 export function registerCommands(bot) {
-  bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
-  )
+  bot.command("start", async (ctx) => {
+    await ctx.reply(
+      "🎵 Salom! Menga musiqa yubor, men uni @ShunchakiMusiqaUz kanaliga joylayman!"
+    );
+  });
 
-  bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
-  )
+  bot.command("help", async (ctx) => {
+    await ctx.reply(
+      "🎵 Menga audio shaklidagi musiqa yubor.\n" +
+      "Men uni @ShunchakiMusiqaUz kanaliga joylayman."
+    );
+  });
 
-  bot.command("ping", (ctx) => ctx.reply("pong"))
+  bot.on("message:audio", async (ctx) => {
+    try {
+      const audio = ctx.message.audio;
+      const title = audio.title || "Noma'lum qo'shiq";
+      const artist = audio.performer || "Noma'lum ijrochi";
 
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
+      const caption =
+        `🎵 ${title}\n` +
+        `🎤 ${artist}\n\n` +
+        `📢 @ShunchakiMusiqaUz`;
 
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
+      await ctx.api.sendAudio(
+        "@ShunchakiMusiqaUz",
+        audio.file_id,
+        { caption }
+      );
 
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
+      await ctx.reply("✅ Musiqa kanalingga joylandi!");
+    } catch (error) {
+      console.error("Musiqa yuborish xatosi:", error);
+
+      await ctx.reply(
+        "❌ Musiqani kanalga joylay olmadim. Bot kanal administratori ekanini tekshir."
+      );
+    }
+  });
+
+  bot.on("message:text", async (ctx) => {
+    if (ctx.message.text.startsWith("/")) return;
+
+    await ctx.reply("🎵 Musiqa yuborish uchun audio fayl jo‘nat!");
+  });
 }
+
+
+
