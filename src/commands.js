@@ -251,7 +251,7 @@ async function showCategory(ctx, category, itemId = null, newMessage = false) {
 
   if (itemId) {
     keyboard
-      .text("⬅️ Назад", `product:${category}`)
+      .text("⬅️ Назад к списку", `product:${category}`)
       .row()
   
   } else {
