@@ -516,7 +516,7 @@ export async function registerCommands(bot) {
 
     const card = await ctx.reply(text, {
       reply_markup: new InlineKeyboard()
-        .text("⬅️ Назад к списку", back)
+        .text("⬅️ Назад к поставщикам", back)
         .row()
         .text("🏠 Главное меню", "home"),
     })
