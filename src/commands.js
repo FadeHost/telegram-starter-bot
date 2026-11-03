@@ -325,7 +325,7 @@ export async function registerCommands(bot) {
     { command: "start", description: "Запустить бота" },
   ])
 
-  bot.api.setMyCommands(
+  await bot.api.setMyCommands(
     [
       { command: "start", description: "Запустить бота" },
       { command: "admin", description: "Панель администратора" },
