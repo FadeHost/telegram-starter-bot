@@ -259,10 +259,16 @@ async function showCategory(ctx, category, itemId = null, newMessage = false) {
 
   keyboard.text("🏠 Главное меню", "home")
 
+  if (newMessage) {
+  await ctx.reply(`${title}\n\nВыбери поставщика:`, {
+    reply_markup: keyboard,
+  })
+} else {
   await ctx.editMessageText(
     `${title}\n\nВыбери поставщика:`,
     { reply_markup: keyboard }
   )
+}
 }
 
 async function startAddSupplier(ctx) {
