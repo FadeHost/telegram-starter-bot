@@ -488,15 +488,15 @@ export function registerCommands(bot) {
 
     const previousCardId = lastSupplierCards.get(ctx.chat.id)
 
-if (previousCardId) {
-  try {
-    await ctx.api.editMessageReplyMarkup(ctx.chat.id, previousCardId, {
-      reply_markup: { inline_keyboard: [] },
-    })
-  } catch (error) {
-    console.error("Не удалось убрать кнопки:", error)
-  }
-}       
+    if (previousCardId) {
+      try {
+        await ctx.api.editMessageReplyMarkup(ctx.chat.id, previousCardId, {
+          reply_markup: { inline_keyboard: [] },
+        })
+      } catch (error) {
+        console.error("Не удалось убрать кнопки:", error)
+      }
+    }  
     await ctx.deleteMessage()
 
     for (const photo of supplier.photos || []) {
