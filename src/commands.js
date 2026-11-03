@@ -668,8 +668,13 @@ export function registerCommands(bot) {
     const photo = ctx.message.photo.at(-1)
     state.photos.push(photo.file_id)
 
+        const keyboard = new InlineKeyboard()
+      .text("✅ Готово", "photo:finish")
+      .text("⏭ Пропустить", "photo:skip")
+
     await ctx.reply(
-      `✅ Фото добавлено. Всего фотографий: ${state.photos.length}. Отправь ещё или нажми «Готово».`
+      `✅ Фото добавлено. Всего фотографий: ${state.photos.length}. Отправь ещё или нажми «Готово».`,
+      { reply_markup: keyboard }
     )
   })
   bot.on("message:text", async (ctx, next) => {
