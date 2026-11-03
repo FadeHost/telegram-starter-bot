@@ -456,8 +456,7 @@ export function registerCommands(bot) {
       ? `category:${supplier.category}:${supplier.itemId}`
       : `category:${supplier.category}`
 
-            for (const photo of supplier.photos || []) {
-          await ctx.deleteMessage()
+                await ctx.deleteMessage()
 
     for (const photo of supplier.photos || []) {
       await ctx.replyWithPhoto(photo)
@@ -469,6 +468,7 @@ export function registerCommands(bot) {
         .row()
         .text("🏠 Главное меню", "home"),
     })
+  })
 
   bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
     await ctx.answerCallbackQuery()
