@@ -654,6 +654,48 @@ export function registerCommands(bot) {
       return
     }
 
+        if (state.step === "extendDuration") {
+      const days = Number(value)
+
+      if (!Number.isInteger(days) || days < 1 || days > 3650) {
+        await ctx.reply("Введи срок целым числом от 1 до 3650 дней.")
+        return
+      }
+
+      const supplier = database.suppliers.find(
+        (item) => item.id === state.supplierId
+      )
+
+      if (!supplier) {
+        userSteps.delete(ctx.from.id)
+        await ctx.reply("Поставщик не найден.")
+        return
+      }
+
+      const now = Date.now()
+      const currentExpiry = supplier.expiresAt
+        ? new Date(supplier.expiresAt).getTime()
+        : now
+
+      const baseDate = Math.max(currentExpiry, now)
+      supplier.expiresAt = new Date(
+        baseDate + days * 24 * 60 * 60 * 1000
+      ).toISOString()
+      supplier.durationDays = (supplier.durationDays || 0) + days
+
+      await saveDatabase()
+      userSteps.delete(ctx.from.id)
+
+      const dateText = new Date(supplier.expiresAt).toLocaleDateString("ru-RU", {
+        timeZone: "Asia/Almaty",
+      })
+
+      await ctx.reply(
+        `✅ Размещение продлено.\n\n${supplier.name}\nНовая дата окончания: ${dateText}`,
+        { reply_markup: adminKeyboard() }
+      )
+      return
+    }
     if (state.step === "duration") {
   const days = Number(value)
 
