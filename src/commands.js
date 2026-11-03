@@ -503,12 +503,14 @@ export function registerCommands(bot) {
       await ctx.replyWithPhoto(photo)
     }
 
-    await ctx.reply(text, {
+       const card = await ctx.reply(text, {
       reply_markup: new InlineKeyboard()
         .text("⬅️ Назад к списку", back)
         .row()
         .text("🏠 Главное меню", "home"),
     })
+
+    lastSupplierCards.set(ctx.chat.id, card.message_id) 
   })
 
   bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
