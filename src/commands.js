@@ -321,7 +321,7 @@ async function finishSupplier(ctx, state) {
   )
 }
 export function registerCommands(bot) {
-    bot.api.setMyCommands([
+  bot.api.setMyCommands([
     { command: "start", description: "Запустить бота" },
   ])
 
