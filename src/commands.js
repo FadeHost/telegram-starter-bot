@@ -705,8 +705,18 @@ export function registerCommands(bot) {
     return
   }
 
-  state.durationDays = days
-  await finishSupplier(ctx, state)
+    state.durationDays = days
+  state.photos = []
+  state.step = "supplierPhotos"
+
+  const keyboard = new InlineKeyboard()
+    .text("✅ Готово", "photo:finish")
+    .text("⏭ Пропустить", "photo:skip")
+
+  await ctx.reply(
+    "Отправь фотографии поставщика по одной. Когда закончишь, нажми «Готово». Если фото нет — нажми «Пропустить».",
+    { reply_markup: keyboard }
+  )
   return
 }
     state.values.push(value)
