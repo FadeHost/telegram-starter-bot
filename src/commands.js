@@ -135,6 +135,14 @@ function adminKeyboard() {
     .row()
     .text("📋 Список поставщиков", "admin:list")
     .row()
+    .text("⏳ Продлить размещение", "admin:extend")
+    .row()
+    .text("✏️ Редактировать поставщика", "admin:edit")
+    .row()
+    .text("🖼 Фотографии", "admin:photos")
+    .row()
+    .text("🗑 Удалить поставщика", "admin:delete")
+    .row()
     .text("🏠 Главное меню", "home")
 }
 
