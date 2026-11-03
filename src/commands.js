@@ -569,6 +569,28 @@ export function registerCommands(bot) {
       { reply_markup: keyboard }
     )
   })
+    bot.callbackQuery(/^extend:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const supplier = database.suppliers.find(
+      (item) => item.id === ctx.match[1]
+    )
+
+    if (!supplier) {
+      await ctx.editMessageText("Поставщик не найден.")
+      return
+    }
+
+    userSteps.set(ctx.from.id, {
+      step: "extendDuration",
+      supplierId: supplier.id,
+    })
+
+    await ctx.editMessageText(
+      `Поставщик: ${supplier.name}\n\nНа сколько дней продлить размещение? Введи число от 1 до 3650.`
+    )
+  })
   bot.callbackQuery("admin:list", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
