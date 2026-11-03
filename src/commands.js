@@ -8,7 +8,8 @@ const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), "data")
 const DATABASE_FILE = path.join(DATA_DIR, "obshepit-astana.json")
 
 const products = [
-  ["🥩 Мясо и птица", "meat"],
+  ["🥩 Мясо и птица Халяль", "meat_halal"],
+  ["🥩 Мясо и птица Фермер", "meat_farm"],
   ["🐟 Рыба и морепродукты", "fish"],
   ["🥬 Овощи и фрукты", "vegetables"],
   ["🧀 Молочная продукция", "dairy"],
