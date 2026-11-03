@@ -321,6 +321,17 @@ async function finishSupplier(ctx, state) {
   )
 }
 export function registerCommands(bot) {
+    bot.api.setMyCommands([
+    { command: "start", description: "Запустить бота" },
+  ])
+
+  bot.api.setMyCommands(
+    [
+      { command: "start", description: "Запустить бота" },
+      { command: "admin", description: "Панель администратора" },
+    ],
+    { scope: { type: "chat", chat_id: ADMIN_ID } }
+  )
   bot.use(async (ctx, next) => {
     if (!databaseLoaded) {
   await loadDatabase()
