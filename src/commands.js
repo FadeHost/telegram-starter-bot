@@ -360,10 +360,14 @@ export function registerCommands(bot) {
     await ctx.answerCallbackQuery()
     const category = ctx.match[1]
 
-    if (category === "meat") {
+        if (category === "meat_farm" || category === "meat_halal") {
+      const title = category === "meat_halal"
+        ? "🥩 МЯСО И ПТИЦА ХАЛЯЛЬ"
+        : "🥩 МЯСО И ПТИЦА ФЕРМЕР"
+
       await ctx.editMessageText(
-        "🥩 МЯСО И ПТИЦА\n\nФермерское мясо\n\nВыбери продукт:",
-        { reply_markup: categoryKeyboard("meat") }
+        `${title}\n\nВыбери продукт:`,
+        { reply_markup: categoryKeyboard(category) }
       )
       return
     }
