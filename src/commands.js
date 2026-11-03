@@ -159,8 +159,17 @@ function adminKeyboard() {
 }
 
 function categoryTitle(category, itemId) {
+  const index = Number(itemId.slice(1))
+
+  if (category === "meat_farm") {
+    return meatNames[index]
+  }
+
+  if (category === "meat_halal") {
+    return halalMeatNames[index]
+  }
+
   if (category === "meat") {
-    const index = Number(itemId.slice(1))
     const name = meatNames[index]
     return itemId.startsWith("h")
       ? `${name} · ХАЛЯЛЬ`
@@ -168,13 +177,11 @@ function categoryTitle(category, itemId) {
   }
 
   if (category === "dairy") {
-    const index = Number(itemId.slice(1))
     return dairyNames[index]
   }
 
   return categoryNames.get(category) || category
 }
-
 function supplierCategory(supplier) {
   return supplier.itemId
     ? `${supplier.categoryLabel}`
