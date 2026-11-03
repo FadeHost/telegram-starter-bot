@@ -176,9 +176,6 @@ function categoryKeyboard(category) {
       keyboard.text(name, `pick:meat:m${i}`).row()
     })
 
-    meatNames.forEach((name, i) => {
-      keyboard.text(`${name} · ХАЛЯЛЬ`, `pick:meat:h${i}`).row()
-    })
   }
 
   if (category === "dairy") {
