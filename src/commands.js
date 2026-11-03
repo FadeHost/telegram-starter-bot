@@ -183,11 +183,16 @@ function supplierCategory(supplier) {
 function categoryKeyboard(category) {
   const keyboard = new InlineKeyboard()
 
-  if (category === "meat") {
+    if (category === "meat_farm") {
     meatNames.forEach((name, i) => {
-      keyboard.text(name, `pick:meat:m${i}`).row()
+      keyboard.text(name, `pick:meat_farm:m${i}`).row()
     })
+  }
 
+  if (category === "meat_halal") {
+    halalMeatNames.forEach((name, i) => {
+      keyboard.text(name, `pick:meat_halal:h${i}`).row()
+    })
   }
 
   if (category === "dairy") {
