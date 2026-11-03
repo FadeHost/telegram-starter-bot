@@ -67,6 +67,7 @@ const categoryNames = new Map([
 ])
 
 const userSteps = new Map()
+const lastSupplierCards = new Map()
 
 let database = {
   suppliers: [],
