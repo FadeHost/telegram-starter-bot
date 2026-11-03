@@ -558,9 +558,19 @@ export function registerCommands(bot) {
       return
     }
 
-    const lines = database.suppliers.map((supplier, i) =>
-      `${i + 1}. ${supplier.name} — ${supplier.categoryLabel}`
-    )
+    const lines = database.suppliers.map((supplier, i) => {
+  if (!supplier.expiresAt) {
+    return `${i + 1}. ${supplier.name} — ${supplier.categoryLabel} — без срока`
+  }
+
+  const date = new Date(supplier.expiresAt)
+  const expired = date.getTime() <= Date.now()
+  const dateText = date.toLocaleDateString("ru-RU", {
+    timeZone: "Asia/Almaty",
+  })
+
+  return `${i + 1}. ${supplier.name} — ${supplier.categoryLabel} — ${expired ? "ИСТЁК" : "до " + dateText}`
+})
 
     await ctx.editMessageText(
       `📋 СПИСОК ПОСТАВЩИКОВ\n\n${lines.join("\n")}`,
