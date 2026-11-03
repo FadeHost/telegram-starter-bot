@@ -270,7 +270,10 @@ async function finishSupplier(ctx, state) {
     itemId: state.itemId || null,
     categoryLabel: state.categoryLabel,
     createdAt: new Date().toISOString(),
-    expiresAt: null,
+        durationDays: state.durationDays,
+    expiresAt: state.durationDays
+      ? new Date(Date.now() + state.durationDays * 24 * 60 * 60 * 1000).toISOString()
+      : null,
   }
 
   database.suppliers.push(supplier)
@@ -571,7 +574,7 @@ export function registerCommands(bot) {
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-    if (!state || state.step !== "supplier") return next()
+    if (!state || !["supplier", "duration"].includes(state.step)) return next()
     if (!isAdmin(ctx)) return
 
     const value = ctx.message.text.trim()
@@ -589,6 +592,18 @@ export function registerCommands(bot) {
       return
     }
 
+    if (state.step === "duration") {
+  const days = Number(value)
+
+  if (!Number.isInteger(days) || days < 1 || days > 3650) {
+    await ctx.reply("Введи срок целым числом от 1 до 3650 дней. Например: 30.")
+    return
+  }
+
+  state.durationDays = days
+  await finishSupplier(ctx, state)
+  return
+}
     state.values.push(value)
 
     const prompts = [
@@ -618,6 +633,8 @@ export function registerCommands(bot) {
     }
 
     state.values[5] = whatsapp
-    await finishSupplier(ctx, state)
+state.step = "duration"
+await ctx.reply("Укажи срок размещения в днях. Например, 30 — на месяц.")
+return
   })
 }
