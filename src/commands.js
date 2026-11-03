@@ -486,7 +486,7 @@ export function registerCommands(bot) {
       ? `category:${supplier.category}:${supplier.itemId}`
       : `category:${supplier.category}`
 
-         const previousCardId = lastSupplierCards.get(ctx.chat.id)
+    const previousCardId = lastSupplierCards.get(ctx.chat.id)
 
 if (previousCardId) {
   try {
