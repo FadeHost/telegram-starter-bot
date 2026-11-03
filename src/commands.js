@@ -274,6 +274,7 @@ async function finishSupplier(ctx, state) {
     description,
     delivery,
     whatsapp,
+    photos: state.photos || [],
     category: state.category,
     itemId: state.itemId || null,
     categoryLabel: state.categoryLabel,
