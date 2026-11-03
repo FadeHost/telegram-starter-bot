@@ -547,6 +547,28 @@ export function registerCommands(bot) {
     )
   })
 
+    bot.callbackQuery("admin:extend", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    if (!database.suppliers.length) {
+      await ctx.editMessageText("Поставщиков пока нет.")
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+
+    for (const supplier of database.suppliers) {
+      keyboard.text(supplier.name, `extend:${supplier.id}`).row()
+    }
+
+    keyboard.text("⬅️ Назад", "admin:cancel")
+
+    await ctx.editMessageText(
+      "Выбери поставщика, которому нужно продлить размещение:",
+      { reply_markup: keyboard }
+    )
+  })
   bot.callbackQuery("admin:list", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
