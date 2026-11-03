@@ -231,7 +231,7 @@ async function showCategory(ctx, category, itemId = null) {
       {
         reply_markup: itemId
           ? new InlineKeyboard()
-              .text("⬅️ Назад", category === "meat" ? "product:meat" : "product:dairy")
+              .text("⬅️ Назад", `product:${category}`)
               .row()
               .text("🏠 Главное меню", "home")
           : backHomeKeyboard()
