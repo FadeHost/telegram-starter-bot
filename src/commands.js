@@ -456,16 +456,16 @@ export function registerCommands(bot) {
       ? `category:${supplier.category}:${supplier.itemId}`
       : `category:${supplier.category}`
 
-        await ctx.editMessageText(text, {
+            for (const photo of supplier.photos || []) {
+      await ctx.replyWithPhoto(photo)
+    }
+
+    await ctx.editMessageText(text, {
       reply_markup: new InlineKeyboard()
         .text("⬅️ Назад к списку", back)
         .row()
         .text("🏠 Главное меню", "home"),
     })
-
-    for (const photo of supplier.photos || []) {
-      await ctx.replyWithPhoto(photo)
-    }
   })
 
   bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
