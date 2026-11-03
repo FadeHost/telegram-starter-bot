@@ -503,7 +503,7 @@ export function registerCommands(bot) {
       await ctx.replyWithPhoto(photo)
     }
 
-       const card = await ctx.reply(text, {
+    const card = await ctx.reply(text, {
       reply_markup: new InlineKeyboard()
         .text("⬅️ Назад к списку", back)
         .row()
