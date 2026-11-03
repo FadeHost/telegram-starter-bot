@@ -505,13 +505,13 @@ export function registerCommands(bot) {
     const category = ctx.match[1]
     const keyboard = new InlineKeyboard()
 
-    if (category === "meat") {
+        if (category === "meat_farm") {
       meatNames.forEach((name, i) => {
-        keyboard.text(name, `admin:item:meat:m${i}`).row()
+        keyboard.text(name, `admin:item:meat_farm:m${i}`).row()
       })
-
-      meatNames.forEach((name, i) => {
-        keyboard.text(`${name} · ХАЛЯЛЬ`, `admin:item:meat:h${i}`).row()
+    } else if (category === "meat_halal") {
+      halalMeatNames.forEach((name, i) => {
+        keyboard.text(name, `admin:item:meat_halal:h${i}`).row()
       })
     } else if (category === "dairy") {
       keyboard
