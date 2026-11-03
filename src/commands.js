@@ -634,6 +634,20 @@ export function registerCommands(bot) {
     })
   })
 
+    bot.on("message:photo", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (!isAdmin(ctx) || !state || state.step !== "supplierPhotos") {
+      return next()
+    }
+
+    const photo = ctx.message.photo.at(-1)
+    state.photos.push(photo.file_id)
+
+    await ctx.reply(
+      `✅ Фото добавлено. Всего фотографий: ${state.photos.length}. Отправь ещё или нажми «Готово».`
+    )
+  })
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
