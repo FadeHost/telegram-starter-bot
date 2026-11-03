@@ -486,7 +486,18 @@ export function registerCommands(bot) {
       ? `category:${supplier.category}:${supplier.itemId}`
       : `category:${supplier.category}`
 
-                await ctx.deleteMessage()
+         const previousCardId = lastSupplierCards.get(ctx.chat.id)
+
+if (previousCardId) {
+  try {
+    await ctx.api.editMessageReplyMarkup(ctx.chat.id, previousCardId, {
+      reply_markup: { inline_keyboard: [] },
+    })
+  } catch (error) {
+    console.error("Не удалось убрать кнопки:", error)
+  }
+}       
+    await ctx.deleteMessage()
 
     for (const photo of supplier.photos || []) {
       await ctx.replyWithPhoto(photo)
