@@ -252,7 +252,7 @@ async function showCategory(ctx, category, itemId = null) {
     keyboard
   .text("⬅️ Назад", `product:${category}`)
   .row()
-      .row()
+  
   } else {
     keyboard.text("⬅️ Назад", "products").row()
   }
