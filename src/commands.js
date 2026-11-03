@@ -501,7 +501,7 @@ export function registerCommands(bot) {
 
   bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
     await ctx.answerCallbackQuery()
-    await showCategory(ctx, ctx.match[1], ctx.match[2] || null)
+    await showCategory(ctx, ctx.match[1], ctx.match[2] || null, true)
   })
     bot.callbackQuery("admin:add", async (ctx) => {
     await ctx.answerCallbackQuery()
