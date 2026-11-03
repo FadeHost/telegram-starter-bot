@@ -403,7 +403,7 @@ export function registerCommands(bot) {
     )
   })
 
-  bot.callbackQuery(/^pick:(meat|dairy):([mhpf]\d+)$/, async (ctx) => {
+    bot.callbackQuery(/^pick:(meat_farm|meat_halal|dairy):([mhpf]\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     await showCategory(ctx, ctx.match[1], ctx.match[2])
   })
