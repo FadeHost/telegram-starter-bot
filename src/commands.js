@@ -1,5 +1,11 @@
-
 import { InlineKeyboard } from "grammy"
+import { mkdir, readFile, writeFile } from "node:fs/promises"
+import path from "node:path"
+import crypto from "node:crypto"
+
+const ADMIN_ID = 8810466796
+const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), "data")
+const DATABASE_FILE = path.join(DATA_DIR, "obshepit-astana.json")
 
 const products = [
   ["🥩 Мясо и птица", "meat"],
@@ -20,6 +26,16 @@ const services = [
   ["🌐 Специалист по интернету", "internet"],
 ]
 
+const meatNames = [
+  "Говядина", "Баранина", "Конина", "Верблюжатина",
+  "Курица", "Индейка", "Утка", "Гусь", "Казы",
+]
+
+const dairyNames = [
+  "Молоко", "Творог", "Сметана", "Сливочное масло",
+  "Топлёное масло", "Кумыс", "Яйца",
+]
+
 const repairItems = [
   ["🍕 Пицца-печь", "oven"],
   ["❄️ Холодильник", "fridge"],
@@ -33,71 +49,20 @@ const automationItems = [
   ["🧾 Принтер чеков", "printer"],
 ]
 
-const meatFarm = [
-  ["Говядина", "meat_farm_beef"],
-  ["Баранина", "meat_farm_lamb"],
-  ["Конина", "meat_farm_horse"],
-  ["Верблюжатина", "meat_farm_camel"],
-  ["Курица", "meat_farm_chicken"],
-  ["Индейка", "meat_farm_turkey"],
-  ["Утка", "meat_farm_duck"],
-  ["Гусь", "meat_farm_goose"],
-  ["Казы", "meat_farm_kazy"],
-]
+const categoryNames = new Map([
+  ...products,
+  ...services,
+])
 
-const meatHalal = [
-  ["Говядина", "meat_halal_beef"],
-  ["Баранина", "meat_halal_lamb"],
-  ["Верблюжатина", "meat_halal_camel"],
-  ["Конина", "meat_halal_horse"],
-  ["Курица", "meat_halal_chicken"],
-  ["Индейка", "meat_halal_turkey"],
-  ["Утка", "meat_halal_duck"],
-  ["Гусь", "meat_halal_goose"],
-  ["Казы", "meat_halal_kazy"],
-]
+const userSteps = new Map()
 
-const dairyIndustrial = [
-  ["Молоко", "dairy_industrial_milk"],
-  ["Творог", "dairy_industrial_cottage"],
-  ["Сметана", "dairy_industrial_sourcream"],
-  ["Сливочное масло", "dairy_industrial_butter"],
-  ["Топлёное масло", "dairy_industrial_ghee"],
-  ["Кумыс", "dairy_industrial_kumys"],
-  ["Яйца", "dairy_industrial_eggs"],
-]
+let database = {
+  suppliers: [],
+}
+let databaseLoaded = false
 
-const dairyFarm = [
-  ["Молоко", "dairy_farm_milk"],
-  ["Творог", "dairy_farm_cottage"],
-  ["Сметана", "dairy_farm_sourcream"],
-  ["Сливочное масло", "dairy_farm_butter"],
-  ["Топлёное масло", "dairy_farm_ghee"],
-  ["Кумыс", "dairy_farm_kumys"],
-  ["Яйца", "dairy_farm_eggs"],
-]
-
-const catalogGroups = {
-  meat_farm: {
-    title: "Фермерское мясо",
-    heading: "🥩 МЯСО И ПТИЦА",
-    items: meatFarm,
-  },
-  meat_halal: {
-    title: "Фермерское мясо Халяль",
-    heading: "🥩 МЯСО И ПТИЦА",
-    items: meatHalal,
-  },
-  dairy_industrial: {
-    title: "Промышленное хозяйство",
-    heading: "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ",
-    items: dairyIndustrial,
-  },
-  dairy_farm: {
-    title: "Фермерское хозяйство",
-    heading: "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ",
-    items: dairyFarm,
-  },
+function isAdmin(ctx) {
+  return Number(ctx.from?.id) === ADMIN_ID
 }
 
 function dateToday() {
@@ -109,11 +74,48 @@ function dateToday() {
   })
 }
 
+async function loadDatabase() {
+  await mkdir(DATA_DIR, { recursive: true })
+
+  try {
+    const content = await readFile(DATABASE_FILE, "utf8")
+    database = JSON.parse(content)
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error
+    database = { suppliers: [] }
+    await saveDatabase()
+  }
+
+  if (!Array.isArray(database.suppliers)) {
+    database.suppliers = []
+  }
+}
+
+async function saveDatabase() {
+  await mkdir(DATA_DIR, { recursive: true })
+
+  const temporaryFile = `${DATABASE_FILE}.tmp`
+  await writeFile(
+    temporaryFile,
+    JSON.stringify(database, null, 2),
+    "utf8"
+  )
+  await writeFile(
+    DATABASE_FILE,
+    await readFile(temporaryFile)
+  )
+}
+
 function mainKeyboard() {
   return new InlineKeyboard()
     .text("📦 Поставщики", "products")
     .row()
     .text("🛠 Услуги", "services")
+}
+
+function backHomeKeyboard() {
+  return new InlineKeyboard()
+    .text("🏠 Главное меню", "home")
 }
 
 function listKeyboard(items, prefix) {
@@ -127,77 +129,195 @@ function listKeyboard(items, prefix) {
   return keyboard
 }
 
-function groupKeyboard(groupId) {
-  const group = catalogGroups[groupId]
-  const keyboard = new InlineKeyboard()
-
-  for (const [name, id] of group.items) {
-    keyboard.text(name, `catalog:${groupId}:${id}`).row()
-  }
-
-  keyboard
-    .text("⬅️ Назад к поставщикам", "products")
+function adminKeyboard() {
+  return new InlineKeyboard()
+    .text("➕ Добавить поставщика", "admin:add")
+    .row()
+    .text("📋 Список поставщиков", "admin:list")
     .row()
     .text("🏠 Главное меню", "home")
+}
+
+function categoryTitle(category, itemId) {
+  if (category === "meat") {
+    const index = Number(itemId.slice(1))
+    const name = meatNames[index]
+    return itemId.startsWith("h")
+      ? `${name} · ХАЛЯЛЬ`
+      : name
+  }
+
+  if (category === "dairy") {
+    const index = Number(itemId.slice(1))
+    return dairyNames[index]
+  }
+
+  return categoryNames.get(category) || category
+}
+
+function supplierCategory(supplier) {
+  return supplier.itemId
+    ? `${supplier.categoryLabel}`
+    : categoryNames.get(supplier.category) || supplier.category
+}
+function categoryKeyboard(category) {
+  const keyboard = new InlineKeyboard()
+
+  if (category === "meat") {
+    meatNames.forEach((name, i) => {
+      keyboard.text(name, `pick:meat:m${i}`).row()
+    })
+
+    meatNames.forEach((name, i) => {
+      keyboard.text(`${name} · ХАЛЯЛЬ`, `pick:meat:h${i}`).row()
+    })
+  }
+
+  if (category === "dairy") {
+    keyboard
+      .text("🏭 Промышленное хозяйство", "dairytype:industrial")
+      .row()
+      .text("🚜 Фермерское хозяйство", "dairytype:farm")
+  }
+
+  keyboard.text("⬅️ Назад", "products").row()
+  keyboard.text("🏠 Главное меню", "home")
 
   return keyboard
 }
 
-async function showGroup(ctx, groupId) {
-  const group = catalogGroups[groupId]
+async function showCategory(ctx, category, itemId = null) {
+  const suppliers = database.suppliers.filter((supplier) => {
+    return supplier.category === category &&
+      (supplier.itemId || null) === (itemId || null)
+  })
+
+  const title = itemId
+    ? categoryTitle(category, itemId)
+    : categoryNames.get(category) || category
+
+  if (!suppliers.length) {
+    await ctx.editMessageText(
+      `${title}\n\nПоставщиков пока нет.`,
+      {
+        reply_markup: itemId
+          ? new InlineKeyboard()
+              .text("⬅️ Назад", category === "meat" ? "product:meat" : "product:dairy")
+              .row()
+              .text("🏠 Главное меню", "home")
+          : backHomeKeyboard()
+      }
+    )
+    return
+  }
+
+  const keyboard = new InlineKeyboard()
+
+  for (const supplier of suppliers) {
+    keyboard
+      .text(supplier.name, `supplier:${supplier.id}`)
+      .row()
+  }
+
+  if (itemId) {
+    keyboard
+      .text(
+        "⬅️ Назад",
+        category === "meat" ? "product:meat" : "product:dairy"
+      )
+      .row()
+  } else {
+    keyboard.text("⬅️ Назад", "products").row()
+  }
+
+  keyboard.text("🏠 Главное меню", "home")
 
   await ctx.editMessageText(
-    `${group.heading}\n\n${group.title}\n\nВыбери вид продукции:`,
-    { reply_markup: groupKeyboard(groupId) },
+    `${title}\n\nВыбери поставщика:`,
+    { reply_markup: keyboard }
   )
 }
 
-async function showMeat(ctx) {
-  await ctx.answerCallbackQuery()
+async function startAddSupplier(ctx) {
+  userSteps.set(ctx.from.id, {
+    step: "category",
+    values: [],
+  })
 
-  await showGroup(ctx, "meat_farm")
+  const keyboard = new InlineKeyboard()
+
+  products.forEach(([name, id]) => {
+    keyboard.text(name, `admin:cat:${id}`).row()
+  })
+
+  await ctx.reply("Выбери категорию поставщика:", {
+    reply_markup: keyboard,
+  })
+}
+
+async function finishSupplier(ctx, state) {
+  const [name, contact, phone, description, delivery, whatsapp] = state.values
+
+  const supplier = {
+    id: crypto.randomUUID(),
+    name,
+    contact,
+    phone,
+    description,
+    delivery,
+    whatsapp,
+    category: state.category,
+    itemId: state.itemId || null,
+    categoryLabel: state.categoryLabel,
+    createdAt: new Date().toISOString(),
+    expiresAt: null,
+  }
+
+  database.suppliers.push(supplier)
+  await saveDatabase()
+  userSteps.delete(ctx.from.id)
 
   await ctx.reply(
-    "🥩 МЯСО И ПТИЦА\n\nФермерское мясо Халяль\n\nВыбери вид продукции:",
-    { reply_markup: groupKeyboard("meat_halal") },
+    `✅ Поставщик добавлен.\n\n${supplier.name}\nРаздел: ${supplier.categoryLabel}`,
+    { reply_markup: adminKeyboard() }
   )
 }
-
-async function showDairy(ctx) {
-  await ctx.answerCallbackQuery()
-
-  await showGroup(ctx, "dairy_industrial")
-
-  await ctx.reply(
-    "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ\n\nФермерское хозяйство\n\nВыбери вид продукции:",
-    { reply_markup: groupKeyboard("dairy_farm") },
-  )
-}
-
 export function registerCommands(bot) {
+  bot.use(async (ctx, next) => {
+    if (!databaseLoaded) {
+  await loadDatabase()
+  databaseLoaded = true
+}
+    await next()
+  })
+
   bot.command("start", async (ctx) => {
     await ctx.reply(
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
-      { reply_markup: mainKeyboard() },
+      { reply_markup: mainKeyboard() }
     )
   })
 
-  bot.command("help", (ctx) =>
-    ctx.reply("Используй кнопки меню, чтобы найти поставщиков и услуги."),
-  )
+  bot.command("admin", async (ctx) => {
+    if (!isAdmin(ctx)) {
+      return ctx.reply("⛔️ Доступ запрещён.")
+    }
+
+    await ctx.reply("🔐 Панель администратора", {
+      reply_markup: adminKeyboard(),
+    })
+  })
 
   bot.callbackQuery("home", async (ctx) => {
     await ctx.answerCallbackQuery()
-
     await ctx.editMessageText(
-      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
-      { reply_markup: mainKeyboard() },
+      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+      { reply_markup: mainKeyboard() }
     )
   })
 
   bot.callbackQuery("products", async (ctx) => {
     await ctx.answerCallbackQuery()
-
     await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
       reply_markup: listKeyboard(products, "product"),
     })
@@ -205,122 +325,299 @@ export function registerCommands(bot) {
 
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
-
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
       reply_markup: listKeyboard(services, "service"),
     })
   })
 
-  bot.callbackQuery("product:meat", showMeat)
-
-  bot.callbackQuery("product:dairy", showDairy)
-
-  bot.callbackQuery(/^catalog:([^:]+):(.+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery()
-
-    const groupId = ctx.match[1]
-    const itemId = ctx.match[2]
-    const group = catalogGroups[groupId]
-
-    if (!group) return
-
-    const item = group.items.find((entry) => entry[1] === itemId)
-
-    if (!item) return
-
-    await ctx.editMessageText(
-      `${item[0]}\n\nПоставщики этой категории скоро появятся.`,
-      {
-        reply_markup: new InlineKeyboard()
-          .text("⬅️ Назад", `group:${groupId}`)
-          .row()
-          .text("🏠 Главное меню", "home"),
-      },
-    )
-  })
-
-  bot.callbackQuery(/^group:(.+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery()
-
-    const groupId = ctx.match[1]
-
-    if (!catalogGroups[groupId]) return
-
-    await showGroup(ctx, groupId)
-  })
-
-  bot.callbackQuery("service:repair", async (ctx) => {
-    await ctx.answerCallbackQuery()
-
-    await ctx.editMessageText("🔧 РЕМОНТ ОБОРУДОВАНИЯ\n\nВыбери оборудование:", {
-      reply_markup: listKeyboard(repairItems, "item"),
-    })
-  })
-
-  bot.callbackQuery("service:automation", async (ctx) => {
-    await ctx.answerCallbackQuery()
-
-    await ctx.editMessageText("💻 СИСТЕМЫ АВТОМАТИЗАЦИИ\n\nВыбери оборудование:", {
-      reply_markup: listKeyboard(automationItems, "item"),
-    })
-  })
-
   bot.callbackQuery(/^product:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
+    const category = ctx.match[1]
 
-    const id = ctx.match[1]
-    const category = products.find((item) => item[1] === id)
+    if (category === "meat") {
+      await ctx.editMessageText(
+        "🥩 МЯСО И ПТИЦА\n\nФермерское мясо\n\nВыбери продукт:",
+        { reply_markup: categoryKeyboard("meat") }
+      )
+      return
+    }
 
-    if (!category) return
+    if (category === "dairy") {
+      await ctx.editMessageText(
+        "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ\n\nВыбери хозяйство:",
+        { reply_markup: categoryKeyboard("dairy") }
+      )
+      return
+    }
+
+    await showCategory(ctx, category)
+  })
+
+  bot.callbackQuery(/^dairytype:(industrial|farm)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+
+    const type = ctx.match[1]
+    const prefix = type === "industrial" ? "p" : "f"
+    const keyboard = new InlineKeyboard()
+
+    dairyNames.forEach((name, i) => {
+      keyboard.text(name, `pick:dairy:${prefix}${i}`).row()
+    })
+
+    keyboard.text("⬅️ Назад", "product:dairy").row()
+    keyboard.text("🏠 Главное меню", "home")
 
     await ctx.editMessageText(
-      `📦 ${category[0]}\n\nПоставщики этой категории скоро появятся.`,
-      {
-        reply_markup: new InlineKeyboard()
-          .text("⬅️ Назад", "products")
-          .row()
-          .text("🏠 Главное меню", "home"),
-      },
+      `${type === "industrial" ? "🏭 Промышленное хозяйство" : "🚜 Фермерское хозяйство"}\n\nВыбери продукт:`,
+      { reply_markup: keyboard }
     )
+  })
+
+  bot.callbackQuery(/^pick:(meat|dairy):([mhpf]\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await showCategory(ctx, ctx.match[1], ctx.match[2])
   })
 
   bot.callbackQuery(/^service:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
     const id = ctx.match[1]
-    const service = services.find((item) => item[1] === id)
+    let items = []
 
-    if (!service) return
+    if (id === "repair") items = repairItems
+    if (id === "automation") items = automationItems
+
+    if (items.length) {
+      await ctx.editMessageText(
+        `${categoryNames.get(id)}\n\nВыбери оборудование:`,
+        { reply_markup: listKeyboard(items, "serviceitem") }
+      )
+      return
+    }
 
     await ctx.editMessageText(
-      `${service[0]}\n\nИсполнители этой категории скоро появятся.`,
-      {
-        reply_markup: new InlineKeyboard()
-          .text("⬅️ Назад", "services")
-          .row()
-          .text("🏠 Главное меню", "home"),
-      },
+      `${categoryNames.get(id)}\n\nИнформация скоро появится.`,
+      { reply_markup: backHomeKeyboard() }
     )
   })
 
-  bot.callbackQuery(/^item:(.+)$/, async (ctx) => {
+  bot.callbackQuery(/^serviceitem:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
-    const id = ctx.match[1]
-    const item = [...repairItems, ...automationItems].find(
-      (entry) => entry[1] === id,
-    )
-
-    if (!item) return
+    const item = [...repairItems, ...automationItems]
+      .find((entry) => entry[1] === ctx.match[1])
 
     await ctx.editMessageText(
-      `${item[0]}\n\nСпециалисты этой категории скоро появятся.`,
-      {
-        reply_markup: new InlineKeyboard()
-          .text("⬅️ Назад", "services")
-          .row()
-          .text("🏠 Главное меню", "home"),
-      },
+      `${item ? item[0] : "Услуга"}\n\nИнформация скоро появится.`,
+      { reply_markup: backHomeKeyboard() }
     )
+  })
+
+  bot.callbackQuery(/^supplier:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+
+    const supplier = database.suppliers.find(
+      (entry) => entry.id === ctx.match[1]
+    )
+
+    if (!supplier) {
+      await ctx.editMessageText("Поставщик не найден.", {
+        reply_markup: backHomeKeyboard(),
+      })
+      return
+    }
+
+    const text = [
+      `🏢 ${supplier.name}`,
+      "",
+      `Раздел: ${supplier.categoryLabel}`,
+      `Контактное лицо: ${supplier.contact || "Не указано"}`,
+      `Телефон: ${supplier.phone || "Не указан"}`,
+      "",
+      supplier.description || "",
+      "",
+      `Доставка: ${supplier.delivery || "Не указано"}`,
+      supplier.whatsapp ? `WhatsApp: ${supplier.whatsapp}` : "",
+    ].filter(Boolean).join("\n")
+
+    const back = supplier.itemId
+      ? `category:${supplier.category}:${supplier.itemId}`
+      : `category:${supplier.category}`
+
+    await ctx.editMessageText(text, {
+      reply_markup: new InlineKeyboard()
+        .text("⬅️ Назад к списку", back)
+        .row()
+        .text("🏠 Главное меню", "home"),
+    })
+  })
+
+  bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await showCategory(ctx, ctx.match[1], ctx.match[2] || null)
+  })
+    bot.callbackQuery("admin:add", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+    await startAddSupplier(ctx)
+  })
+
+  bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const category = ctx.match[1]
+    const keyboard = new InlineKeyboard()
+
+    if (category === "meat") {
+      meatNames.forEach((name, i) => {
+        keyboard.text(name, `admin:item:meat:m${i}`).row()
+      })
+
+      meatNames.forEach((name, i) => {
+        keyboard.text(`${name} · ХАЛЯЛЬ`, `admin:item:meat:h${i}`).row()
+      })
+    } else if (category === "dairy") {
+      keyboard
+        .text("🏭 Промышленное хозяйство", "admin:dairy:industrial")
+        .row()
+        .text("🚜 Фермерское хозяйство", "admin:dairy:farm")
+        .row()
+    } else {
+      keyboard.text("Добавить в общий раздел", `admin:item:${category}:none`).row()
+    }
+
+    keyboard.text("❌ Отмена", "admin:cancel")
+
+    await ctx.editMessageText("Выбери подкатегорию:", {
+      reply_markup: keyboard,
+    })
+  })
+
+  bot.callbackQuery(/^admin:dairy:(industrial|farm)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const prefix = ctx.match[1] === "industrial" ? "p" : "f"
+    const keyboard = new InlineKeyboard()
+
+    dairyNames.forEach((name, i) => {
+      keyboard.text(name, `admin:item:dairy:${prefix}${i}`).row()
+    })
+
+    keyboard.text("❌ Отмена", "admin:cancel")
+
+    await ctx.editMessageText("Выбери молочный продукт:", {
+      reply_markup: keyboard,
+    })
+  })
+
+  bot.callbackQuery(/^admin:item:([^:]+):([mhpf]\d+|none)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const category = ctx.match[1]
+    const itemId = ctx.match[2]
+
+    const label = itemId === "none"
+      ? categoryNames.get(category)
+      : categoryTitle(category, itemId)
+
+    userSteps.set(ctx.from.id, {
+      step: "supplier",
+      category,
+      itemId: itemId === "none" ? null : itemId,
+      categoryLabel: label,
+      values: [],
+    })
+
+    await ctx.editMessageText(
+      "Введи название компании или поставщика:"
+    )
+  })
+
+  bot.callbackQuery("admin:list", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    if (!database.suppliers.length) {
+      await ctx.editMessageText("Поставщиков пока нет.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const lines = database.suppliers.map((supplier, i) =>
+      `${i + 1}. ${supplier.name} — ${supplier.categoryLabel}`
+    )
+
+    await ctx.editMessageText(
+      `📋 СПИСОК ПОСТАВЩИКОВ\n\n${lines.join("\n")}`,
+      { reply_markup: adminKeyboard() }
+    )
+  })
+
+  bot.callbackQuery("admin:cancel", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    userSteps.delete(ctx.from.id)
+
+    await ctx.editMessageText("Действие отменено.", {
+      reply_markup: adminKeyboard(),
+    })
+  })
+
+  bot.on("message:text", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (!state || state.step !== "supplier") return next()
+    if (!isAdmin(ctx)) return
+
+    const value = ctx.message.text.trim()
+
+    if (value === "/cancel") {
+      userSteps.delete(ctx.from.id)
+      await ctx.reply("Действие отменено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    if (!value) {
+      await ctx.reply("Поле не должно быть пустым. Введи значение:")
+      return
+    }
+
+    state.values.push(value)
+
+    const prompts = [
+      "Введи контактное лицо:",
+      "Введи номер телефона:",
+      "Опиши ассортимент или продукцию:",
+      "Укажи адрес и условия доставки:",
+      "Введи ссылку WhatsApp или напиши «нет»:",
+    ]
+
+    if (state.values.length <= prompts.length) {
+      await ctx.reply(prompts[state.values.length - 1])
+      return
+    }
+
+    const whatsapp = value.toLowerCase() === "нет" ? "" : value
+
+    if (
+      whatsapp &&
+      !/^https:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(whatsapp)
+    ) {
+      state.values.pop()
+      await ctx.reply(
+        "Нужна ссылка WhatsApp, начинающаяся с https://wa.me/ или https://api.whatsapp.com/. Либо напиши «нет»."
+      )
+      return
+    }
+
+    state.values[5] = whatsapp
+    await finishSupplier(ctx, state)
   })
 }
