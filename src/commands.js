@@ -636,7 +636,7 @@ export function registerCommands(bot) {
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-    if (!state || !["supplier", "duration"].includes(state.step)) return next()
+    if (!state || !["supplier", "duration", "extendDuration"].includes(state.step)) return next()
     if (!isAdmin(ctx)) return
 
     const value = ctx.message.text.trim()
