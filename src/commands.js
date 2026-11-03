@@ -320,7 +320,7 @@ async function finishSupplier(ctx, state) {
     { reply_markup: adminKeyboard() }
   )
 }
-export function registerCommands(bot) {
+export async function registerCommands(bot) {
   bot.api.setMyCommands([
     { command: "start", description: "Запустить бота" },
   ])
