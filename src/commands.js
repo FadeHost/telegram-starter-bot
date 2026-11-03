@@ -250,8 +250,9 @@ async function showCategory(ctx, category, itemId = null) {
 
   if (itemId) {
     keyboard
-  .text("⬅️ Назад", `product:${category}`)
-  .row()
+      keyboard
+      .text("⬅️ Назад", `product:${category}`)
+      .row()
   
   } else {
     keyboard.text("⬅️ Назад", "products").row()
