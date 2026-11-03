@@ -77,6 +77,29 @@ const dairyFarm = [
   ["Яйца", "dairy_farm_eggs"],
 ]
 
+const catalogGroups = {
+  meat_farm: {
+    title: "Фермерское мясо",
+    heading: "🥩 МЯСО И ПТИЦА",
+    items: meatFarm,
+  },
+  meat_halal: {
+    title: "Фермерское мясо Халяль",
+    heading: "🥩 МЯСО И ПТИЦА",
+    items: meatHalal,
+  },
+  dairy_industrial: {
+    title: "Промышленное хозяйство",
+    heading: "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ",
+    items: dairyIndustrial,
+  },
+  dairy_farm: {
+    title: "Фермерское хозяйство",
+    heading: "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ",
+    items: dairyFarm,
+  },
+}
+
 function dateToday() {
   return new Date().toLocaleDateString("ru-RU", {
     day: "numeric",
@@ -104,19 +127,51 @@ function listKeyboard(items, prefix) {
   return keyboard
 }
 
-function groupedKeyboard(groups) {
+function groupKeyboard(groupId) {
+  const group = catalogGroups[groupId]
   const keyboard = new InlineKeyboard()
 
-  for (const group of groups) {
-    for (const [name, id] of group.items) {
-      keyboard.text(name, `catalog:${id}`).row()
-    }
+  for (const [name, id] of group.items) {
+    keyboard.text(name, `catalog:${groupId}:${id}`).row()
   }
 
-  keyboard.text("⬅️ Назад", "products").row()
-  keyboard.text("🏠 Главное меню", "home")
+  keyboard
+    .text("⬅️ Назад к поставщикам", "products")
+    .row()
+    .text("🏠 Главное меню", "home")
 
   return keyboard
+}
+
+async function showGroup(ctx, groupId) {
+  const group = catalogGroups[groupId]
+
+  await ctx.editMessageText(
+    `${group.heading}\n\n${group.title}\n\nВыбери вид продукции:`,
+    { reply_markup: groupKeyboard(groupId) },
+  )
+}
+
+async function showMeat(ctx) {
+  await ctx.answerCallbackQuery()
+
+  await showGroup(ctx, "meat_farm")
+
+  await ctx.reply(
+    "🥩 МЯСО И ПТИЦА\n\nФермерское мясо Халяль\n\nВыбери вид продукции:",
+    { reply_markup: groupKeyboard("meat_halal") },
+  )
+}
+
+async function showDairy(ctx) {
+  await ctx.answerCallbackQuery()
+
+  await showGroup(ctx, "dairy_industrial")
+
+  await ctx.reply(
+    "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ\n\nФермерское хозяйство\n\nВыбери вид продукции:",
+    { reply_markup: groupKeyboard("dairy_farm") },
+  )
 }
 
 export function registerCommands(bot) {
@@ -133,6 +188,7 @@ export function registerCommands(bot) {
 
   bot.callbackQuery("home", async (ctx) => {
     await ctx.answerCallbackQuery()
+
     await ctx.editMessageText(
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
       { reply_markup: mainKeyboard() },
@@ -141,6 +197,7 @@ export function registerCommands(bot) {
 
   bot.callbackQuery("products", async (ctx) => {
     await ctx.answerCallbackQuery()
+
     await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
       reply_markup: listKeyboard(products, "product"),
     })
@@ -148,77 +205,53 @@ export function registerCommands(bot) {
 
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
+
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
       reply_markup: listKeyboard(services, "service"),
     })
   })
 
-  bot.callbackQuery("product:meat", async (ctx) => {
+  bot.callbackQuery("product:meat", showMeat)
+
+  bot.callbackQuery("product:dairy", showDairy)
+
+  bot.callbackQuery(/^catalog:([^:]+):(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
-    const groups = [
-      { title: "Фермерское мясо", items: meatFarm },
-      { title: "Фермерское мясо Халяль", items: meatHalal },
-    ]
+    const groupId = ctx.match[1]
+    const itemId = ctx.match[2]
+    const group = catalogGroups[groupId]
 
-    const description = groups
-      .map((group) => `\n${group.title}`)
-      .join("\n")
+    if (!group) return
 
-    await ctx.editMessageText(
-      `🥩 МЯСО И ПТИЦА\n${description}\n\nВыбери вид продукции:`,
-      { reply_markup: groupedKeyboard(groups) },
-    )
-  })
-
-  bot.callbackQuery("product:dairy", async (ctx) => {
-    await ctx.answerCallbackQuery()
-
-    const groups = [
-      { title: "Промышленное хозяйство", items: dairyIndustrial },
-      { title: "Фермерское хозяйство", items: dairyFarm },
-    ]
-
-    const description = groups
-      .map((group) => `\n${group.title}`)
-      .join("\n")
-
-    await ctx.editMessageText(
-      `🧀 МОЛОЧНАЯ ПРОДУКЦИЯ\n${description}\n\nВыбери вид продукции:`,
-      { reply_markup: groupedKeyboard(groups) },
-    )
-  })
-
-  bot.callbackQuery(/^catalog:(.+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery()
-
-    const id = ctx.match[1]
-    const allItems = [
-      ...meatFarm,
-      ...meatHalal,
-      ...dairyIndustrial,
-      ...dairyFarm,
-    ]
-
-    const item = allItems.find((entry) => entry[1] === id)
+    const item = group.items.find((entry) => entry[1] === itemId)
 
     if (!item) return
-
-    const back = id.startsWith("meat_") ? "product:meat" : "product:dairy"
 
     await ctx.editMessageText(
       `${item[0]}\n\nПоставщики этой категории скоро появятся.`,
       {
         reply_markup: new InlineKeyboard()
-          .text("⬅️ Назад", back)
+          .text("⬅️ Назад", `group:${groupId}`)
           .row()
           .text("🏠 Главное меню", "home"),
       },
     )
   })
 
+  bot.callbackQuery(/^group:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+
+    const groupId = ctx.match[1]
+
+    if (!catalogGroups[groupId]) return
+
+    await showGroup(ctx, groupId)
+  })
+
   bot.callbackQuery("service:repair", async (ctx) => {
     await ctx.answerCallbackQuery()
+
     await ctx.editMessageText("🔧 РЕМОНТ ОБОРУДОВАНИЯ\n\nВыбери оборудование:", {
       reply_markup: listKeyboard(repairItems, "item"),
     })
@@ -226,6 +259,7 @@ export function registerCommands(bot) {
 
   bot.callbackQuery("service:automation", async (ctx) => {
     await ctx.answerCallbackQuery()
+
     await ctx.editMessageText("💻 СИСТЕМЫ АВТОМАТИЗАЦИИ\n\nВыбери оборудование:", {
       reply_markup: listKeyboard(automationItems, "item"),
     })
