@@ -215,7 +215,7 @@ function categoryKeyboard(category) {
   return keyboard
 }
 
-async function showCategory(ctx, category, itemId = null) {
+async function showCategory(ctx, category, itemId = null, newMessage = false) {
   const suppliers = database.suppliers.filter((supplier) => {
     return supplier.category === category &&
       (supplier.itemId || null) === (itemId || null)
