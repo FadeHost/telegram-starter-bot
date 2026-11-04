@@ -288,36 +288,6 @@ async function startAddSupplier(ctx) {
     reply_markup: keyboard,
   })
 }
-  userSteps.set(ctx.from.id, {
-    step: "category",
-    values: [],
-  })
-
-  const keyboard = new InlineKeyboard()
-
-  bot.callbackQuery("products", async (ctx) => {
-  await ctx.answerCallbackQuery()
-
-  const keyboard = new InlineKeyboard()
-
-  products.forEach(([name, id]) => {
-    keyboard.text(name, `product:${id}`).row()
-  })
-
-  keyboard.text("⬅️ Главное меню", "home")
-
-  await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
-    reply_markup: keyboard,
-  })
-})
-  products.forEach(([name, id]) => {
-    keyboard.text(name, `admin:cat:${id}`).row()
-  })
-
-  await ctx.reply("Выбери категорию поставщика:", {
-    reply_markup: keyboard,
-  })
-}
 
 async function finishSupplier(ctx, state) {
   const [name, contact, phone, description, delivery, whatsapp] = state.values
@@ -388,21 +358,21 @@ export async function registerCommands(bot) {
   })
 
   bot.callbackQuery("home", async (ctx) => {
-  await ctx.answerCallbackQuery()
-
-  const lastCardId = lastSupplierCards.get(ctx.chat.id)
-
-  if (ctx.callbackQuery.message.message_id === lastCardId) {
-    await ctx.reply(
+    await ctx.answerCallbackQuery()
+    await ctx.editMessageText(
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
       { reply_markup: mainKeyboard() }
     )
-    return
-  }
+  })
 
-  await ctx.editMessageText(
-    `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
-    { reply_markup: 
+  bot.callbackQuery("products", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
+      reply_markup: listKeyboard(products, "product"),
+    })
+  })
+
+  bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
       reply_markup: listKeyboard(services, "service"),
