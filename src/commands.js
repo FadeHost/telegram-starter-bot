@@ -280,6 +280,21 @@ async function startAddSupplier(ctx) {
 
   const keyboard = new InlineKeyboard()
 
+  bot.callbackQuery("products", async (ctx) => {
+  await ctx.answerCallbackQuery()
+
+  const keyboard = new InlineKeyboard()
+
+  products.forEach(([name, id]) => {
+    keyboard.text(name, `product:${id}`).row()
+  })
+
+  keyboard.text("⬅️ Главное меню", "home")
+
+  await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
+    reply_markup: keyboard,
+  })
+})
   products.forEach(([name, id]) => {
     keyboard.text(name, `admin:cat:${id}`).row()
   })
@@ -377,6 +392,12 @@ export async function registerCommands(bot) {
 })
 
   bot.callbackQuery("services", async (ctx) => {
+    bot.callbackQuery("products", async (ctx) => {
+  await ctx.answerCallbackQuery()
+  await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
+    reply_markup: productsKeyboard(),
+  })
+})
     await ctx.answerCallbackQuery()
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
       reply_markup: listKeyboard(services, "service"),
