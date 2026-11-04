@@ -365,12 +365,24 @@ export async function registerCommands(bot) {
     )
   })
 
-  bot.callbackQuery("products", async (ctx) => {
-    await ctx.answerCallbackQuery()
-    await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
-      reply_markup: listKeyboard(products, "product"),
-    })
-  })
+  bot.callbackQuery("home", async (ctx) => {
+  await ctx.answerCallbackQuery()
+
+  const lastCardId = lastSupplierCards.get(ctx.chat.id)
+
+  if (ctx.callbackQuery.message.message_id === lastCardId) {
+    await ctx.reply(
+      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+      { reply_markup: mainKeyboard() }
+    )
+    return
+  }
+
+  await ctx.editMessageText(
+    `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+    { reply_markup: mainKeyboard() }
+  )
+})
 
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
