@@ -280,6 +280,21 @@ async function startAddSupplier(ctx) {
 
   const keyboard = new InlineKeyboard()
 
+  products.forEach(([name, id]) => {
+    keyboard.text(name, `admin:cat:${id}`).row()
+  })
+
+  await ctx.reply("Выбери категорию поставщика:", {
+    reply_markup: keyboard,
+  })
+}
+  userSteps.set(ctx.from.id, {
+    step: "category",
+    values: [],
+  })
+
+  const keyboard = new InlineKeyboard()
+
   bot.callbackQuery("products", async (ctx) => {
   await ctx.answerCallbackQuery()
 
@@ -387,17 +402,7 @@ export async function registerCommands(bot) {
 
   await ctx.editMessageText(
     `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
-    { reply_markup: mainKeyboard() }
-  )
-})
-
-  bot.callbackQuery("services", async (ctx) => {
-    bot.callbackQuery("products", async (ctx) => {
-  await ctx.answerCallbackQuery()
-  await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
-    reply_markup: productsKeyboard(),
-  })
-})
+    { reply_markup: 
     await ctx.answerCallbackQuery()
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
       reply_markup: listKeyboard(services, "service"),
