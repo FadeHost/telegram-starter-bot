@@ -358,14 +358,6 @@ export async function registerCommands(bot) {
   })
 
   bot.callbackQuery("home", async (ctx) => {
-    await ctx.answerCallbackQuery()
-    await ctx.editMessageText(
-      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
-      { reply_markup: mainKeyboard() }
-    )
-  })
-
-  bot.callbackQuery("home", async (ctx) => {
   await ctx.answerCallbackQuery()
 
   const lastCardId = lastSupplierCards.get(ctx.chat.id)
