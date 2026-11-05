@@ -348,6 +348,35 @@ export async function registerCommands(bot) {
       { reply_markup: mainKeyboard() }
     )
   })
+    bot.command("connect_autopost", async (ctx) => {
+    if (!isAdmin(ctx)) {
+      return ctx.reply("⛔️ Доступ запрещён.")
+    }
+
+    if (!["group", "supergroup"].includes(ctx.chat.type)) {
+      return ctx.reply("Добавь бота в свою группу и отправь эту команду там.")
+    }
+
+    const state = userSteps.get(ctx.from.id)
+
+    if (!state || state.step !== "autopostReady") {
+      return ctx.reply("Сначала закончи настройку автопостера в личном чате с ботом.")
+    }
+
+    database.autopost = {
+      active: true,
+      chatId: ctx.chat.id,
+      expiresAt: new Date(Date.now() + state.days * 24 * 60 * 60 * 1000).toISOString(),
+      times: state.times,
+      posts: state.posts,
+      lastSentDates: {},
+    }
+
+    await saveDatabase()
+    userSteps.delete(ctx.from.id)
+
+    await ctx.reply("✅ Группа подключена! Настройки автопостера сохранены.")
+  })
 
   bot.command("admin", async (ctx) => {
     if (!isAdmin(ctx)) {
