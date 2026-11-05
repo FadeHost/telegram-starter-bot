@@ -208,7 +208,12 @@ function listKeyboard(items, prefix) {
   const keyboard = new InlineKeyboard()
 
   for (const [name, id] of items) {
-    keyboard.text(name, `${prefix}:${id}`).row()
+  keyboard.text(
+  prefix === "product" && id === "meat_halal"
+    ? "　🥩 Мясо и птица Халяль　"
+    : name,
+  `${prefix}:${id}`
+).row()
   }
 
   keyboard.text("⬅️ Главное меню", "home")
