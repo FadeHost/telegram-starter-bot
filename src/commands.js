@@ -671,6 +671,12 @@ export async function registerCommands(bot) {
         console.error("Не удалось убрать кнопки:", error)
       }
     }  
+        const supplierListId = lastSupplierLists.get(ctx.chat.id)
+
+    if (supplierListId === ctx.callbackQuery.message.message_id) {
+      lastSupplierLists.delete(ctx.chat.id)
+    }
+
     await ctx.deleteMessage()
 
     for (const photo of supplier.photos || []) {
