@@ -842,7 +842,21 @@ export async function registerCommands(bot) {
       return
     }
 
-        if (state.step === "extendDuration") {
+        if (state.step === "autopostDays") {
+      const days = Number(value)
+
+      if (!Number.isInteger(days) || days < 1 || days > 365) {
+        await ctx.reply("Введи число от 1 до 365 дней.")
+        return
+      }
+
+      state.days = days
+      state.step = "autopostCount"
+
+      await ctx.reply("Сколько публикаций в день? Введи 1 или 2.")
+      return
+    }    
+    if (state.step === "extendDuration") {
       const days = Number(value)
 
       if (!Number.isInteger(days) || days < 1 || days > 3650) {
