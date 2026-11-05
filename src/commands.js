@@ -530,7 +530,19 @@ export async function registerCommands(bot) {
     await ctx.answerCallbackQuery()
     await showCategory(ctx, ctx.match[1], ctx.match[2] || null, true)
   })
-    bot.callbackQuery("admin:add", async (ctx) => {
+      bot.callbackQuery("admin:autopost", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    userSteps.set(ctx.from.id, {
+      step: "autopostDays",
+    })
+
+    await ctx.reply(
+      "📢 НАСТРОЙКА АВТОПОСТЕРА\n\nНа сколько дней включить автопостер?\n\nВведи число от 1 до 365."
+    )
+  })
+  bot.callbackQuery("admin:add", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
     await startAddSupplier(ctx)
