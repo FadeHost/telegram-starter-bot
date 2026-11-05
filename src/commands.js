@@ -669,9 +669,22 @@ export async function registerCommands(bot) {
     lastSupplierCards.set(ctx.chat.id, card.message_id) 
   })
 
-  bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
+    bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
     await ctx.answerCallbackQuery()
-    await showCategory(ctx, ctx.match[1], ctx.match[2] || null, true)
+
+    const menuId = lastMainMenus.get(ctx.chat.id)
+
+    await showCategory(
+      ctx,
+      ctx.match[1],
+      ctx.match[2] || null,
+      !menuId,
+      menuId || null
+    )
+
+    if (menuId) {
+      lastMainMenus.delete(ctx.chat.id)
+    }
   })
       bot.callbackQuery("admin:autopost", async (ctx) => {
     await ctx.answerCallbackQuery()
