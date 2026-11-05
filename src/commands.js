@@ -650,7 +650,7 @@ export async function registerCommands(bot) {
       reply_markup: new InlineKeyboard()
         .text("⬅️ Назад к поставщикам", back)
         .row()
-        .text("🏠 Главное меню", "home"),
+        .text("🏠 Главное меню", "home:new"),
     })
 
     lastSupplierCards.set(ctx.chat.id, card.message_id) 
