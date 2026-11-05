@@ -14,7 +14,7 @@ const products = [
   ["🥬 Овощи и фрукты", "vegetables"],
   ["🧀 Молочная продукция", "dairy"],
   ["🥫 Бакалея и продукты", "grocery"],
-  ["🍽 Оборудование", "equipment"],
+    ["🥟 Замороженный полуфабрикат", "equipment"],
 ]
 
 const services = [
