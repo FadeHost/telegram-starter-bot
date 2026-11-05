@@ -418,16 +418,17 @@ export async function registerCommands(bot) {
     await next()
   })
 
-  bot.command("start", async (ctx) => {
-    await ctx.reply(
-      bot.command("start", async (ctx) => {
-  if (ctx.chat.type !== "private") return
+    bot.command("start", async (ctx) => {
+    if (ctx.chat.type !== "private") return
 
-  await ctx.reply(
-    `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
-    { reply_markup: mainKeyboard() }
-  )
-})
+    await ctx.reply(
+      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
+      { reply_markup: mainKeyboard() }
+    )
+  })
+
+  bot.command("connect_autopost", async (ctx) => {
+    if (!isAdmin(ctx)) {
       return ctx.reply("⛔️ Доступ запрещён.")
     }
 
