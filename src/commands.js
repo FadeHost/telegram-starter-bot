@@ -874,7 +874,29 @@ export async function registerCommands(bot) {
       )
       return
     }
-    if (state.step === "extendDuration") {
+          if (state.step === "autopostTimes") {
+      const times = value.split(",").map((time) => time.trim())
+
+      if (
+        times.length !== state.count ||
+        times.some((time) => !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) ||
+        new Set(times).size !== times.length
+      ) {
+        await ctx.reply(
+          state.count === 1
+            ? "Введи время в формате 10:00."
+            : "Введи два разных времени через запятую. Например: 10:00, 20:00."
+        )
+        return
+      }
+
+      state.times = times
+      state.step = "autopostContent"
+
+      await ctx.reply("Время принято! Теперь отправь текст первой публикации или фотографию с описанием.")
+      return
+    }
+      if (state.step === "extendDuration") {
       const days = Number(value)
 
       if (!Number.isInteger(days) || days < 1 || days > 3650) {
