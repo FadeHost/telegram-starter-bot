@@ -118,6 +118,132 @@ async function saveDatabase() {
     await readFile(temporaryFile)
   )
 }
+let autopostTimer = null
+let autopostBusy = false
+
+async function runAutopost(bot) {
+  if (autopostBusy) return
+  autopostBusy = true
+
+  try {
+    const config = database.autopost
+    if (!config || !config.active) return
+
+    if (Date.now() >= new Date(config.expiresAt).getTime()) {
+      config.active = false
+      await saveDatabase()
+      return
+    }
+
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Almaty",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(new Date())
+
+    const get = (type) => parts.find((p) => p.type === type).value
+    const today = `${get("year")}-${get("month")}-${get("day")}`
+    const currentTime = `${get("hour")}:${get("minute")}`
+
+    for (let i = 0; i < config.times.length; i++) {
+      const time = config.times[i]
+
+      if (time !== currentTime || config.lastSentDates[time] === today) continue
+
+      const post = config.posts[i]
+      if (!post) continue
+
+      if (post.type === "photo") {
+        await bot.api.sendPhoto(config.chatId, post.fileId, {
+          caption: post.caption,
+        })
+      } else {
+        await bot.api.sendMessage(config.chatId, post.text)
+      }
+
+      config.lastSentDates[time] = today
+      await saveDatabase()
+    }
+  } catch (error) {
+    console.error("Ошибка автопостера:", error)
+  } finally {
+    autopostBusy = false
+  }
+}
+function startAutopostScheduler(bot) {
+  let running = false
+
+  setInterval(async () => {
+    if (running) return
+    running = true
+
+    try {
+      const job = database.autopost
+
+      if (!job || !job.active) return
+
+      const now = new Date()
+
+      if (now >= new Date(job.expiresAt)) {
+        job.active = false
+        await saveDatabase()
+        return
+      }
+
+      const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Almaty",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      }).formatToParts(now)
+
+      const get = (type) => parts.find((p) => p.type === type).value
+
+      const today = `${get("year")}-${get("month")}-${get("day")}`
+      const currentTime = `${get("hour")}:${get("minute")}`
+
+      for (let i = 0; i < job.times.length; i++) {
+        if (job.times[i] !== currentTime) continue
+
+        const key = `${today}_${i}`
+
+        if (job.lastSentDates?.[key] === today) continue
+
+        const post = job.posts[i]
+        if (!post) continue
+
+        job.lastSentDates = job.lastSentDates || {}
+        job.lastSentDates[key] = today
+        await saveDatabase()
+
+        try {
+          if (post.type === "photo") {
+            await bot.api.sendPhoto(job.chatId, post.fileId, {
+              caption: post.caption || undefined,
+            })
+          } else {
+            await bot.api.sendMessage(job.chatId, post.text)
+          }
+        } catch (error) {
+          delete job.lastSentDates[key]
+          await saveDatabase()
+          throw error
+        }
+      }
+    } catch (error) {
+      console.error("Ошибка автопостера:", error)
+    } finally {
+      running = false
+    }
+  }, 30000)
+}
 
 function mainKeyboard() {
   return new InlineKeyboard()
