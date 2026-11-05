@@ -608,7 +608,81 @@ export async function registerCommands(bot) {
     )
   })
 
-    bot.callbackQuery("admin:extend", async (ctx) => {
+    bot.callbackQuery("admin:delete", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    if (!database.suppliers.length) {
+      await ctx.editMessageText("Поставщиков пока нет.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+
+    for (const supplier of database.suppliers) {
+      keyboard.text(supplier.name, `delete:select:${supplier.id}`).row()
+    }
+
+    keyboard.text("⬅️ Назад", "admin:cancel")
+
+    await ctx.editMessageText(
+      "Выбери поставщика, которого нужно удалить:",
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery(/^delete:select:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const supplier = database.suppliers.find(
+      (item) => item.id === ctx.match[1]
+    )
+
+    if (!supplier) {
+      await ctx.editMessageText("Поставщик не найден.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+      .text("🗑 Да, удалить", `delete:yes:${supplier.id}`)
+      .row()
+      .text("❌ Отмена", "admin:cancel")
+
+    await ctx.editMessageText(
+      `⚠️ Подтверди удаление поставщика:\n\n${supplier.name}\n${supplier.categoryLabel}\n\nЭто действие нельзя отменить.`,
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery(/^delete:yes:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const index = database.suppliers.findIndex(
+      (item) => item.id === ctx.match[1]
+    )
+
+    if (index === -1) {
+      await ctx.editMessageText("Поставщик уже удалён или не найден.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const [supplier] = database.suppliers.splice(index, 1)
+    await saveDatabase()
+
+    await ctx.editMessageText(
+      `✅ Поставщик «${supplier.name}» удалён.`,
+      { reply_markup: adminKeyboard() }
+    )
+  })  
+  bot.callbackQuery("admin:extend", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
