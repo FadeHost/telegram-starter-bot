@@ -352,7 +352,7 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
       reply_markup: keyboard,
     })
   } else if (newMessage) {
-    await ctx.reply(messageText, { reply_markup: keyboard })
+    return await ctx.reply(messageText, { reply_markup: keyboard })
   } else {
     await ctx.editMessageText(messageText, { reply_markup: keyboard })
   }
