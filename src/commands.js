@@ -291,7 +291,7 @@ function categoryKeyboard(category) {
       .text("🚜 Фермерское хозяйство", "dairytype:farm")
   }
 
-  keyboard.text("⬅️ Назад", "products").row()
+  keyboard.text("⬅️ Вернуться к разделам товаров", "products").row()
   keyboard.text("🏠 Главное меню", "home")
 
   return keyboard
