@@ -896,7 +896,23 @@ export async function registerCommands(bot) {
       await ctx.reply("Время принято! Теперь отправь текст первой публикации или фотографию с описанием.")
       return
     }
-      if (state.step === "extendDuration") {
+          if (state.step === "autopostContent") {
+      state.posts = state.posts || []
+      state.posts.push({
+        type: "text",
+        text: value,
+      })
+
+      if (state.posts.length < state.count) {
+        await ctx.reply("Первая публикация принята. Отправь текст второй публикации.")
+        return
+      }
+
+      state.step = "autopostReady"
+      await ctx.reply("Тексты публикаций собраны!")
+      return
+    }
+     if (state.step === "extendDuration") {
       const days = Number(value)
 
       if (!Number.isInteger(days) || days < 1 || days > 3650) {
