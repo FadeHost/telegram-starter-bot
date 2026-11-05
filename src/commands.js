@@ -916,7 +916,7 @@ export async function registerCommands(bot) {
       await ctx.reply("Время принято! Теперь отправь текст первой публикации или фотографию с описанием.")
       return
     }
-          if (state.step === "autopostContent") {
+      if (state.step === "autopostContent") {
       state.posts = state.posts || []
       state.posts.push({
         type: "text",
@@ -924,12 +924,12 @@ export async function registerCommands(bot) {
       })
 
       if (state.posts.length < state.count) {
-        await ctx.reply("Первая публикация принята. Отправь текст второй публикации.")
+        await ctx.reply(`Публикация ${state.posts.length} из ${state.count} принята. Отправь следующую: текст или фото с описанием.`)
         return
       }
 
       state.step = "autopostReady"
-      await ctx.reply("Тексты публикаций собраны!")
+      await ctx.reply("Все публикации собраны!")
       return
     }
      if (state.step === "extendDuration") {
