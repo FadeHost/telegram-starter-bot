@@ -336,7 +336,7 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
 
   if (itemId) {
     keyboard
-      .text("⬅️ Назад к списку товаров", `product:${category}`)
+      .text("⬅️ Вернуться к списку товаров", `product:${category}`)
       .row()
   } else {
     keyboard.text("⬅️ Назад", "products").row()
