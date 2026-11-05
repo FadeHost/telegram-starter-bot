@@ -344,7 +344,7 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
 
   keyboard.text("🏠 Главное меню", "home")
 
-  const messageText = `${title}\n\nВыбери поставщика:`
+  const messageText = `Раздел: ${title}\n\nВыбери поставщика:`
 
   if (targetMessageId) {
     await ctx.api.editMessageText(ctx.chat.id, targetMessageId, messageText, {
