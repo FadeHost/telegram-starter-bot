@@ -486,13 +486,30 @@ export async function registerCommands(bot) {
     )
   })
   bot.callbackQuery("home:new", async (ctx) => {
-    await ctx.answerCallbackQuery()
-    const menu = await ctx.reply(
+  await ctx.answerCallbackQuery()
+
+  const listId = lastSupplierLists.get(ctx.chat.id)
+
+  if (listId) {
+    await ctx.api.editMessageText(
+      ctx.chat.id,
+      listId,
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
       { reply_markup: mainKeyboard() }
     )
-    lastMainMenus.set(ctx.chat.id, menu.message_id)
-  })
+
+    lastSupplierLists.delete(ctx.chat.id)
+    lastMainMenus.set(ctx.chat.id, listId)
+    return
+  }
+
+  const menu = await ctx.reply(
+    `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+    { reply_markup: mainKeyboard() }
+  )
+
+  lastMainMenus.set(ctx.chat.id, menu.message_id)
+})
 
   bot.callbackQuery("products", async (ctx) => {
     await ctx.answerCallbackQuery()
