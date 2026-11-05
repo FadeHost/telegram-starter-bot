@@ -675,13 +675,17 @@ export async function registerCommands(bot) {
 
     const menuId = lastMainMenus.get(ctx.chat.id)
 
-    await showCategory(
-      ctx,
-      ctx.match[1],
-      ctx.match[2] || null,
-      !menuId,
-      menuId || null
-    )
+    const list = await showCategory(
+  ctx,
+  ctx.match[1],
+  ctx.match[2] || null,
+  !menuId,
+  menuId || null
+)
+
+if (!menuId && list) {
+  lastSupplierLists.set(ctx.chat.id, list.message_id)
+}
 
     if (menuId) {
       lastMainMenus.delete(ctx.chat.id)
