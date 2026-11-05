@@ -196,7 +196,11 @@ function mainKeyboard() {
   return new InlineKeyboard()
     .text("📦 Поставщики", "products")
     .row()
-    .text("🛠 Услуги", "services")
+    .text("🛠 Услуги для общепита", "services")
+    .row()
+    .text("⚙️ Оборудование для общепита", "equipment")
+    .row()
+    .text("ℹ️ О проекте", "about")
 }
 
 function backHomeKeyboard() {
