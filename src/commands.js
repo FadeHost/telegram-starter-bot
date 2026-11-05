@@ -479,6 +479,13 @@ export async function registerCommands(bot) {
       { reply_markup: mainKeyboard() }
     )
   })
+    bot.callbackQuery("home:new", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await ctx.reply(
+      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+      { reply_markup: mainKeyboard() }
+    )
+  })
 
   bot.callbackQuery("products", async (ctx) => {
     await ctx.answerCallbackQuery()
