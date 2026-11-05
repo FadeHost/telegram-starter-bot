@@ -801,6 +801,10 @@ if (!menuId && list) {
         .row()
         .text("🚜 Фермерское хозяйство", "admin:dairy:farm")
         .row()
+        } else if (category === "fish") {
+      fishNames.forEach((name, i) => {
+        keyboard.text(name, `admin:item:fish:f${i}`).row()
+      })
     } else {
       keyboard.text("Добавить в общий раздел", `admin:item:${category}:none`).row()
     }
