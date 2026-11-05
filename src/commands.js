@@ -282,8 +282,12 @@ function categoryTitle(category, itemId) {
       : name
   }
 
-  if (category === "dairy") {
+    if (category === "dairy") {
     return dairyNames[index]
+  }
+
+  if (category === "fish") {
+    return fishNames[index]
   }
 
   return categoryNames.get(category) || category
