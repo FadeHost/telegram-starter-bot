@@ -480,12 +480,13 @@ export async function registerCommands(bot) {
       { reply_markup: mainKeyboard() }
     )
   })
-  bot.callbackQuery("home:new", async (ctx) => {
+    bot.callbackQuery("home:new", async (ctx) => {
     await ctx.answerCallbackQuery()
-    await ctx.reply(
+    const menu = await ctx.reply(
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
       { reply_markup: mainKeyboard() }
     )
+    lastMainMenus.set(ctx.chat.id, menu.message_id)
   })
 
   bot.callbackQuery("products", async (ctx) => {
