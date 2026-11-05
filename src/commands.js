@@ -802,17 +802,37 @@ export async function registerCommands(bot) {
     })
   })
 
-    bot.on("message:photo", async (ctx, next) => {
+      bot.on("message:photo", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-    if (!isAdmin(ctx) || !state || state.step !== "supplierPhotos") {
-      return next()
+    if (!isAdmin(ctx) || !state) return next()
+
+    if (state.step === "autopostContent") {
+      state.posts = state.posts || []
+      const photo = ctx.message.photo.at(-1)
+
+      state.posts.push({
+        type: "photo",
+        fileId: photo.file_id,
+        caption: ctx.message.caption || "",
+      })
+
+      if (state.posts.length < state.count) {
+        await ctx.reply(`Публикация ${state.posts.length} из ${state.count} принята. Отправь следующую: текст или фото с описанием.`)
+        return
+      }
+
+      state.step = "autopostReady"
+      await ctx.reply("Все публикации собраны!")
+      return
     }
+
+    if (state.step !== "supplierPhotos") return next()
 
     const photo = ctx.message.photo.at(-1)
     state.photos.push(photo.file_id)
 
-        const keyboard = new InlineKeyboard()
+    const keyboard = new InlineKeyboard()
       .text("✅ Готово", "photo:finish")
       .text("⏭ Пропустить", "photo:skip")
 
