@@ -598,10 +598,18 @@ export async function registerCommands(bot) {
       return
     }
 
-    if (category === "dairy") {
+     if (category === "dairy") {
       await ctx.editMessageText(
         "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ\n\nВыбери хозяйство:",
         { reply_markup: categoryKeyboard("dairy") }
+      )
+      return
+    }
+
+    if (category === "fish") {
+      await ctx.editMessageText(
+        "🐟 РЫБА И МОРЕПРОДУКТЫ\n\nВыбери продукт:",
+        { reply_markup: categoryKeyboard("fish") }
       )
       return
     }
