@@ -486,11 +486,28 @@ export async function registerCommands(bot) {
     })
   })
 
-  bot.callbackQuery("services", async (ctx) => {
+    bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
       reply_markup: listKeyboard(services, "service"),
     })
+  })
+
+  bot.callbackQuery("about", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await ctx.editMessageText(
+      `🏙 О ПРОЕКТЕ «ОБЩЕПИТ АСТАНА»
+
+«Общепит Астана» — это не просто группа. Это сообщество, благодаря которому более 10 000 человек уже нашли работу.
+
+Присоединяйся к нам!
+
+💬 Наш Telegram-чат: @obshepit_astana
+
+📢 Реклама и сотрудничество
+По вопросам размещения и партнёрства пишите: @rabka_uhalla`,
+      { reply_markup: backHomeKeyboard() }
+    )
   })
 
   bot.callbackQuery(/^product:(.+)$/, async (ctx) => {
