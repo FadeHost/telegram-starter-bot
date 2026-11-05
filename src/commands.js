@@ -297,7 +297,7 @@ function categoryKeyboard(category) {
   return keyboard
 }
 
-async function showCategory(ctx, category, itemId = null, newMessage = false) {
+async function showCategory(ctx, category, itemId = null, newMessage = false, targetMessageId = null) {
   const suppliers = database.suppliers.filter((supplier) => {
     return supplier.category === category &&
       (supplier.itemId || null) === (itemId || null)
@@ -308,17 +308,21 @@ async function showCategory(ctx, category, itemId = null, newMessage = false) {
     : categoryNames.get(category) || category
 
   if (!suppliers.length) {
-    await ctx.editMessageText(
-      `${title}\n\nПоставщиков пока нет.`,
-      {
-        reply_markup: itemId
-          ? new InlineKeyboard()
-              .text("⬅️ Назад", `product:${category}`)
-              .row()
-              .text("🏠 Главное меню", "home")
-          : backHomeKeyboard()
-      }
-    )
+    const messageText = `${title}\n\nПоставщиков пока нет.`
+    const keyboard = itemId
+      ? new InlineKeyboard()
+          .text("⬅️ Назад", `product:${category}`)
+          .row()
+          .text("🏠 Главное меню", "home")
+      : backHomeKeyboard()
+
+    if (targetMessageId) {
+      await ctx.api.editMessageText(ctx.chat.id, targetMessageId, messageText, {
+        reply_markup: keyboard,
+      })
+    } else {
+      await ctx.editMessageText(messageText, { reply_markup: keyboard })
+    }
     return
   }
 
@@ -334,23 +338,23 @@ async function showCategory(ctx, category, itemId = null, newMessage = false) {
     keyboard
       .text("⬅️ Назад к списку", `product:${category}`)
       .row()
-  
   } else {
     keyboard.text("⬅️ Назад", "products").row()
   }
 
   keyboard.text("🏠 Главное меню", "home")
 
-  if (newMessage) {
-  await ctx.reply(`${title}\n\nВыбери поставщика:`, {
-    reply_markup: keyboard,
-  })
-} else {
-  await ctx.editMessageText(
-    `${title}\n\nВыбери поставщика:`,
-    { reply_markup: keyboard }
-  )
-}
+  const messageText = `${title}\n\nВыбери поставщика:`
+
+  if (targetMessageId) {
+    await ctx.api.editMessageText(ctx.chat.id, targetMessageId, messageText, {
+      reply_markup: keyboard,
+    })
+  } else if (newMessage) {
+    await ctx.reply(messageText, { reply_markup: keyboard })
+  } else {
+    await ctx.editMessageText(messageText, { reply_markup: keyboard })
+  }
 }
 
 async function startAddSupplier(ctx) {
