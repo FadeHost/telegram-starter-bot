@@ -420,12 +420,14 @@ export async function registerCommands(bot) {
 
   bot.command("start", async (ctx) => {
     await ctx.reply(
-      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
-      { reply_markup: mainKeyboard() }
-    )
-  })
-    bot.command("connect_autopost", async (ctx) => {
-    if (!isAdmin(ctx)) {
+      bot.command("start", async (ctx) => {
+  if (ctx.chat.type !== "private") return
+
+  await ctx.reply(
+    `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
+    { reply_markup: mainKeyboard() }
+  )
+})
       return ctx.reply("⛔️ Доступ запрещён.")
     }
 
