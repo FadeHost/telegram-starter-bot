@@ -155,8 +155,10 @@ function adminKeyboard() {
     .text("🖼 Фотографии", "admin:photos")
     .row()
     .text("🗑 Удалить поставщика", "admin:delete")
-    .row()
-    .text("🏠 Главное меню", "home")
+.row()
+.text("📢 Автопостер", "admin:autopost")
+.row()
+.text("🏠 Главное меню", "home")
 }
 
 function categoryTitle(category, itemId) {
