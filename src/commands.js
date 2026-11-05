@@ -669,7 +669,7 @@ export async function registerCommands(bot) {
     lastSupplierCards.set(ctx.chat.id, card.message_id) 
   })
 
-    bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
+   bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
     const menuId = lastMainMenus.get(ctx.chat.id)
