@@ -396,6 +396,9 @@ async function finishSupplier(ctx, state) {
   )
 }
 export async function registerCommands(bot) {
+    await loadDatabase()
+  databaseLoaded = true
+  startAutopostScheduler(bot)
   await bot.api.setMyCommands([
     { command: "start", description: "Запустить бота" },
   ])
