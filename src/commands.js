@@ -300,7 +300,7 @@ function supplierCategory(supplier) {
 function categoryKeyboard(category) {
   const keyboard = new InlineKeyboard()
 
-    if (category === "meat_farm") {
+  if (category === "meat_farm") {
     meatNames.forEach((name, i) => {
       keyboard.text(name, `pick:meat_farm:m${i}`).row()
     })
@@ -319,7 +319,20 @@ function categoryKeyboard(category) {
       .text("🚜 Фермерское хозяйство", "dairytype:farm")
   }
 
-  keyboard.text("⬅️ Вернуться к разделам товаров", "products").row()
+  if (category === "fish") {
+    for (let i = 0; i < fishNames.length; i += 2) {
+      keyboard.text(fishNames[i], `pick:fish:f${i}`)
+      keyboard.text(fishNames[i + 1], `pick:fish:f${i + 1}`)
+      keyboard.row()
+    }
+  }
+
+  if (category === "fish") {
+    keyboard.text("⬅️ Назад", "products").row()
+  } else {
+    keyboard.text("⬅️ Вернуться к разделам товаров", "products").row()
+  }
+
   keyboard.text("🏠 Главное меню", "home")
 
   return keyboard
