@@ -856,6 +856,24 @@ export async function registerCommands(bot) {
       await ctx.reply("Сколько публикаций в день? Введи 1 или 2.")
       return
     }    
+        if (state.step === "autopostCount") {
+      const count = Number(value)
+
+      if (!Number.isInteger(count) || count < 1 || count > 2) {
+        await ctx.reply("Введи 1 или 2.")
+        return
+      }
+
+      state.count = count
+      state.step = "autopostTimes"
+
+      await ctx.reply(
+        count === 1
+          ? "Во сколько публиковать? Например: 10:00"
+          : "Укажи два времени через запятую. Например: 10:00, 20:00"
+      )
+      return
+    }
     if (state.step === "extendDuration") {
       const days = Number(value)
 
