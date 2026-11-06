@@ -527,10 +527,9 @@ export async function registerCommands(bot) {
       database.autoposts.push(newJob)
     }
 
-    await saveDatabase()
-    userSteps.delete(ctx.from.id)
+        await saveDatabase()
 
-    await ctx.reply("✅ Группа подключена! Настройки автопостера сохранены.")
+    await ctx.reply("✅ Группа подключена! Настройки автопостера сохранены. Для подключения второй группы отправь /connect_autopost в ней.")
   })
 
   bot.command("admin", async (ctx) => {
