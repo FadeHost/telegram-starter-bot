@@ -503,13 +503,14 @@ export async function registerCommands(bot) {
   databaseLoaded = true
     startAutopostScheduler(bot)
 
-  bot.on("my_chat_member", async (ctx) => {
+    bot.on("my_chat_member", async (ctx) => {
     const update = ctx.update.my_chat_member
     const chat = update.chat
 
     if (!["group", "supergroup"].includes(chat.type)) return
 
     database.autopostGroups = database.autopostGroups || []
+    database.autoposts = database.autoposts || []
 
     if (update.new_chat_member.status === "administrator") {
       const group = {
@@ -530,6 +531,21 @@ export async function registerCommands(bot) {
 
       await saveDatabase()
       console.log("Группа автопостера сохранена:", group.title)
+    } else {
+      const job = database.autoposts.find(
+        (item) => String(item.chatId) === String(chat.id)
+      )
+
+      if (job) {
+        job.active = false
+      }
+
+      database.autopostGroups = database.autopostGroups.filter(
+        (item) => String(item.chatId) !== String(chat.id)
+      )
+
+      await saveDatabase()
+      console.log("Группа отключена:", chat.title)
     }
   })
   await bot.api.setMyCommands([
