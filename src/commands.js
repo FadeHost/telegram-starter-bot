@@ -125,9 +125,16 @@ async function loadDatabase() {
     await saveDatabase()
   }
 
-  if (!Array.isArray(database.suppliers)) {
+    if (!Array.isArray(database.suppliers)) {
     database.suppliers = []
   }
+
+  if (!Array.isArray(database.autoposts)) {
+    database.autoposts = database.autopost ? [database.autopost] : []
+  }
+
+  delete database.autopost
+  await saveDatabase()
 }
 
 let saveQueue = Promise.resolve()
