@@ -129,8 +129,12 @@ async function loadDatabase() {
     database.suppliers = []
   }
 
-  if (!Array.isArray(database.autoposts)) {
+    if (!Array.isArray(database.autoposts)) {
     database.autoposts = database.autopost ? [database.autopost] : []
+  }
+
+  if (!Array.isArray(database.autopostGroups)) {
+    database.autopostGroups = []
   }
 
   delete database.autopost
