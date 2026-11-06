@@ -1292,7 +1292,8 @@ if (!menuId && list) {
       }
 
       state.step = "autopostReady"
-      await ctx.reply("Все публикации собраны!")
+      await saveAutopostJob(state)
+      await ctx.reply("Все публикации собраны! Автопостер сохранён.")
       return
     }
      if (state.step === "extendDuration") {
