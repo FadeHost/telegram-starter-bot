@@ -224,10 +224,24 @@ function startAutopostScheduler(bot) {
             } else {
               await bot.api.sendMessage(job.chatId, post.text)
             }
-          } catch (error) {
+                    } catch (error) {
             delete job.lastSentDates[key]
+
+            const errorCode = error.error_code
+            const description = error.description || error.message || ""
+
+            const accessError =
+              errorCode === 403 ||
+              /chat not found|bot was kicked|not enough rights|bot is not a member/i.test(description)
+
+            if (accessError) {
+              job.active = false
+              console.log("Автопостер отключён: нет доступа к группе", job.chatId)
+            } else {
+              console.error("Ошибка публикации в группе:", job.chatId, error)
+            }
+
             await saveDatabase()
-            console.error("Ошибка публикации в группе:", job.chatId, error)
           }
         }
       }
