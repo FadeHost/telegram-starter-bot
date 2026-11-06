@@ -506,13 +506,25 @@ export async function registerCommands(bot) {
       return ctx.reply("Сначала закончи настройку автопостера в личном чате с ботом.")
     }
 
-    database.autopost = {
+        database.autoposts = database.autoposts || []
+
+    const newJob = {
       active: true,
       chatId: ctx.chat.id,
       expiresAt: new Date(Date.now() + state.days * 24 * 60 * 60 * 1000).toISOString(),
       times: state.times,
       posts: state.posts,
       lastSentDates: {},
+    }
+
+    const existingIndex = database.autoposts.findIndex(
+      (job) => String(job.chatId) === String(ctx.chat.id)
+    )
+
+    if (existingIndex >= 0) {
+      database.autoposts[existingIndex] = newJob
+    } else {
+      database.autoposts.push(newJob)
     }
 
     await saveDatabase()
