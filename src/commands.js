@@ -506,7 +506,7 @@ export async function registerCommands(bot) {
       return ctx.reply("Сначала закончи настройку автопостера в личном чате с ботом.")
     }
 
-   database.autoposts = database.autoposts || []
+    database.autoposts = database.autoposts || []
 
     const newJob = {
       active: true,
