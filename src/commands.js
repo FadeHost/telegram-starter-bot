@@ -473,7 +473,6 @@ export async function registerCommands(bot) {
     const chat = update.chat
 
     if (!["group", "supergroup"].includes(chat.type)) return
-    if (Number(update.from.id) !== ADMIN_ID) return
 
     database.autopostGroups = database.autopostGroups || []
 
