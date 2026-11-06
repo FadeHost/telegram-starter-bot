@@ -1,24 +1,28 @@
-// Your bot's behaviour. Add commands here; grammY's docs (grammy.dev) cover
-// keyboards, sessions, files, inline queries and everything else.
-
-import { InlineKeyboard } from "grammy"
-
 export function registerCommands(bot) {
+
+  const GROUP_ID = -1003318605733
+  const THREAD_ID = 64
+
   bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
+    ctx.reply("⚔️ Бот Гонки вооружений запущен!")
   )
+
+  bot.command("testtopic", async (ctx) => {
+    try {
+      await bot.api.sendMessage(
+        GROUP_ID,
+        "⚔️ ГОНКА ВООРУЖЕНИЙ\n\n✅ Проверка связи! Бот успешно публикует сообщения.",
+        { message_thread_id: THREAD_ID }
+      )
+
+      await ctx.reply("✅ Команда выполнена! Проверь тему FANGroup.")
+    } catch (error) {
+      await ctx.reply("❌ Ошибка:\n" + error.message)
+    }
+  })
 
   bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
+    ctx.reply("/start — запуск\n/testtopic — проверка публикации")
   )
 
-  bot.command("ping", (ctx) => ctx.reply("pong"))
-
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
-
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
-
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
 }
