@@ -167,17 +167,8 @@ function startAutopostScheduler(bot) {
     running = true
 
     try {
-      const job = database.autopost
-
-      if (!job || !job.active) return
-
+            const jobs = database.autoposts || []
       const now = new Date()
-
-      if (now >= new Date(job.expiresAt)) {
-        job.active = false
-        await saveDatabase()
-        return
-      }
 
       const parts = new Intl.DateTimeFormat("en-GB", {
         timeZone: "Asia/Almaty",
@@ -194,32 +185,42 @@ function startAutopostScheduler(bot) {
       const today = `${get("year")}-${get("month")}-${get("day")}`
       const currentTime = `${get("hour")}:${get("minute")}`
 
-      for (let i = 0; i < job.times.length; i++) {
-        if (job.times[i] !== currentTime) continue
+      for (const job of jobs) {
+        if (!job || !job.active) continue
 
-        const key = `${today}_${i}`
-
-        if (job.lastSentDates?.[key] === today) continue
-
-        const post = job.posts[i]
-        if (!post) continue
-
-        job.lastSentDates = job.lastSentDates || {}
-        job.lastSentDates[key] = today
-        await saveDatabase()
-
-        try {
-          if (post.type === "photo") {
-            await bot.api.sendPhoto(job.chatId, post.fileId, {
-              caption: post.caption || undefined,
-            })
-          } else {
-            await bot.api.sendMessage(job.chatId, post.text)
-          }
-        } catch (error) {
-          delete job.lastSentDates[key]
+        if (now >= new Date(job.expiresAt)) {
+          job.active = false
           await saveDatabase()
-          throw error
+          continue
+        }
+
+        for (let i = 0; i < job.times.length; i++) {
+          if (job.times[i] !== currentTime) continue
+
+          const key = `${today}_${i}`
+
+          if (job.lastSentDates?.[key] === today) continue
+
+          const post = job.posts[i]
+          if (!post) continue
+
+          job.lastSentDates = job.lastSentDates || {}
+          job.lastSentDates[key] = today
+          await saveDatabase()
+
+          try {
+            if (post.type === "photo") {
+              await bot.api.sendPhoto(job.chatId, post.fileId, {
+                caption: post.caption || undefined,
+              })
+            } else {
+              await bot.api.sendMessage(job.chatId, post.text)
+            }
+          } catch (error) {
+            delete job.lastSentDates[key]
+            await saveDatabase()
+            console.error("Ошибка публикации в группе:", job.chatId, error)
+          }
         }
       }
     } catch (error) {
