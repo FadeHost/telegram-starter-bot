@@ -855,7 +855,7 @@ if (!menuId && list) {
       lastMainMenus.delete(ctx.chat.id)
     }
   })
-        bot.callbackQuery("admin:autopost", async (ctx) => {
+          bot.callbackQuery("admin:autopost", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
@@ -871,15 +871,52 @@ if (!menuId && list) {
     const keyboard = new InlineKeyboard()
 
     for (const group of groups) {
+      const job = (database.autoposts || []).find(
+        (item) => String(item.chatId) === String(group.chatId)
+      )
+
       keyboard
-        .text(`📢 ${group.title}`, `autopost:group:${group.chatId}`)
+        .text(
+          `${job?.active ? "🟢" : "⚪"} ${group.title}`,
+          `autopost:group:${group.chatId}`
+        )
         .row()
+
+      if (job?.active) {
+        keyboard
+          .text(
+            `⛔ Отключить: ${group.title}`,
+            `autopost:stop:${group.chatId}`
+          )
+          .row()
+      }
     }
 
     await ctx.reply(
-      "📢 ВЫБЕРИ ГРУППУ ДЛЯ АВТОПОСТЕРА:",
+      "📢 УПРАВЛЕНИЕ АВТОПОСТЕРОМ:",
       { reply_markup: keyboard }
     )
+  })
+
+  bot.callbackQuery(/^autopost:stop:(-?\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const chatId = Number(ctx.match[1])
+
+    const job = (database.autoposts || []).find(
+      (item) => String(item.chatId) === String(chatId)
+    )
+
+    if (!job || !job.active) {
+      await ctx.reply("Автопостер этой группы уже отключён.")
+      return
+    }
+
+    job.active = false
+    await saveDatabase()
+
+    await ctx.reply("⛔ Автопостер этой группы отключён.")
   })
     bot.callbackQuery(/^autopost:group:(-?\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
