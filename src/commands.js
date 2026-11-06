@@ -820,16 +820,30 @@ if (!menuId && list) {
       lastMainMenus.delete(ctx.chat.id)
     }
   })
-      bot.callbackQuery("admin:autopost", async (ctx) => {
+        bot.callbackQuery("admin:autopost", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
-    userSteps.set(ctx.from.id, {
-      step: "autopostDays",
-    })
+    const groups = database.autopostGroups || []
+
+    if (groups.length === 0) {
+      await ctx.reply(
+        "📢 Пока нет подключённых групп.\n\nДобавь бота в группу и выдай ему права администратора."
+      )
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+
+    for (const group of groups) {
+      keyboard
+        .text(`📢 ${group.title}`, `autopost:group:${group.chatId}`)
+        .row()
+    }
 
     await ctx.reply(
-      "📢 НАСТРОЙКА АВТОПОСТЕРА\n\nНа сколько дней включить автопостер?\n\nВведи число от 1 до 365."
+      "📢 ВЫБЕРИ ГРУППУ ДЛЯ АВТОПОСТЕРА:",
+      { reply_markup: keyboard }
     )
   })
   bot.callbackQuery("admin:add", async (ctx) => {
