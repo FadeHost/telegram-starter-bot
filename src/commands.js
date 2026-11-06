@@ -130,19 +130,23 @@ async function loadDatabase() {
   }
 }
 
-async function saveDatabase() {
-  await mkdir(DATA_DIR, { recursive: true })
+let saveQueue = Promise.resolve()
 
-  const temporaryFile = `${DATABASE_FILE}.tmp`
-  await writeFile(
-    temporaryFile,
-    JSON.stringify(database, null, 2),
-    "utf8"
-  )
-  await writeFile(
-    DATABASE_FILE,
-    await readFile(temporaryFile)
-  )
+async function saveDatabase() {
+  const operation = saveQueue.then(async () => {
+    await mkdir(DATA_DIR, { recursive: true })
+
+    const temporaryFile = `${DATABASE_FILE}.${process.pid}.tmp`
+    await writeFile(
+      temporaryFile,
+      JSON.stringify(database, null, 2),
+      "utf8"
+    )
+    await rename(temporaryFile, DATABASE_FILE)
+  })
+
+  saveQueue = operation.catch(() => {})
+  return operation
 }
 let autopostTimer = null
 let autopostBusy = false
