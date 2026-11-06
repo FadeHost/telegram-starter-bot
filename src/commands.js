@@ -299,6 +299,8 @@ function mainKeyboard() {
     .row()
     .text("⚙️ Оборудование для общепита", "equipment")
     .row()
+    .text("💼 Готовый бизнес", "business")
+    .row()
     .text("ℹ️ О проекте", "about")
 }
 
