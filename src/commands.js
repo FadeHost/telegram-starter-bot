@@ -226,7 +226,7 @@ function startAutopostScheduler(bot) {
             } else {
               await bot.api.sendMessage(job.chatId, post.text)
             }
-                              } catch (error) {
+                 } catch (error) {
             delete job.lastSentDates[key]
 
             const errorCode = error.error_code
