@@ -198,6 +198,8 @@ function startAutopostScheduler(bot) {
           continue
         }
 
+        if (job.retryAfterAt && Date.now() < job.retryAfterAt) continue
+
         for (let i = 0; i < job.times.length; i++) {
           const [hours, minutes] = job.times[i].split(":").map(Number)
           const scheduledMinutes = hours * 60 + minutes
