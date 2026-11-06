@@ -187,7 +187,7 @@ function startAutopostScheduler(bot) {
       const get = (type) => parts.find((p) => p.type === type).value
 
       const today = `${get("year")}-${get("month")}-${get("day")}`
-      const currentTime = `${get("hour")}:${get("minute")}`
+      const currentMinutes = Number(get("hour")) * 60 + Number(get("minute"))
 
       for (const job of jobs) {
         if (!job || !job.active) continue
