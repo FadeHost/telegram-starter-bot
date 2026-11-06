@@ -199,7 +199,11 @@ function startAutopostScheduler(bot) {
         }
 
         for (let i = 0; i < job.times.length; i++) {
-          if (job.times[i] !== currentTime) continue
+          const [hours, minutes] = job.times[i].split(":").map(Number)
+const scheduledMinutes = hours * 60 + minutes
+const minutesLate = currentMinutes - scheduledMinutes
+
+if (minutesLate < 0 || minutesLate > 5) continue
 
           const key = `${today}_${i}`
 
