@@ -846,6 +846,30 @@ if (!menuId && list) {
       { reply_markup: keyboard }
     )
   })
+    bot.callbackQuery(/^autopost:group:(-?\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const chatId = Number(ctx.match[1])
+
+    const group = (database.autopostGroups || []).find(
+      (item) => String(item.chatId) === String(chatId)
+    )
+
+    if (!group) {
+      await ctx.reply("Группа не найдена. Открой автопостер заново.")
+      return
+    }
+
+    userSteps.set(ctx.from.id, {
+      step: "autopostDays",
+      chatId: group.chatId,
+    })
+
+    await ctx.reply(
+      `📢 Группа: ${group.title}\n\nНа сколько дней включить автопостер?\n\nВведи число от 1 до 365.`
+    )
+  })
   bot.callbackQuery("admin:add", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
