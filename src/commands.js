@@ -466,7 +466,38 @@ async function finishSupplier(ctx, state) {
 export async function registerCommands(bot) {
     await loadDatabase()
   databaseLoaded = true
-  startAutopostScheduler(bot)
+    startAutopostScheduler(bot)
+
+  bot.on("my_chat_member", async (ctx) => {
+    const update = ctx.update.my_chat_member
+    const chat = update.chat
+
+    if (!["group", "supergroup"].includes(chat.type)) return
+    if (Number(update.from.id) !== ADMIN_ID) return
+
+    database.autopostGroups = database.autopostGroups || []
+
+    if (update.new_chat_member.status === "administrator") {
+      const group = {
+        chatId: chat.id,
+        title: chat.title || "Без названия",
+        active: true,
+      }
+
+      const index = database.autopostGroups.findIndex(
+        (item) => String(item.chatId) === String(chat.id)
+      )
+
+      if (index >= 0) {
+        database.autopostGroups[index] = group
+      } else {
+        database.autopostGroups.push(group)
+      }
+
+      await saveDatabase()
+      console.log("Группа автопостера сохранена:", group.title)
+    }
+  })
   await bot.api.setMyCommands([
     { command: "start", description: "Запустить бота" },
   ])
