@@ -203,7 +203,7 @@ function startAutopostScheduler(bot) {
           const scheduledMinutes = hours * 60 + minutes
           const minutesLate = currentMinutes - scheduledMinutes
 
-          if (minutesLate < 0 || minutesLate > 5) continue
+          if (minutesLate < 0 || minutesLate > 1439) continue
 
           const key = `${today}_${i}`
 
