@@ -1100,12 +1100,19 @@ if (!menuId && list) {
     format: format === "Другое" ? "" : format,
   })
 
-  if (format === "Другое") {
-    await ctx.reply("✏️ Напиши свой формат бизнеса:")
+      const cancelKeyboard = new InlineKeyboard()
+    .text("❌ Отмена", "business:cancel")
+
+    if (format === "Другое") {
+    await ctx.reply("✏️ Напиши свой формат бизнеса:", {
+      reply_markup: cancelKeyboard,
+    })
     return
   }
 
-  await ctx.reply(`Формат: ${format}\n\nУкажи площадь помещения в квадратных метрах. Например: 150`)
+  await ctx.reply(`Формат: ${format}\n\nУкажи площадь помещения в квадратных метрах. Например: 150`, {
+    reply_markup: cancelKeyboard,
+  })
 })
     bot.callbackQuery(/^business:water:(yes|no)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
