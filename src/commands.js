@@ -95,6 +95,7 @@ const lastSupplierCards = new Map()
 const lastMainMenus = new Map()
 const lastSupplierLists = new Map()
 const businessPhotoMessages = new Map()
+const supplierPhotoMessages = new Map()
 
 let database = {
   suppliers: [],
