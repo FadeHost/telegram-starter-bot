@@ -748,8 +748,14 @@ export async function registerCommands(bot) {
     )
   })
 
-  bot.callbackQuery(/^business:view:(.+)$/, async (ctx) => {
+    bot.callbackQuery(/^business:view:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
+
+    try {
+      await ctx.deleteMessage()
+    } catch (error) {
+      console.log("Не удалось удалить старый список")
+    }
 
     const id = ctx.match[1]
     const business = (database.businesses || []).find(item => item.id === id)
