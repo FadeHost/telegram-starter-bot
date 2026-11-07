@@ -1521,6 +1521,27 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
       return
     }
 
+        if (state.step === "businessRooms") {
+      const rooms = Number(value)
+
+      if (!Number.isInteger(rooms) || rooms < 0) {
+        await ctx.reply("Укажи количество комнат целым числом. Например: 5")
+        return
+      }
+
+      state.rooms = rooms
+      state.step = "businessWater"
+
+      const keyboard = new InlineKeyboard()
+        .text("Есть", "business:water:yes")
+        .text("Нет", "business:water:no")
+
+      await ctx.reply("Есть ли водопровод?", {
+        reply_markup: keyboard,
+      })
+      return
+    }
+
     state.values.push(value)
 
     const prompts = [
