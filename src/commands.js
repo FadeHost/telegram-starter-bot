@@ -1055,6 +1055,24 @@ if (!menuId && list) {
       reply_markup: keyboard,
     })
   })
+    bot.callbackQuery(/^business:sewer:(yes|no)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state) return
+
+    state.sewer = ctx.match[1] === "yes" ? "Есть" : "Нет"
+    state.step = "businessHeating"
+
+    const keyboard = new InlineKeyboard()
+      .text("Есть", "business:heating:yes")
+      .text("Нет", "business:heating:no")
+
+    await ctx.reply("Есть ли отопление?", {
+      reply_markup: keyboard,
+    })
+  })
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
