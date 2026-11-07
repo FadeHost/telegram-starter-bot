@@ -1316,6 +1316,83 @@ if (!menuId && list) {
       { reply_markup: adminKeyboard() }
     )
   })  
+    bot.callbackQuery("admin:business:delete", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    if (!database.businesses.length) {
+      await ctx.editMessageText("Готового бизнеса пока нет.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+
+    for (const business of database.businesses) {
+      keyboard.text(
+        `${business.format} — ${business.price.toLocaleString("ru-RU")} ₸`,
+        `business:delete:select:${business.id}`
+      ).row()
+    }
+
+    keyboard.text("⬅️ Назад", "admin:cancel")
+
+    await ctx.editMessageText(
+      "Выбери готовый бизнес, который нужно удалить:",
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery(/^business:delete:select:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const business = database.businesses.find(
+      (item) => item.id === ctx.match[1]
+    )
+
+    if (!business) {
+      await ctx.editMessageText("Объект не найден.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+      .text("🗑 Да, удалить", `business:delete:yes:${business.id}`)
+      .row()
+      .text("❌ Отмена", "admin:cancel")
+
+    await ctx.editMessageText(
+      `⚠️ Подтверди удаление бизнеса:\n\n${business.format}\n${business.address}\n${business.price.toLocaleString("ru-RU")} ₸\n\nЭто действие нельзя отменить.`,
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery(/^business:delete:yes:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const index = database.businesses.findIndex(
+      (item) => item.id === ctx.match[1]
+    )
+
+    if (index === -1) {
+      await ctx.editMessageText("Объект уже удалён или не найден.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const [business] = database.businesses.splice(index, 1)
+    await saveDatabase()
+
+    await ctx.editMessageText(
+      `✅ Бизнес «${business.format}» удалён.`,
+      { reply_markup: adminKeyboard() }
+    )
+  })
   bot.callbackQuery("admin:extend", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
