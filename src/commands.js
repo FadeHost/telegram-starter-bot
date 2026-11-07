@@ -1024,6 +1024,19 @@ if (!menuId && list) {
   })
 })
 
+  bot.callbackQuery(/^business:format:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const format = ctx.match[1]
+
+  userSteps.set(ctx.from.id, {
+    step: "businessArea",
+    format,
+  })
+
+  await ctx.reply(`Формат: ${format}\n\nУкажи площадь помещения в квадратных метрах. Например: 150`)
+})
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
