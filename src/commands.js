@@ -987,7 +987,19 @@ export async function registerCommands(bot) {
   })
 
  bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+))?$/, async (ctx) => {
-    await ctx.answerCallbackQuery()
+       await ctx.answerCallbackQuery()
+
+    const photoMessageIds = supplierPhotoMessages.get(ctx.chat.id) || []
+
+    for (const messageId of photoMessageIds) {
+      try {
+        await ctx.api.deleteMessage(ctx.chat.id, messageId)
+      } catch (error) {
+        console.log("Не удалось удалить фото поставщика:", messageId)
+      }
+    }
+
+    supplierPhotoMessages.delete(ctx.chat.id)
 
     const menuId = lastMainMenus.get(ctx.chat.id)
 
