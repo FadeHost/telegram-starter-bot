@@ -1369,6 +1369,20 @@ if (!menuId && list) {
       return
     }
 
+        if (state.step === "businessPhotos") {
+      const photo = ctx.message.photo.at(-1)
+      state.photos.push(photo.file_id)
+
+      const keyboard = new InlineKeyboard()
+        .text("✅ Готово", "business:photos:finish")
+
+      await ctx.reply(
+        `Фото добавлено. Всего фотографий: ${state.photos.length}. Отправь ещё или нажми «Готово».`,
+        { reply_markup: keyboard }
+      )
+      return
+    }
+
     if (state.step !== "supplierPhotos") return next()
 
     const photo = ctx.message.photo.at(-1)
