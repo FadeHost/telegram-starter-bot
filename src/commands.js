@@ -1371,6 +1371,39 @@ if (!menuId && list) {
       { reply_markup: keyboard }
     )
   })
+    bot.callbackQuery("business:publish", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state || state.step !== "businessReady") return
+
+    const business = {
+      id: crypto.randomUUID(),
+      format: state.format,
+      area: state.area,
+      electricity: state.electricity,
+      rooms: state.rooms,
+      water: state.water,
+      sewer: state.sewer,
+      heating: state.heating,
+      address: state.address,
+      status: state.status,
+      equipment: state.equipment,
+      price: state.price,
+      photos: state.photos || [],
+      createdAt: new Date().toISOString(),
+    }
+
+    database.businesses.push(business)
+    await saveDatabase()
+    userSteps.delete(ctx.from.id)
+
+    await ctx.reply(
+      "✅ Готовый бизнес успешно сохранён!",
+      { reply_markup: adminKeyboard() }
+    )
+  })
   bot.callbackQuery("admin:cancel", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
