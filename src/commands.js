@@ -1001,6 +1001,18 @@ export async function registerCommands(bot) {
 
     supplierPhotoMessages.delete(ctx.chat.id)
 
+        const supplierCardId = lastSupplierCards.get(ctx.chat.id)
+
+    if (supplierCardId === ctx.callbackQuery.message.message_id) {
+      try {
+        await ctx.deleteMessage()
+      } catch (error) {
+        console.log("Не удалось удалить карточку поставщика")
+      }
+
+      lastSupplierCards.delete(ctx.chat.id)
+    }
+
     const menuId = lastMainMenus.get(ctx.chat.id)
 
     const list = await showCategory(
