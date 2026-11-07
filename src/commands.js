@@ -322,7 +322,7 @@ function listKeyboard(items, prefix) {
       keyboard.text(name, `${prefix}:${id}`).row()
   }
 
-  keyboard.text("⬅️ Главное меню", "home")
+  keyboard.text("🏠 Главное меню", "home")
   return keyboard
 }
 
