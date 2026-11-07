@@ -340,7 +340,7 @@ function adminKeyboard() {
     .row()
     .text("🗑 Удалить поставщика", "admin:delete")
     .row()
-    .text("🗑 Удалить готовый бизнес", "admin:business:delete")
+    .text("❌ Удалить готовый бизнес", "admin:business:delete")
     .row()
     .text("📢 Автопостер", "admin:autopost")
     .row()
