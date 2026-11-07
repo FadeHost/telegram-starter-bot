@@ -1436,6 +1436,21 @@ if (!menuId && list) {
       reply_markup: keyboard,
     })
   })
+    bot.callbackQuery(/^business:equipment:(yes|no)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state) return
+
+    state.equipment = ctx.match[1] === "yes"
+      ? "Входит в стоимость"
+      : "Не входит в стоимость"
+
+    state.step = "businessPrice"
+
+    await ctx.reply("Укажи стоимость готового бизнеса в тенге. Например: 25000000")
+  })
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
