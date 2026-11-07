@@ -1093,12 +1093,17 @@ if (!menuId && list) {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
-  const format = ctx.match[1]
+    const format = ctx.match[1]
 
   userSteps.set(ctx.from.id, {
-    step: "businessArea",
-    format,
+    step: format === "Другое" ? "businessFormat" : "businessArea",
+    format: format === "Другое" ? "" : format,
   })
+
+  if (format === "Другое") {
+    await ctx.reply("✏️ Напиши свой формат бизнеса:")
+    return
+  }
 
   await ctx.reply(`Формат: ${format}\n\nУкажи площадь помещения в квадратных метрах. Например: 150`)
 })
