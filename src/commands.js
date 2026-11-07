@@ -1491,6 +1491,21 @@ if (!menuId && list) {
   )
   return
 }
+        if (state.step === "businessArea") {
+      const area = Number(value)
+
+      if (!Number.isFinite(area) || area <= 0) {
+        await ctx.reply("Введи корректную площадь в квадратных метрах. Например: 150")
+        return
+      }
+
+      state.area = area
+      state.step = "businessElectricity"
+
+      await ctx.reply("Укажи мощность электричества в кВт. Например: 120")
+      return
+    }
+
     state.values.push(value)
 
     const prompts = [
