@@ -1397,6 +1397,17 @@ if (!menuId && list) {
     state.photos = []
     await finishSupplier(ctx, state)
   })
+      bot.callbackQuery("business:cancel", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    userSteps.delete(ctx.from.id)
+
+    await ctx.reply(
+      "❌ Создание карточки готового бизнеса отменено.",
+      { reply_markup: adminKeyboard() }
+    )
+  })
     bot.callbackQuery("business:photos:finish", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
