@@ -703,12 +703,33 @@ export async function registerCommands(bot) {
     })
   })
 
-  bot.callbackQuery("business", async (ctx) => {
+    bot.callbackQuery("business", async (ctx) => {
     await ctx.answerCallbackQuery()
 
+    const businesses = database.businesses || []
+
+    if (businesses.length === 0) {
+      await ctx.editMessageText(
+        "💼 ГОТОВЫЙ БИЗНЕС\n\nПока нет объявлений.",
+        { reply_markup: backHomeKeyboard() }
+      )
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+
+    for (const business of businesses) {
+      keyboard.text(
+        `${business.format} — ${business.price.toLocaleString("ru-RU")} ₸`,
+        `business:view:${business.id}`
+      ).row()
+    }
+
+    keyboard.text("⬅️ Назад", "home")
+
     await ctx.editMessageText(
-      "💼 ГОТОВЫЙ БИЗНЕС\n\nПока нет опубликованных объявлений.",
-      { reply_markup: backHomeKeyboard() }
+      "💼 ГОТОВЫЙ БИЗНЕС\n\nВыбери интересующий объект:",
+      { reply_markup: keyboard }
     )
   })
 
