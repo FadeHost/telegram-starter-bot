@@ -1037,6 +1037,24 @@ if (!menuId && list) {
 
   await ctx.reply(`Формат: ${format}\n\nУкажи площадь помещения в квадратных метрах. Например: 150`)
 })
+    bot.callbackQuery(/^business:water:(yes|no)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state) return
+
+    state.water = ctx.match[1] === "yes" ? "Есть" : "Нет"
+    state.step = "businessSewer"
+
+    const keyboard = new InlineKeyboard()
+      .text("Есть", "business:sewer:yes")
+      .text("Нет", "business:sewer:no")
+
+    await ctx.reply("Есть ли канализация?", {
+      reply_markup: keyboard,
+    })
+  })
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
