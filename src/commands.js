@@ -344,7 +344,6 @@ function adminKeyboard() {
     .row()
     .text("🏠 Главное меню", "home")
 }
-}
 
 function categoryTitle(category, itemId) {
   const index = Number(itemId.slice(1))
