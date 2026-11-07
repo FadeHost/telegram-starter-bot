@@ -741,13 +741,7 @@ export async function registerCommands(bot) {
       ).row()
     }
 
-      if (category === "fish") {
-    keyboard.text("⬅️ Назад", "products")
-    keyboard.text("🏠 Главное меню", "home")
-  } else {
-    keyboard.text("⬅️ Вернуться к разделам товаров", "products").row()
-    keyboard.text("🏠 Главное меню", "home")
-  }
+      keyboard.text("🏠 Главное меню", "home")
 
     await ctx.editMessageText(
       "💼 ГОТОВЫЙ БИЗНЕС\n\nВыбери интересующий объект:",
