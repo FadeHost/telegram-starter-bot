@@ -740,7 +740,7 @@ export async function registerCommands(bot) {
       ).row()
     }
 
-    keyboard.text("⬅️ Назад", "home")
+    keyboard.text("⬅️ Назад в главное меню", "home")
 
     await ctx.editMessageText(
       "💼 ГОТОВЫЙ БИЗНЕС\n\nВыбери интересующий объект:",
