@@ -328,6 +328,8 @@ function adminKeyboard() {
   return new InlineKeyboard()
     .text("➕ Добавить поставщика", "admin:add")
     .row()
+    .text("💼 Добавить готовый бизнес", "admin:business:add")
+    .row()
     .text("📋 Список поставщиков", "admin:list")
     .row()
     .text("⏳ Продлить размещение", "admin:extend")
@@ -337,10 +339,11 @@ function adminKeyboard() {
     .text("🖼 Фотографии", "admin:photos")
     .row()
     .text("🗑 Удалить поставщика", "admin:delete")
-.row()
-.text("📢 Автопостер", "admin:autopost")
-.row()
-.text("🏠 Главное меню", "home")
+    .row()
+    .text("📢 Автопостер", "admin:autopost")
+    .row()
+    .text("🏠 Главное меню", "home")
+}
 }
 
 function categoryTitle(category, itemId) {
