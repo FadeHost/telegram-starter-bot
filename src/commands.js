@@ -1073,6 +1073,18 @@ if (!menuId && list) {
       reply_markup: keyboard,
     })
   })
+    bot.callbackQuery(/^business:heating:(yes|no)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state) return
+
+    state.heating = ctx.match[1] === "yes" ? "Есть" : "Нет"
+    state.step = "businessAddress"
+
+    await ctx.reply("Укажи адрес объекта:")
+  })
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
