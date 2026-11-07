@@ -1383,6 +1383,40 @@ if (!menuId && list) {
       { reply_markup: keyboard }
     )
   })
+    bot.on("message:text", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (!isAdmin(ctx) || !state || state.step !== "businessAddress") {
+      return next()
+    }
+
+    const address = ctx.message.text.trim()
+
+    if (!address) {
+      await ctx.reply("Укажи адрес объекта:")
+      return
+    }
+
+    if (address === "/cancel") {
+      userSteps.delete(ctx.from.id)
+      await ctx.reply("Действие отменено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    state.address = address
+    state.step = "businessStatus"
+
+    const keyboard = new InlineKeyboard()
+      .text("Действующий", "business:status:active")
+      .row()
+      .text("Закрытый", "business:status:closed")
+
+    await ctx.reply("Какой статус у объекта?", {
+      reply_markup: keyboard,
+    })
+  })
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
