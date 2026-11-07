@@ -1506,6 +1506,21 @@ if (!menuId && list) {
       return
     }
 
+        if (state.step === "businessElectricity") {
+      const electricity = Number(value)
+
+      if (!Number.isFinite(electricity) || electricity <= 0) {
+        await ctx.reply("Введи корректную мощность в кВт. Например: 120")
+        return
+      }
+
+      state.electricity = electricity
+      state.step = "businessRooms"
+
+      await ctx.reply("Укажи количество комнат в помещении. Например: 5")
+      return
+    }
+
     state.values.push(value)
 
     const prompts = [
