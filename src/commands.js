@@ -1338,7 +1338,7 @@ if (!menuId && list) {
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-    if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "businessArea"].includes(state.step)) return next()
+        if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "businessArea", "businessElectricity"].includes(state.step)) return next()
     if (!isAdmin(ctx)) return
 
     const value = ctx.message.text.trim()
