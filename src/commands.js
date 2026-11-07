@@ -1451,6 +1451,27 @@ if (!menuId && list) {
 
     await ctx.reply("Укажи стоимость готового бизнеса в тенге. Например: 25000000")
   })
+    bot.on("message:text", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (!isAdmin(ctx) || !state || state.step !== "businessPrice") {
+      return next()
+    }
+
+    const value = ctx.message.text.trim()
+    const price = Number(value.replace(/\s/g, ""))
+
+    if (!Number.isFinite(price) || price <= 0) {
+      await ctx.reply("Введи корректную стоимость в тенге. Например: 25000000")
+      return
+    }
+
+    state.price = price
+    state.step = "businessPhotos"
+    state.photos = []
+
+    await ctx.reply("Теперь отправь фотографии бизнеса. Можно несколько: фасад, зал, кухня.")
+  })
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
