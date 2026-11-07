@@ -967,9 +967,14 @@ export async function registerCommands(bot) {
 
     await ctx.deleteMessage()
 
+    const photoMessageIds = []
+
     for (const photo of supplier.photos || []) {
-      await ctx.replyWithPhoto(photo)
+      const message = await ctx.replyWithPhoto(photo)
+      photoMessageIds.push(message.message_id)
     }
+
+    supplierPhotoMessages.set(ctx.chat.id, photoMessageIds)
 
     const card = await ctx.reply(text, {
       reply_markup: new InlineKeyboard()
