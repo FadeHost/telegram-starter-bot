@@ -1795,6 +1795,13 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
   )
   return
 }
+        if (state.step === "businessFormat") {
+  state.format = value
+  state.step = "businessArea"
+
+  await ctx.reply(`Формат: ${state.format}\n\nУкажи площадь помещения в квадратных метрах. Например: 150`)
+  return
+}
         if (state.step === "businessArea") {
       const area = Number(value)
 
