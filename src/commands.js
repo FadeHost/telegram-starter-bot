@@ -747,7 +747,7 @@ export async function registerCommands(bot) {
     const keyboard = new InlineKeyboard()
       .text("⬅️ Назад к списку", "business")
 
-    await ctx.reply(
+        await ctx.reply(
       `💼 ${business.format}
 
 Площадь: ${business.area} м²
@@ -762,6 +762,20 @@ export async function registerCommands(bot) {
 Цена: ${business.price.toLocaleString("ru-RU")} ₸`,
       { reply_markup: keyboard }
     )
+
+    if (business.photos && business.photos.length > 0) {
+      for (let i = 0; i < business.photos.length; i += 10) {
+        const album = business.photos
+          .slice(i, i + 10)
+          .map(photo => ({ type: "photo", media: photo }))
+
+        if (album.length === 1) {
+          await ctx.replyWithPhoto(album[0].media)
+        } else {
+          await ctx.replyWithMediaGroup(album)
+        }
+      }
+    }
   })
   bot.callbackQuery("about", async (ctx) => {
     await ctx.answerCallbackQuery()
