@@ -1332,6 +1332,45 @@ if (!menuId && list) {
     state.photos = []
     await finishSupplier(ctx, state)
   })
+    bot.callbackQuery("business:photos:finish", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state || state.step !== "businessPhotos") return
+
+    if (!state.photos || state.photos.length === 0) {
+      await ctx.reply("Сначала отправь хотя бы одну фотографию.")
+      return
+    }
+
+    state.step = "businessReady"
+
+    const keyboard = new InlineKeyboard()
+      .text("✅ Подтвердить", "business:publish")
+      .row()
+      .text("❌ Отменить", "business:cancel")
+
+    await ctx.reply(
+      `ПРОВЕРЬ КАРТОЧКУ БИЗНЕСА
+
+Формат: ${state.format}
+Площадь: ${state.area} м²
+Электричество: ${state.electricity} кВт
+Комнат: ${state.rooms}
+Водопровод: ${state.water}
+Канализация: ${state.sewer}
+Отопление: ${state.heating}
+Адрес: ${state.address}
+Статус: ${state.status}
+Оборудование: ${state.equipment}
+Цена: ${state.price.toLocaleString("ru-RU")} ₸
+Фотографий: ${state.photos.length}
+
+Подтверди карточку:`,
+      { reply_markup: keyboard }
+    )
+  })
   bot.callbackQuery("admin:cancel", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
