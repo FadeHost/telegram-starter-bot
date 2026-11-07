@@ -1417,6 +1417,25 @@ if (!menuId && list) {
       reply_markup: keyboard,
     })
   })
+    bot.callbackQuery(/^business:status:(active|closed)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state) return
+
+    state.status = ctx.match[1] === "active" ? "Действующий" : "Закрытый"
+    state.step = "businessEquipment"
+
+    const keyboard = new InlineKeyboard()
+      .text("Входит в стоимость", "business:equipment:yes")
+      .row()
+      .text("Не входит в стоимость", "business:equipment:no")
+
+    await ctx.reply("Оборудование входит в стоимость бизнеса?", {
+      reply_markup: keyboard,
+    })
+  })
   bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
