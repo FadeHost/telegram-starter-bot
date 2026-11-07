@@ -706,8 +706,20 @@ export async function registerCommands(bot) {
     })
   })
 
-    bot.callbackQuery("business", async (ctx) => {
+      bot.callbackQuery("business", async (ctx) => {
     await ctx.answerCallbackQuery()
+
+    const messageIds = businessPhotoMessages.get(ctx.chat.id) || []
+
+    for (const messageId of messageIds) {
+      try {
+        await ctx.api.deleteMessage(ctx.chat.id, messageId)
+      } catch (error) {
+        console.log("Не удалось удалить фото:", messageId)
+      }
+    }
+
+    businessPhotoMessages.delete(ctx.chat.id)
 
     const businesses = database.businesses || []
 
@@ -736,7 +748,7 @@ export async function registerCommands(bot) {
     )
   })
 
-    bot.callbackQuery(/^business:view:(.+)$/, async (ctx) => {
+  bot.callbackQuery(/^business:view:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
     const id = ctx.match[1]
@@ -747,22 +759,28 @@ export async function registerCommands(bot) {
       return
     }
 
+    const messageIds = []
+
     const keyboard = new InlineKeyboard()
       .text("⬅️ Назад к списку", "business")
 
-            if (business.photos && business.photos.length > 0) {
+    if (business.photos && business.photos.length > 0) {
       for (let i = 0; i < business.photos.length; i += 10) {
         const album = business.photos
           .slice(i, i + 10)
           .map(photo => ({ type: "photo", media: photo }))
 
         if (album.length === 1) {
-          await ctx.replyWithPhoto(album[0].media)
+          const message = await ctx.replyWithPhoto(album[0].media)
+          messageIds.push(message.message_id)
         } else {
-          await ctx.replyWithMediaGroup(album)
+          const messages = await ctx.replyWithMediaGroup(album)
+          messageIds.push(...messages.map(message => message.message_id))
         }
       }
     }
+
+    businessPhotoMessages.set(ctx.chat.id, messageIds)
 
     await ctx.reply(
       `💼 ${business.format}
