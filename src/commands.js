@@ -690,7 +690,7 @@ export async function registerCommands(bot) {
     })
   })
 
-    bot.callbackQuery("services", async (ctx) => {
+  bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
       reply_markup: listKeyboard(services, "service"),
