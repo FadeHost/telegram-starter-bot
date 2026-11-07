@@ -997,10 +997,32 @@ if (!menuId && list) {
     )
   })
   bot.callbackQuery("admin:add", async (ctx) => {
-    await ctx.answerCallbackQuery()
-    if (!isAdmin(ctx)) return
-    await startAddSupplier(ctx)
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+  await startAddSupplier(ctx)
+})
+
+  bot.callbackQuery("admin:business:add", async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const keyboard = new InlineKeyboard()
+    .text("🍽 Ресторан", "business:format:Ресторан")
+    .row()
+    .text("🛒 Супермаркет", "business:format:Супермаркет")
+    .row()
+    .text("☕ Кафе", "business:format:Кафе")
+    .row()
+    .text("🥐 Пекарня", "business:format:Пекарня")
+    .row()
+    .text("✏️ Другое", "business:format:Другое")
+    .row()
+    .text("❌ Отмена", "admin:cancel")
+
+  await ctx.reply("💼 Выбери формат бизнеса:", {
+    reply_markup: keyboard,
   })
+})
 
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
