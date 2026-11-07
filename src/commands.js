@@ -733,6 +733,36 @@ export async function registerCommands(bot) {
     )
   })
 
+    bot.callbackQuery(/^business:view:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+
+    const id = ctx.match[1]
+    const business = (database.businesses || []).find(item => item.id === id)
+
+    if (!business) {
+      await ctx.reply("Объявление не найдено.")
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+      .text("⬅️ Назад к списку", "business")
+
+    await ctx.reply(
+      `💼 ${business.format}
+
+Площадь: ${business.area} м²
+Электричество: ${business.electricity} кВт
+Комнат: ${business.rooms}
+Водопровод: ${business.water}
+Канализация: ${business.sewer}
+Отопление: ${business.heating}
+Адрес: ${business.address}
+Статус: ${business.status}
+Оборудование: ${business.equipment}
+Цена: ${business.price.toLocaleString("ru-RU")} ₸`,
+      { reply_markup: keyboard }
+    )
+  })
   bot.callbackQuery("about", async (ctx) => {
     await ctx.answerCallbackQuery()
     await ctx.editMessageText(
