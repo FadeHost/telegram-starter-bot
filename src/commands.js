@@ -929,6 +929,20 @@ bot.callbackQuery(
   equipmentPhotoMessages.set(cardMessage.message_id, photoMessage.message_id)
 })
   bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
+  bot.callbackQuery(/^equipment:call:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+
+  const item = database.equipment.find(
+    (equipment) => equipment.id === ctx.match[1]
+  )
+
+  if (!item) {
+    await ctx.reply("Оборудование не найдено.")
+    return
+  }
+
+  await ctx.replyWithContact(item.phone, item.name)
+})
   await ctx.answerCallbackQuery()
 
   const cardMessageId = ctx.callbackQuery.message.message_id
