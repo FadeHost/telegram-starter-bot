@@ -656,7 +656,7 @@ export async function registerCommands(bot) {
 
     await saveDatabase()
 
-    const menuText = `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`
+    const menuText = `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.` + "\u2063".repeat((database.stats.startCount % 1000) + 1)
     const previousMessageId = database.startMessages[userId]
     console.log("START: пользователь", userId, "предыдущее меню:", previousMessageId)
 
@@ -669,11 +669,7 @@ export async function registerCommands(bot) {
           { reply_markup: mainKeyboard() }
         )
         return
-            } catch (error) {
-        if (error.message.includes("message is not modified")) {
-          return
-        }
-
+      } catch (error) {
         console.log("Не удалось обновить старое меню:", error.message)
       }
     }
