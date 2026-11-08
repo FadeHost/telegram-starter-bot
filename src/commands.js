@@ -1261,7 +1261,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     await showCategory(ctx, ctx.match[1], ctx.match[2])
   })
 
-  bot.callbackQuery(/^service:(.+)$/, async (ctx) => {
+  bot.callbackQuery(/^service:(repair|disinfection|cleaning|oil|accountant|automation|internet)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
     const id = ctx.match[1]
