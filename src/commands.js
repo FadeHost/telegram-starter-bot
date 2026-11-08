@@ -2487,6 +2487,13 @@ bot.on("message:text", async (ctx, next) => {
       return
     }
 
+    if (state.step === "serviceDescription") {
+      state.description = value
+      state.step = "servicePrice"
+      await ctx.reply("Укажи стоимость услуги:")
+      return
+    }
+
     if (state.step === "autopostButton") {
   if (value.length > 64) {
     await ctx.reply("Текст кнопки слишком длинный. Введи не более 64 символов.")
