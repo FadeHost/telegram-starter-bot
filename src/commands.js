@@ -657,32 +657,29 @@ export async function registerCommands(bot) {
 
     await saveDatabase()
 
-    const menuText = `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.` + "\u2063".repeat((database.stats.startCount % 1000) + 1)
+    const menuText = `🏙 ОБЩЕПИТ АСТАНА
+
+Список актуален на ${dateToday()}
+
+Каталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`
+
     const previousMessageId = startMenuMessages.get(userId)
-    console.log("START: пользователь", userId, "предыдущее меню:", previousMessageId)
 
     if (previousMessageId) {
       try {
-        await ctx.api.editMessageText(
-          ctx.chat.id,
-          previousMessageId,
-          menuText,
-          { reply_markup: mainKeyboard() }
-        )
-        return
+        await ctx.api.deleteMessage(ctx.chat.id, previousMessageId)
+        console.log("START: старое меню удалено")
       } catch (error) {
-        console.log("Не удалось обновить старое меню:", error.message)
+        console.log("Не удалось удалить старое меню:", error.message)
       }
     }
 
-      const message = await ctx.reply(menuText, {
+    const message = await ctx.reply(menuText, {
       reply_markup: mainKeyboard(),
     })
 
+    startMenuMessages.set(userId, message.message_id)
     console.log("START: новое меню отправлено, ID:", message.message_id)
-
-        startMenuMessages.set(userId, message.message_id)
-    console.log("START: ID меню сохранён")
   })
 
   bot.command("connect_autopost", async (ctx) => {
