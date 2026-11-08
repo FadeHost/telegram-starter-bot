@@ -1376,6 +1376,22 @@ if (!menuId && list) {
 
     await ctx.reply("Укажи адрес объекта:")
   })
+  bot.callbackQuery("admin:equipment", async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const keyboard = new InlineKeyboard()
+
+  for (const [name, id] of equipmentCategories) {
+    keyboard.text(name, `admin:equipment:cat:${id}`).row()
+  }
+
+  keyboard.text("❌ Отмена", "admin:cancel")
+
+  await ctx.editMessageText("Выбери категорию оборудования:", {
+    reply_markup: keyboard,
+  })
+})
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
