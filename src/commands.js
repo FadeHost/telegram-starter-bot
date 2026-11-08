@@ -153,6 +153,14 @@ async function loadDatabase() {
     database.autopostGroups = []
   }
 
+    if (!database.stats) {
+    database.stats = {
+      startCount: 0,
+      uniqueUsers: [],
+      catalogStarts: 0,
+    }
+  }
+
   delete database.autopost
   await saveDatabase()
 }
