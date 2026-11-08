@@ -663,7 +663,7 @@ export async function registerCommands(bot) {
 
 Каталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`
 
-    const previousMessageId = startMenuMessages.get(userId)
+   const previousMessageId = database.startMessages[userId]
 
     if (previousMessageId) {
       try {
