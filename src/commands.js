@@ -707,14 +707,15 @@ export async function registerCommands(bot) {
 
     database.autoposts = database.autoposts || []
 
-    const newJob = {
-      active: true,
-      chatId: ctx.chat.id,
-      expiresAt: new Date(Date.now() + state.days * 24 * 60 * 60 * 1000).toISOString(),
-      times: state.times,
-      posts: state.posts,
-      lastSentDates: {},
-    }
+   const newJob = {
+   active: true,
+   chatId: ctx.chat.id,
+   expiresAt: new Date(Date.now() + state.days * 24 * 60 * 60 * 1000).toISOString(),
+   times: state.times,
+   posts: state.posts,
+   buttonText: state.buttonText,
+   lastSentDates: {},
+}
 
     const existingIndex = database.autoposts.findIndex(
       (job) => String(job.chatId) === String(ctx.chat.id)
