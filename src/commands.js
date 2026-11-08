@@ -2298,7 +2298,7 @@ bot.on("message:text", async (ctx, next) => {
   const equipment = {
     id: crypto.randomUUID(),
     category: state.category,
-    categoryLabel: equipmentCategories.find(([name, id]) => id === state.category)?.[0] || "Оборудование",
+    categoryLabel: categoryNames.get(state.category) || "ОБОРУДОВАНИЕ",
     name: state.values.name,
     model: state.values.model,
     condition: state.values.condition,
