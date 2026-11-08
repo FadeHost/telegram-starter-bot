@@ -1279,12 +1279,28 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 
     supplierPhotoMessages.set(ctx.chat.id, photoMessageIds)
 
-    const card = await ctx.reply(text, {
-      reply_markup: new InlineKeyboard()
-        .text("⬅️ Назад к поставщикам", back)
-        .row()
-        .text("🏠 Главное меню", "home:new"),
-    })
+    const phoneDigits = (supplier.phone || "").replace(/\D/g, "")
+const whatsappPhone =
+  phoneDigits.length === 11 && phoneDigits.startsWith("8")
+    ? `7${phoneDigits.slice(1)}`
+    : phoneDigits.length === 10
+      ? `7${phoneDigits}`
+      : phoneDigits
+
+const keyboard = new InlineKeyboard()
+
+if (whatsappPhone) {
+  keyboard.url("WhatsApp", `https://wa.me/${whatsappPhone}`).row()
+}
+
+keyboard
+  .text("⬅️ Назад к поставщикам", back)
+  .row()
+  .text("🏠 Главное меню", "home:new")
+
+const card = await ctx.reply(text, {
+  reply_markup: keyboard,
+})
 
     lastSupplierCards.set(ctx.chat.id, card.message_id) 
   })
