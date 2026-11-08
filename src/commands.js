@@ -1312,23 +1312,18 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       lastSupplierCards.delete(ctx.chat.id)
     }
 
-    const menuId = lastMainMenus.get(ctx.chat.id)
+    lastMainMenus.delete(ctx.chat.id)
 
-    const list = await showCategory(
+const list = await showCategory(
   ctx,
   ctx.match[1],
   ctx.match[2] || null,
-  !menuId,
-  menuId || null
+  true
 )
 
-if (!menuId && list) {
+if (list) {
   lastSupplierLists.set(ctx.chat.id, list.message_id)
 }
-
-    if (menuId) {
-      lastMainMenus.delete(ctx.chat.id)
-    }
   })
           bot.callbackQuery("admin:autopost", async (ctx) => {
     await ctx.answerCallbackQuery()
