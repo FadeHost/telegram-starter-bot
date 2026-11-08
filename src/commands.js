@@ -1991,6 +1991,31 @@ if (state.step === "equipmentPhoto") {
     await ctx.reply("Теперь отправь фотографии бизнеса. Можно несколько: фасад, зал, кухня.")
   })
   bot.on("message:text", async (ctx, next) => {
+  bot.on("message:text", async (ctx, next) => {
+  const state = userSteps.get(ctx.from.id)
+
+  if (!isAdmin(ctx) || !state || state.step !== "equipmentModel") {
+    return next()
+  }
+
+  const value = ctx.message.text.trim()
+
+  if (!value) {
+    await ctx.reply("Укажи модель оборудования:")
+    return
+  }
+
+  state.values.model = value
+  state.step = "equipmentCondition"
+
+  const keyboard = new InlineKeyboard()
+    .text("Новое", "equipment:condition:new")
+    .text("Б/У", "equipment:condition:used")
+
+  await ctx.reply("Выбери состояние оборудования:", {
+    reply_markup: keyboard,
+  })
+})
   const state = userSteps.get(ctx.from.id)
 
   if (!isAdmin(ctx) || !state || state.step !== "equipmentName") {
