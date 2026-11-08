@@ -928,7 +928,6 @@ bot.callbackQuery(
 
   equipmentPhotoMessages.set(cardMessage.message_id, photoMessage.message_id)
 })
-  bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
   bot.callbackQuery(/^equipment:call:(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
 
@@ -943,6 +942,8 @@ bot.callbackQuery(
 
   await ctx.replyWithContact(item.phone, item.name)
 })
+
+bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
 
   const cardMessageId = ctx.callbackQuery.message.message_id
