@@ -549,10 +549,10 @@ async function finishSupplier(ctx, state) {
   await saveDatabase()
   userSteps.delete(ctx.from.id)
 
-  await ctx.reply(
-    `✅ Поставщик добавлен.\n\n${supplier.name}\nРаздел: ${supplier.categoryLabel}`,
-    { reply_markup: adminKeyboard() }
-  )
+  if (category === "meat_farm" || category === "meat_halal") {
+  const title = category === "meat_halal"
+    ? "🥩 МЯСО ХАЛЯЛЬ"
+    : "🥩 МЯСО ФЕРМЕРСКОЕ"
 }
 export async function registerCommands(bot) {
     await loadDatabase()
