@@ -1365,6 +1365,45 @@ ${service.website ? `Сайт: ${service.website}` : ""}`,
     })
   })
 
+    bot.callbackQuery(/^serviceback:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+
+    const category = ctx.match[1]
+    const saved = servicePhotoMessages.get(ctx.chat.id)
+
+    if (saved) {
+      for (const messageId of saved.photoIds) {
+        try {
+          await ctx.api.deleteMessage(ctx.chat.id, messageId)
+        } catch (error) {
+          console.error("Не удалось удалить фото услуги:", error)
+        }
+      }
+
+      servicePhotoMessages.delete(ctx.chat.id)
+    }
+
+    await ctx.deleteMessage()
+
+    const items = (database.services || []).filter(
+      (service) => service.category === category
+    )
+
+    const keyboard = new InlineKeyboard()
+
+    for (const service of items) {
+      keyboard.text(service.company, `serviceview:${service.id}`).row()
+    }
+
+    keyboard
+      .text("⬅️ Назад к услугам", "services")
+      .text("🏠 Главное меню", "home")
+
+    await ctx.reply(
+      `${categoryNames.get(category) || "УСЛУГИ"}\n\nВыбери компанию:`,
+      { reply_markup: keyboard }
+    )
+  })
   bot.callbackQuery(/^supplier:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
