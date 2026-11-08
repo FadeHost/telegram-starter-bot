@@ -2487,10 +2487,17 @@ bot.on("message:text", async (ctx, next) => {
         return
       }
 
-      if (state.step === "servicePrice") {
+        if (state.step === "servicePrice") {
         state.price = value
         state.step = "servicePhone"
         await ctx.reply("Укажи номер телефона:")
+        return
+      }
+
+      if (state.step === "servicePhone") {
+        state.phone = value
+        state.step = "serviceWebsite"
+        await ctx.reply("Укажи сайт компании или напиши /skip:")
         return
       }
 
