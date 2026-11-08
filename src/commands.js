@@ -2480,14 +2480,7 @@ bot.on("message:text", async (ctx, next) => {
       return
     }
 
-    if (state.step === "serviceDescription") {
-      state.description = value
-      state.step = "servicePrice"
-      await ctx.reply("Укажи стоимость услуги:")
-      return
-    }
-
-    if (state.step === "serviceDescription") {
+      if (state.step === "serviceDescription") {
       state.description = value
       state.step = "servicePrice"
       await ctx.reply("Укажи стоимость услуги:")
