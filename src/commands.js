@@ -861,8 +861,7 @@ export async function registerCommands(bot) {
 })
   async function showEquipmentCategory(ctx, category) {
   const categoryLabel =
-    equipmentCategories.find(([name, id]) => id === category)?.[0] ||
-    "Оборудование"
+  categoryNames.get(category) || "ОБОРУДОВАНИЕ"
 
   const items = database.equipment.filter(
     (item) => item.category === category
