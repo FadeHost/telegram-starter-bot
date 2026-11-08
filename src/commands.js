@@ -431,13 +431,9 @@ function categoryKeyboard(category) {
     }
   }
 
-    if (category === "fish") {
-    keyboard.text("⬅️ Назад", "products")
-    keyboard.text("🏠 Главное меню", "home")
-  } else {
-    keyboard.text("⬅️ Вернуться к разделам товаров", "products").row()
-    keyboard.text("🏠 Главное меню", "home")
-  }
+      keyboard
+    .text("⬅️ Назад к разделам товаров", "products")
+    .text("🏠 Главное меню", "home")
 
   return keyboard
 }
