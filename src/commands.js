@@ -1293,16 +1293,76 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     )
   })
 
-  bot.callbackQuery(/^serviceitem:(.+)$/, async (ctx) => {
+    bot.callbackQuery(/^serviceview:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
-    const item = [...repairItems, ...automationItems]
-      .find((entry) => entry[1] === ctx.match[1])
-
-    await ctx.editMessageText(
-      `${item ? item[0] : "Услуга"}\n\nИнформация скоро появится.`,
-      { reply_markup: backHomeKeyboard() }
+    const service = (database.services || []).find(
+      (item) => item.id === ctx.match[1]
     )
+
+    if (!service) {
+      await ctx.editMessageText("Услуга не найдена.", {
+        reply_markup: backHomeKeyboard(),
+      })
+      return
+    }
+
+    await ctx.deleteMessage()
+
+    const photoMessageIds = []
+    const photos = service.photos || []
+
+    if (photos.length === 1) {
+      const message = await ctx.replyWithPhoto(photos[0])
+      photoMessageIds.push(message.message_id)
+    } else {
+      for (let i = 0; i < photos.length; i += 10) {
+        const album = photos.slice(i, i + 10).map((photo) => ({
+          type: "photo",
+          media: photo,
+        }))
+
+        const messages = await ctx.replyWithMediaGroup(album)
+        photoMessageIds.push(...messages.map((message) => message.message_id))
+      }
+    }
+
+    const phoneDigits = (service.phone || "").replace(/\D/g, "")
+    const whatsappPhone =
+      phoneDigits.length === 11 && phoneDigits.startsWith("8")
+        ? `7${phoneDigits.slice(1)}`
+        : phoneDigits.length === 10
+          ? `7${phoneDigits}`
+          : phoneDigits
+
+    const keyboard = new InlineKeyboard()
+
+    if (whatsappPhone) {
+      keyboard.url("WhatsApp", `https://wa.me/${whatsappPhone}`).row()
+    }
+
+    keyboard
+      .text("⬅️ Вернуться к списку услуг", `serviceback:${service.category}`)
+      .row()
+      .text("🏠 Главное меню", "home")
+
+    const card = await ctx.reply(
+      `Раздел: ${service.categoryLabel}
+
+🏢 ${service.company}
+
+${service.description || ""}
+
+Стоимость: ${service.price}
+Телефон: ${service.phone}
+${service.website ? `Сайт: ${service.website}` : ""}`,
+      { reply_markup: keyboard }
+    )
+
+    servicePhotoMessages.set(ctx.chat.id, {
+      photoIds: photoMessageIds,
+      cardId: card.message_id,
+    })
   })
 
   bot.callbackQuery(/^supplier:(.+)$/, async (ctx) => {
