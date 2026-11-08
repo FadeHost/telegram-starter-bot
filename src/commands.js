@@ -510,9 +510,13 @@ async function startAddSupplier(ctx) {
 
   const keyboard = new InlineKeyboard()
 
-  products.forEach(([name, id]) => {
-    keyboard.text(name, `admin:cat:${id}`).row()
-  })
+  for (let i = 0; i < products.length; i += 2) {
+  keyboard.text(products[i][0], `admin:cat:${products[i][1]}`)
+  if (products[i + 1]) {
+    keyboard.text(products[i + 1][0], `admin:cat:${products[i + 1][1]}`)
+  }
+  keyboard.row()
+}
 
   await ctx.reply("Выбери категорию поставщика:", {
     reply_markup: keyboard,
