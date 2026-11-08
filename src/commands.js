@@ -230,7 +230,20 @@ function startAutopostScheduler(bot) {
       for (const job of jobs) {
         if (!job || !job.active) continue
 
-        if (now >= new Date(job.expiresAt)) {
+        if (
+  !Array.isArray(job.times) ||
+  !Array.isArray(job.posts) ||
+  job.times.length === 0 ||
+  job.posts.length < job.times.length ||
+  job.times.some((time) => typeof time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time))
+) {
+  job.active = false
+  await saveDatabase()
+  console.error("Автопостер отключён: повреждены настройки группы", job.chatId)
+  continue
+}
+
+if (now >= new Date(job.expiresAt)) {
           job.active = false
           await saveDatabase()
           continue
