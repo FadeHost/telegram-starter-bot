@@ -1404,6 +1404,32 @@ if (!menuId && list) {
 
   await ctx.editMessageText("Отправь фотографию оборудования:")
 })
+  bot.callbackQuery(/^equipment:condition:(new|used)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const state = userSteps.get(ctx.from.id)
+  if (!state) return
+
+  state.values.condition = ctx.match[1] === "new" ? "Новое" : "Б/У"
+
+  if (ctx.match[1] === "used") {
+    state.step = "equipmentYear"
+    await ctx.reply("Укажи год покупки оборудования:")
+    return
+  }
+
+  state.values.purchaseYear = "Не применимо"
+  state.step = "equipmentWarranty"
+
+  const keyboard = new InlineKeyboard()
+    .text("Есть", "equipment:warranty:yes")
+    .text("Нет", "equipment:warranty:no")
+
+  await ctx.reply("Гарантия есть?", {
+    reply_markup: keyboard,
+  })
+})
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
