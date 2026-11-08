@@ -898,6 +898,36 @@ bot.callbackQuery(
   }
 )
 
+  bot.callbackQuery(/^equipment:item:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+
+  const item = database.equipment.find(
+    (equipment) => equipment.id === ctx.match[1]
+  )
+
+  if (!item) {
+    await ctx.reply("Оборудование не найдено.")
+    return
+  }
+
+  try {
+    await ctx.deleteMessage()
+  } catch (error) {}
+
+  const photoMessage = await ctx.replyWithPhoto(item.photo)
+  const keyboard = new InlineKeyboard()
+    .url("WhatsApp", `https://wa.me/${item.phone.replace(/\D/g, "")}`)
+    .url("Позвонить", `tel:${item.phone.replace(/\D/g, "")}`)
+    .row()
+    .text("⬅️ Вернуться к списку товаров", `equipment:back:${item.category}`)
+
+  const cardMessage = await ctx.reply(
+    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nТелефон: ${item.phone}`,
+    { reply_markup: keyboard }
+  )
+
+  equipmentPhotoMessages.set(cardMessage.message_id, photoMessage.message_id)
+})
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
