@@ -453,13 +453,10 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
     : categoryNames.get(category) || category
 
   if (!suppliers.length) {
-    const messageText = `${title}\n\nПоставщиков пока нет.`
-    const keyboard = itemId
-      ? new InlineKeyboard()
-          .text("⬅️ Назад", `product:${category}`)
-          .row()
-          .text("🏠 Главное меню", "home")
-      : backHomeKeyboard()
+  const messageText = `${title}\n\nПоставщиков пока нет.`
+  const keyboard = new InlineKeyboard()
+    .text("⬅️ Назад к разделам товаров", "products")
+    .text("🏠 Главное меню", "home")
 
     if (targetMessageId) {
       await ctx.api.editMessageText(ctx.chat.id, targetMessageId, messageText, {
