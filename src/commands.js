@@ -119,6 +119,7 @@ const supplierPhotoMessages = new Map()
 
 let database = {
   suppliers: [],
+  equipment: [],
 }
 let databaseLoaded = false
 
