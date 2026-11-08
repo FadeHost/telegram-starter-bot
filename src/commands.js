@@ -669,7 +669,11 @@ export async function registerCommands(bot) {
           { reply_markup: mainKeyboard() }
         )
         return
-      } catch (error) {
+            } catch (error) {
+        if (error.message.includes("message is not modified")) {
+          return
+        }
+
         console.log("Не удалось обновить старое меню:", error.message)
       }
     }
