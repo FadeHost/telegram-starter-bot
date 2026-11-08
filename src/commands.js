@@ -917,7 +917,7 @@ bot.callbackQuery(
   const photoMessage = await ctx.replyWithPhoto(item.photo)
   const keyboard = new InlineKeyboard()
     .url("WhatsApp", `https://wa.me/${item.phone.replace(/\D/g, "")}`)
-    .url("Позвонить", `tel:${item.phone.replace(/\D/g, "")}`)
+    .text("Позвонить", `equipment:call:${item.id}`)
     .row()
     .text("⬅️ Вернуться к списку товаров", `equipment:back:${item.category}`)
 
