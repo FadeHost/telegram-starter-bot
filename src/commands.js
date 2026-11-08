@@ -161,6 +161,10 @@ async function loadDatabase() {
     }
   }
 
+  if (!database.startMessages) {
+    database.startMessages = {}
+  }
+
   delete database.autopost
   await saveDatabase()
 }
