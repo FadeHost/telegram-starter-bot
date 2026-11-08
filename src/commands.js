@@ -538,13 +538,15 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
     .text("🏠 Главное меню", "home")
 
     if (targetMessageId) {
-      await ctx.api.editMessageText(ctx.chat.id, targetMessageId, messageText, {
-        reply_markup: keyboard,
-      })
-    } else {
-      await ctx.editMessageText(messageText, { reply_markup: keyboard })
-    }
-    return
+  await ctx.api.editMessageText(ctx.chat.id, targetMessageId, messageText, {
+    reply_markup: keyboard,
+  })
+} else if (newMessage) {
+  await ctx.reply(messageText, { reply_markup: keyboard })
+} else {
+  await ctx.editMessageText(messageText, { reply_markup: keyboard })
+}
+return
   }
 
   const keyboard = new InlineKeyboard()
