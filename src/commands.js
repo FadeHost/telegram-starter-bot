@@ -915,9 +915,18 @@ bot.callbackQuery(
   } catch (error) {}
 
   const photoMessage = await ctx.replyWithPhoto(item.photo)
-  const keyboard = new InlineKeyboard()
-    .url("WhatsApp", `https://wa.me/${item.phone.replace(/\D/g, "")}`)
-    .text("Позвонить", `equipment:call:${item.id}`)
+
+const phoneDigits = item.phone.replace(/\D/g, "")
+const whatsappPhone =
+  phoneDigits.length === 11 && phoneDigits.startsWith("8")
+    ? `7${phoneDigits.slice(1)}`
+    : phoneDigits.length === 10
+      ? `7${phoneDigits}`
+      : phoneDigits
+
+const keyboard = new InlineKeyboard()
+  .url("WhatsApp", `https://wa.me/${whatsappPhone}`)
+  .text("Позвонить", `equipment:call:${item.id}`)
     .row()
     .text("⬅️ Вернуться к списку товаров", `equipment:back:${item.category}`)
 
