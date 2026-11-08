@@ -28,6 +28,15 @@ const products = [
   ["🔪 Инвентарь для кухни и бара", "inventory"],
 ]
 
+const equipmentCategories = [
+  ["♨️ Тепловое оборудование", "equipment_heat"],
+  ["❄️ Холодильное оборудование", "equipment_cold"],
+  ["🍹 Барное оборудование", "equipment_bar"],
+  ["⚙️ Кухонное оборудование", "equipment_kitchen"],
+  ["🧼 Моечное оборудование", "equipment_wash"],
+  ["🔧 Прочее оборудование", "equipment_other"],
+]
+
 const services = [
   ["🔧 Ремонт оборудования", "repair"],
   ["🦠 Дезинфекция и дезинсекция", "disinfection"],
