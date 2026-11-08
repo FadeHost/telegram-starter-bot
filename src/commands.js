@@ -149,8 +149,12 @@ async function loadDatabase() {
   }
 
     if (!Array.isArray(database.suppliers)) {
-    database.suppliers = []
-  }
+  database.suppliers = []
+}
+
+if (!Array.isArray(database.equipment)) {
+  database.equipment = []
+}
 
   if (!Array.isArray(database.businesses)) {
     database.businesses = []
