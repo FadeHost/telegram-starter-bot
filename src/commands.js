@@ -536,11 +536,7 @@ async function finishSupplier(ctx, state) {
   await saveDatabase()
   userSteps.delete(ctx.from.id)
 
-  if (category === "meat_farm" || category === "meat_halal") {
-  const title = category === "meat_halal"
-    ? "🥩 МЯСО ХАЛЯЛЬ"
-    : "🥩 МЯСО ФЕРМЕРСКОЕ"
-}
+  }
 export async function registerCommands(bot) {
     await loadDatabase()
   databaseLoaded = true
