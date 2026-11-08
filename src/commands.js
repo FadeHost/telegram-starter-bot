@@ -520,6 +520,9 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
     ? categoryTitle(category, itemId)
     : categoryNames.get(category) || category
 
+  const backCallback = category.startsWith("equipment_")
+    ? "equipment"
+    : "products"
   if (!suppliers.length) {
   const messageText = `${title}\n\nПоставщиков пока нет.`
   const keyboard = new InlineKeyboard()
