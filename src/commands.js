@@ -2555,32 +2555,39 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
     state.values.push(value)
 
     const prompts = [
-      "Введи контактное лицо:",
-      "Введи номер телефона:",
-      "Опиши ассортимент или продукцию:",
-      "Укажи адрес и условия доставки:",
-      "Введи ссылку WhatsApp или напиши «нет»:",
-    ]
+  "Введи контактное лицо:",
+  "Введи номер телефона:",
+  "Опиши ассортимент или продукцию:",
+  "Укажи адрес поставщика:",
+  "Укажи условия доставки:",
+  "Введи ссылку WhatsApp или напиши «нет»:",
+  "Введи сайт компании или напиши «нет»:",
+]
 
-    if (state.values.length <= prompts.length) {
-      await ctx.reply(prompts[state.values.length - 1])
-      return
-    }
+if (state.values.length <= prompts.length) {
+  await ctx.reply(prompts[state.values.length - 1])
+  return
+}
 
-    const whatsapp = value.toLowerCase() === "нет" ? "" : value
+const whatsapp = state.values[6].toLowerCase() === "нет"
+  ? ""
+  : state.values[6]
 
-    if (
-      whatsapp &&
-      !/^https:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(whatsapp)
-    ) {
-      state.values.pop()
-      await ctx.reply(
-        "Нужна ссылка WhatsApp, начинающаяся с https://wa.me/ или https://api.whatsapp.com/. Либо напиши «нет»."
-      )
-      return
-    }
+if (
+  whatsapp &&
+  !/^https:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(whatsapp)
+) {
+  state.values.splice(6, 1)
+  await ctx.reply(
+    "Нужна ссылка WhatsApp, начинающаяся с https://wa.me/ или https://api.whatsapp.com/. Либо напиши «нет»."
+  )
+  return
+}
 
-    state.values[5] = whatsapp
+const website = value.toLowerCase() === "нет" ? "" : value
+state.values[6] = whatsapp
+state.values[7] = website
+
 state.step = "duration"
 await ctx.reply("Укажи срок размещения в днях. Например, 30 — на месяц.")
 return
