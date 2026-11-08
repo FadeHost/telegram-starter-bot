@@ -928,6 +928,24 @@ bot.callbackQuery(
 
   equipmentPhotoMessages.set(cardMessage.message_id, photoMessage.message_id)
 })
+  bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+
+  const cardMessageId = ctx.callbackQuery.message.message_id
+  const photoMessageId = equipmentPhotoMessages.get(cardMessageId)
+
+  if (photoMessageId) {
+    try {
+      await ctx.api.deleteMessage(ctx.chat.id, photoMessageId)
+    } catch (error) {
+      console.log("Не удалось удалить фото оборудования")
+    }
+  }
+
+  equipmentPhotoMessages.delete(cardMessageId)
+
+  await showEquipmentCategory(ctx, ctx.match[1])
+})
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
     await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
