@@ -425,29 +425,13 @@ function listKeyboard(items, prefix, columns = 1) {
   return keyboard
 }
 
-function adminKeyboard() {
+  function adminKeyboard() {
   return new InlineKeyboard()
-    .text("➕ Добавить поставщика", "admin:add")
+    .text("📥 Добавление", "admin:add:menu")
     .row()
-    .text("⚙️ Добавить оборудование", "admin:equipment")
+    .text("🗂 Управление", "admin:manage:menu")
     .row()
-    .text("💼 Добавить готовый бизнес", "admin:business:add")
-    .row()
-    .text("📋 Список поставщиков", "admin:list")
-    .row()
-    .text("⏳ Продлить размещение", "admin:extend")
-    .row()
-    .text("✏️ Редактировать поставщика", "admin:edit")
-    .row()
-    .text("🖼 Фотографии", "admin:photos")
-    .row()
-    .text("🗑 Удалить поставщика", "admin:delete")
-    .row()
-    .text("❌ Удалить готовый бизнес", "admin:business:delete")
-    .row()
-    .text("📢 Автопостер", "admin:autopost")
-    .row()
-    .text("📊 Статистика", "admin:stats")
+    .text("📢 Продвижение", "admin:promo:menu")
     .row()
     .text("🏠 Главное меню", "home")
 }
