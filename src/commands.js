@@ -1825,7 +1825,9 @@ if (!menuId && list) {
       bot.on("message:photo", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-    if (state.step === "equipmentPhoto") {
+    if (!isAdmin(ctx) || !state) return next()
+
+if (state.step === "equipmentPhoto") {
   const photo = ctx.message.photo.at(-1)
 
   if (!photo?.file_id) {
@@ -1839,7 +1841,6 @@ if (!menuId && list) {
   await ctx.reply("Укажи наименование оборудования:")
   return
 }
-    if (!isAdmin(ctx) || !state) return next()
 
     if (state.step === "autopostContent") {
   const photo = ctx.message.photo.at(-1)
