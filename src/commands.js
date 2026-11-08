@@ -674,12 +674,15 @@ export async function registerCommands(bot) {
       }
     }
 
-    const message = await ctx.reply(menuText, {
+      const message = await ctx.reply(menuText, {
       reply_markup: mainKeyboard(),
     })
 
+    console.log("START: новое меню отправлено, ID:", message.message_id)
+
     database.startMessages[userId] = message.message_id
     await saveDatabase()
+    console.log("START: ID меню сохранён")
   })
 
   bot.command("connect_autopost", async (ctx) => {
