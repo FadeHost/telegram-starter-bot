@@ -709,10 +709,19 @@ export async function registerCommands(bot) {
     })
   })
 
-  bot.callbackQuery("admin:stats", async (ctx) => {
+    bot.callbackQuery("admin:stats", async (ctx) => {
     await ctx.answerCallbackQuery()
 
     if (!isAdmin(ctx)) return
+
+    const currentText = ctx.callbackQuery.message?.text || ""
+
+    if (currentText.startsWith("📊 СТАТИСТИКА")) {
+      await ctx.editMessageText("🔐 Панель администратора", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
 
     const stats = database.stats || {
       startCount: 0,
