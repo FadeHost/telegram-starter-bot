@@ -597,7 +597,7 @@ async function startAddSupplier(ctx) {
 }
 
 async function finishSupplier(ctx, state) {
-  const [name, contact, phone, description, address, delivery, whatsapp, website] = state.values
+  const [name, contact, phone, description, address, delivery, website] = state.values
 
 const supplier = {
   id: crypto.randomUUID(),
@@ -607,7 +607,6 @@ const supplier = {
   description,
   address,
   delivery,
-  whatsapp,
   website,
   photos: state.photos || [],
   category: state.category,
