@@ -628,8 +628,29 @@ export async function registerCommands(bot) {
     await next()
   })
 
-    bot.command("start", async (ctx) => {
+        bot.command("start", async (ctx) => {
     if (ctx.chat.type !== "private") return
+
+    if (!database.stats) {
+      database.stats = {
+        startCount: 0,
+        uniqueUsers: [],
+        catalogStarts: 0,
+      }
+    }
+
+    database.stats.startCount += 1
+
+    const userId = ctx.from.id
+    if (!database.stats.uniqueUsers.includes(userId)) {
+      database.stats.uniqueUsers.push(userId)
+    }
+
+    if (ctx.match === "catalog") {
+      database.stats.catalogStarts += 1
+    }
+
+    await saveDatabase()
 
     await ctx.reply(
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
