@@ -877,8 +877,23 @@ bot.callbackQuery("admin:stats", async (ctx) => {
     )
   })
 
-  bot.callbackQuery("home", async (ctx) => {
+    bot.callbackQuery("home", async (ctx) => {
     await ctx.answerCallbackQuery()
+
+    const savedService = servicePhotoMessages.get(ctx.chat.id)
+
+    if (savedService) {
+      for (const messageId of savedService.photoIds) {
+        try {
+          await ctx.api.deleteMessage(ctx.chat.id, messageId)
+        } catch (error) {
+          console.error("Не удалось удалить фото услуги:", error)
+        }
+      }
+
+      servicePhotoMessages.delete(ctx.chat.id)
+    }
+
     await ctx.editMessageText(
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
       { reply_markup: mainKeyboard() }
