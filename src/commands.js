@@ -2165,12 +2165,77 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
       createdAt: new Date().toISOString(),
     }
 
-    database.businesses.push(business)
+        database.businesses.push(business)
     await saveDatabase()
     userSteps.delete(ctx.from.id)
 
     await ctx.reply(
       "✅ Готовый бизнес успешно сохранён!",
+      { reply_markup: adminKeyboard() }
+    )
+  })
+
+  bot.callbackQuery("service:photos:finish", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state || state.step !== "servicePhotos") return
+
+    if (!state.photos || state.photos.length === 0) {
+      await ctx.reply("Сначала отправь хотя бы одну фотографию.")
+      return
+    }
+
+    state.step = "serviceReady"
+
+    const keyboard = new InlineKeyboard()
+      .text("✅ Подтвердить", "service:publish")
+      .row()
+      .text("❌ Отменить", "admin:cancel")
+
+    await ctx.reply(
+      `ПРОВЕРЬ КАРТОЧКУ УСЛУГИ
+
+Категория: ${state.categoryLabel}
+Компания: ${state.company}
+Описание: ${state.description}
+Стоимость: ${state.price}
+Телефон: ${state.phone}
+Сайт: ${state.website || "Не указан"}
+Фотографий: ${state.photos.length}
+
+Подтверди карточку:`,
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery("service:publish", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state || state.step !== "serviceReady") return
+
+    const service = {
+      id: crypto.randomUUID(),
+      category: state.category,
+      categoryLabel: state.categoryLabel,
+      company: state.company,
+      description: state.description,
+      price: state.price,
+      phone: state.phone,
+      website: state.website || "",
+      photos: state.photos || [],
+      createdAt: new Date().toISOString(),
+    }
+
+    database.services.push(service)
+    await saveDatabase()
+    userSteps.delete(ctx.from.id)
+
+    await ctx.reply(
+      "✅ Услуга успешно сохранена!",
       { reply_markup: adminKeyboard() }
     )
   })
