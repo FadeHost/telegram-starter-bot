@@ -476,15 +476,9 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
       .row()
   }
 
-  if (itemId) {
-    keyboard
-      .text("⬅️ Вернуться к списку товаров", `product:${category}`)
-      .row()
-  } else {
-    keyboard.text("⬅️ Назад", "products").row()
-  }
-
-  keyboard.text("🏠 Главное меню", "home")
+  keyboard
+  .text("⬅️ Назад к разделам товаров", "products")
+  .text("🏠 Главное меню", "home")
 
   const messageText = `Раздел: ${title}\n\nВыбери поставщика:`
 
