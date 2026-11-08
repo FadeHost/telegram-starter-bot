@@ -385,6 +385,8 @@ function adminKeyboard() {
     .row()
     .text("📢 Автопостер", "admin:autopost")
     .row()
+    .text("📊 Статистика", "admin:stats")
+    .row()
     .text("🏠 Главное меню", "home")
 }
 
