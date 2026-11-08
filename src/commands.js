@@ -1404,6 +1404,18 @@ if (!menuId && list) {
 
   await ctx.editMessageText("Отправь фотографию оборудования:")
 })
+bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const state = userSteps.get(ctx.from.id)
+  if (!state) return
+
+  state.values.delivery = ctx.match[1] === "free" ? "Бесплатная" : "Платная"
+  state.step = "equipmentPhone"
+
+  await ctx.reply("Укажи номер телефона для связи:")
+})
   bot.callbackQuery(/^equipment:documents:(yes|no)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
