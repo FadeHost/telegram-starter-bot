@@ -2473,10 +2473,17 @@ bot.on("message:text", async (ctx, next) => {
       return
     }
 
-    if (state.step === "serviceCompany") {
+      if (state.step === "serviceCompany") {
       state.company = value
       state.step = "serviceDescription"
       await ctx.reply("Напиши описание услуги:")
+      return
+    }
+
+    if (state.step === "serviceDescription") {
+      state.description = value
+      state.step = "servicePrice"
+      await ctx.reply("Укажи стоимость услуги:")
       return
     }
 
