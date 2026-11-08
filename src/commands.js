@@ -99,9 +99,6 @@ const categoryNames = new Map([
   ...products.map(([name, id]) => [id, name.toUpperCase()]),
   ...services.map(([name, id]) => [id, name.toUpperCase()]),
 ])
-  ...products,
-  ...services,
-])
 
 const userSteps = new Map()
 const lastSupplierCards = new Map()
