@@ -235,13 +235,24 @@ function startAutopostScheduler(bot) {
           await saveDatabase()
 
           try {
-            if (post.type === "photo") {
-              await bot.api.sendPhoto(job.chatId, post.fileId, {
-                caption: post.caption || undefined,
-              })
-            } else {
-              await bot.api.sendMessage(job.chatId, post.text)
-            }
+          if (post.type === "photo") {
+  await bot.api.sendPhoto(job.chatId, post.fileId, {
+    caption: post.caption || undefined,
+    reply_markup: {
+      inline_keyboard: [[
+        { text: job.buttonText, url: "https://t.me/ObshepitAstanaBot" }
+      ]]
+    }
+  })
+} else {
+  await bot.api.sendMessage(job.chatId, post.text, {
+    reply_markup: {
+      inline_keyboard: [[
+        { text: job.buttonText, url: "https://t.me/ObshepitAstanaBot" }
+      ]]
+    }
+  })
+}
                  } catch (error) {
             delete job.lastSentDates[key]
 
