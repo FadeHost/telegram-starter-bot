@@ -856,10 +856,44 @@ export async function registerCommands(bot) {
     reply_markup: listKeyboard(equipmentCategories, "equipment", 2),
   })
 })
-  bot.callbackQuery(/^equipment:(.+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery()
-    await showCategory(ctx, ctx.match[1])
+  async function showEquipmentCategory(ctx, category) {
+  const categoryLabel =
+    equipmentCategories.find(([name, id]) => id === category)?.[0] ||
+    "Оборудование"
+
+  const items = database.equipment.filter(
+    (item) => item.category === category
+  )
+
+  const keyboard = new InlineKeyboard()
+
+  for (const item of items) {
+    keyboard
+      .text(`${item.name} — ${item.model}`, `equipment:item:${item.id}`)
+      .row()
+  }
+
+  keyboard
+    .text("⬅️ Назад к категориям", "equipment")
+    .row()
+    .text("🏠 Главное меню", "home")
+
+  const message = items.length
+    ? `${categoryLabel}\n\nВыбери оборудование:`
+    : `${categoryLabel}\n\nВ этой категории пока нет оборудования.`
+
+  await ctx.editMessageText(message, {
+    reply_markup: keyboard,
   })
+}
+
+bot.callbackQuery(
+  /^equipment:(equipment_(?:heat|cold|bar|kitchen|wash|other))$/,
+  async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await showEquipmentCategory(ctx, ctx.match[1])
+  }
+)
 
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
