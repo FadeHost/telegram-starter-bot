@@ -231,6 +231,10 @@ function startAutopostScheduler(bot) {
         if (!job || !job.active) continue
 
         if (
+  job.chatId === undefined ||
+  job.chatId === null ||
+  typeof job.buttonText !== "string" ||
+  !job.buttonText.trim() ||
   !Array.isArray(job.times) ||
   !Array.isArray(job.posts) ||
   job.times.length === 0 ||
