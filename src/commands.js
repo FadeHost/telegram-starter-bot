@@ -2575,7 +2575,6 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
   "Опиши ассортимент или продукцию:",
   "Укажи адрес поставщика:",
   "Укажи условия доставки:",
-  "Введи ссылку WhatsApp или напиши «нет»:",
   "Введи сайт компании или напиши «нет»:",
 ]
 
@@ -2584,24 +2583,7 @@ if (state.values.length <= prompts.length) {
   return
 }
 
-const whatsapp = state.values[6].toLowerCase() === "нет"
-  ? ""
-  : state.values[6]
-
-if (
-  whatsapp &&
-  !/^https:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(whatsapp)
-) {
-  state.values.splice(6, 1)
-  await ctx.reply(
-    "Нужна ссылка WhatsApp, начинающаяся с https://wa.me/ или https://api.whatsapp.com/. Либо напиши «нет»."
-  )
-  return
-}
-
-const website = value.toLowerCase() === "нет" ? "" : value
-state.values[6] = whatsapp
-state.values[7] = website
+state.values[6] = value.toLowerCase() === "нет" ? "" : value
 
 state.step = "duration"
 await ctx.reply("Укажи срок размещения в днях. Например, 30 — на месяц.")
