@@ -597,20 +597,22 @@ async function startAddSupplier(ctx) {
 }
 
 async function finishSupplier(ctx, state) {
-  const [name, contact, phone, description, delivery, whatsapp] = state.values
+  const [name, contact, phone, description, address, delivery, whatsapp, website] = state.values
 
-  const supplier = {
-    id: crypto.randomUUID(),
-    name,
-    contact,
-    phone,
-    description,
-    delivery,
-    whatsapp,
-    photos: state.photos || [],
-    category: state.category,
-    itemId: state.itemId || null,
-    categoryLabel: state.categoryLabel,
+const supplier = {
+  id: crypto.randomUUID(),
+  name,
+  contact,
+  phone,
+  description,
+  address,
+  delivery,
+  whatsapp,
+  website,
+  photos: state.photos || [],
+  category: state.category,
+  itemId: state.itemId || null,
+  categoryLabel: state.categoryLabel,
     createdAt: new Date().toISOString(),
         durationDays: state.durationDays,
     expiresAt: state.durationDays
