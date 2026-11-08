@@ -701,7 +701,7 @@ export async function registerCommands(bot) {
 
   bot.callbackQuery("products", async (ctx) => {
     await ctx.answerCallbackQuery()
-    await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
+    await ctx.editMessageText("🛒 ПРОДУКТЫ\n\nВыбери категорию:", {
       reply_markup: listKeyboard(products, "product", 2),
     })
   })
