@@ -833,6 +833,30 @@ export async function registerCommands(bot) {
   bot.callbackQuery("home:new", async (ctx) => {
   await ctx.answerCallbackQuery()
 
+  const photoMessageIds = supplierPhotoMessages.get(ctx.chat.id) || []
+
+  for (const messageId of photoMessageIds) {
+    try {
+      await ctx.api.deleteMessage(ctx.chat.id, messageId)
+    } catch (error) {
+      console.log("Не удалось удалить фото поставщика:", messageId)
+    }
+  }
+
+  supplierPhotoMessages.delete(ctx.chat.id)
+
+  const supplierCardId = lastSupplierCards.get(ctx.chat.id)
+
+  if (supplierCardId) {
+    try {
+      await ctx.api.deleteMessage(ctx.chat.id, supplierCardId)
+    } catch (error) {
+      console.log("Не удалось удалить карточку поставщика")
+    }
+
+    lastSupplierCards.delete(ctx.chat.id)
+  }
+
   const listId = lastSupplierLists.get(ctx.chat.id)
 
   if (listId) {
