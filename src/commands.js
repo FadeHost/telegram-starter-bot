@@ -2455,7 +2455,7 @@ bot.on("message:text", async (ctx, next) => {
     bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-    if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "autopostButton", "businessFormat", "businessArea", "businessElectricity", "businessRooms", "serviceCompany", "serviceDescription", "servicePrice", "servicePhone"].includes(state.step)) return next()
+    if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "autopostButton", "businessFormat", "businessArea", "businessElectricity", "businessRooms", "serviceCompany", "serviceDescription", "servicePrice", "servicePhone", "serviceWebsite"].includes(state.step)) return next()
     if (!isAdmin(ctx)) return
 
     const value = ctx.message.text.trim()
