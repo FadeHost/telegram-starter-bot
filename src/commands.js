@@ -926,12 +926,11 @@ const whatsappPhone =
 
 const keyboard = new InlineKeyboard()
   .url("WhatsApp", `https://wa.me/${whatsappPhone}`)
-  .text("Позвонить", `equipment:call:${item.id}`)
-    .row()
-    .text("⬅️ Вернуться к списку товаров", `equipment:back:${item.category}`)
+  .row()
+  .text("⬅️ Вернуться к списку товаров", `equipment:back:${item.category}`)
 
   const cardMessage = await ctx.reply(
-    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nТелефон: ${item.phone}`,
+    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nПозвонить: +${whatsappPhone}`,
     { reply_markup: keyboard }
   )
 
