@@ -1233,17 +1233,19 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     }
 
     const text = [
-      `🏢 ${supplier.name}`,
-      "",
-      `Раздел: ${supplier.categoryLabel}`,
-      `Контактное лицо: ${supplier.contact || "Не указано"}`,
-      `Телефон: ${supplier.phone || "Не указан"}`,
-      "",
-      supplier.description || "",
-      "",
-      `Доставка: ${supplier.delivery || "Не указано"}`,
-      supplier.whatsapp ? `WhatsApp: ${supplier.whatsapp}` : "",
-    ].filter(Boolean).join("\n")
+  `Раздел: ${supplier.categoryLabel}`,
+  "",
+  `🏢 ${supplier.name}`,
+  "",
+  `Контактное лицо: ${supplier.contact || "Не указано"}`,
+  `Телефон: ${supplier.phone || "Не указан"}`,
+  "",
+  supplier.description || "",
+  "",
+  `Адрес: ${supplier.address || "Не указан"}`,
+  `Доставка: ${supplier.delivery || "Не указано"}`,
+  supplier.website ? `Сайт: ${supplier.website}` : "",
+].filter(Boolean).join("\n")
 
     const back = supplier.itemId
       ? `category:${supplier.category}:${supplier.itemId}`
