@@ -548,7 +548,7 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
   }
 
   keyboard
-  .text("⬅️ Назад к разделам товаров", "products")
+  .text("⬅️ Назад к разделам товаров", backCallback)
   .text("🏠 Главное меню", "home")
 
   const messageText = `Раздел: ${title}\n\nВыбери поставщика:`
