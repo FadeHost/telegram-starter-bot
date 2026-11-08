@@ -526,7 +526,7 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
   if (!suppliers.length) {
   const messageText = `${title}\n\nПоставщиков пока нет.`
   const keyboard = new InlineKeyboard()
-    .text("⬅️ Назад к разделам товаров", "products")
+    .text("⬅️ Назад к разделам товаров", backCallback)
     .text("🏠 Главное меню", "home")
 
     if (targetMessageId) {
