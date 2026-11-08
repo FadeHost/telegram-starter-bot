@@ -2150,6 +2150,43 @@ bot.on("message:text", async (ctx, next) => {
   })
 })
   bot.on("message:text", async (ctx, next) => {
+  const state = userSteps.get(ctx.from.id)
+
+  if (!isAdmin(ctx) || !state || state.step !== "equipmentPhone") return next()
+
+  const phone = ctx.message.text.trim()
+  const digits = phone.replace(/\D/g, "")
+
+  if (digits.length < 10 || digits.length > 15) {
+    await ctx.reply("Укажи корректный номер телефона:")
+    return
+  }
+
+  state.values.phone = phone
+
+  const equipment = {
+    id: crypto.randomUUID(),
+    category: state.category,
+    categoryLabel: equipmentCategories.find(([name, id]) => id === state.category)?.[0] || "Оборудование",
+    name: state.values.name,
+    model: state.values.model,
+    condition: state.values.condition,
+    purchaseYear: state.values.purchaseYear,
+    warranty: state.values.warranty,
+    documents: state.values.documents,
+    delivery: state.values.delivery,
+    phone: state.values.phone,
+    photo: state.values.photo,
+    createdAt: new Date().toISOString(),
+  }
+
+  database.equipment.push(equipment)
+  await saveDatabase()
+  userSteps.delete(ctx.from.id)
+
+  await ctx.reply("Оборудование успешно сохранено!")
+})
+  bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
 if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "autopostButton", "businessFormat", "businessArea", "businessElectricity", "businessRooms"].includes(state.step)) return next()
