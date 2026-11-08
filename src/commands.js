@@ -845,6 +845,10 @@ export async function registerCommands(bot) {
     reply_markup: listKeyboard(equipmentCategories, "equipment", 2),
   })
 })
+  bot.callbackQuery(/^equipment:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    await showCategory(ctx, ctx.match[1])
+  })
 
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
