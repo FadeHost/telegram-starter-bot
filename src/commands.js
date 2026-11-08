@@ -850,9 +850,9 @@ export async function registerCommands(bot) {
     const category = ctx.match[1]
 
         if (category === "meat_farm" || category === "meat_halal") {
-      const title = category === "meat_halal"
-        ? "🥩 МЯСО И ПТИЦА ХАЛЯЛЬ"
-        : "🥩 МЯСО И ПТИЦА ФЕРМЕР"
+  const title = category === "meat_halal"
+    ? "🥩 МЯСО ХАЛЯЛЬ"
+    : "🥩 МЯСО ФЕРМЕРСКОЕ"
 
       await ctx.editMessageText(
         `${title}\n\nВыбери продукт:`,
