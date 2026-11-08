@@ -658,7 +658,7 @@ export async function registerCommands(bot) {
     await saveDatabase()
 
     const menuText = `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.` + "\u2063".repeat((database.stats.startCount % 1000) + 1)
-    const previousMessageId = database.startMessages[userId]
+    const previousMessageId = startMenuMessages.get(userId)
     console.log("START: пользователь", userId, "предыдущее меню:", previousMessageId)
 
     if (previousMessageId) {
