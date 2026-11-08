@@ -1516,7 +1516,7 @@ if (list) {
     await startAddSupplier(ctx)
   })
 
-  bot.callbackQuery("admin:service:add", async (ctx) => {
+    bot.callbackQuery("admin:service:add", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
@@ -1531,6 +1531,25 @@ if (list) {
     await ctx.reply("🛠 Выбери категорию услуги:", {
       reply_markup: keyboard,
     })
+  })
+
+  bot.callbackQuery(/^admin:service:category:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const category = services.find(
+      ([name, id]) => id === ctx.match[1]
+    )
+
+    if (!category) return
+
+    userSteps.set(ctx.from.id, {
+      step: "serviceCompany",
+      category: category[1],
+      categoryLabel: category[0],
+    })
+
+    await ctx.reply("Укажи название компании:")
   })
 
   bot.callbackQuery("admin:business:add", async (ctx) => {
