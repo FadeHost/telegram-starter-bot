@@ -852,6 +852,12 @@ export async function registerCommands(bot) {
 
   lastMainMenus.set(ctx.chat.id, menu.message_id)
 })
+bot.callbackQuery("products", async (ctx) => {
+  await ctx.answerCallbackQuery()
+  await ctx.editMessageText("📦 ПОСТАВЩИКИ\n\nВыбери категорию:", {
+    reply_markup: listKeyboard(products, "product", 2),
+  })
+})
 
   bot.callbackQuery("equipment", async (ctx) => {
   await ctx.answerCallbackQuery()
