@@ -1392,6 +1392,18 @@ if (!menuId && list) {
     reply_markup: keyboard,
   })
 })
+  bot.callbackQuery(/^admin:equipment:cat:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  userSteps.set(ctx.from.id, {
+    step: "equipmentPhoto",
+    category: ctx.match[1],
+    values: {},
+  })
+
+  await ctx.editMessageText("Отправь фотографию оборудования:")
+})
   bot.callbackQuery(/^admin:cat:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
