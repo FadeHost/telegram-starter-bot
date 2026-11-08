@@ -1510,11 +1510,28 @@ if (list) {
       `📢 Группа: ${group.title}\n\nНа сколько дней включить автопостер?\n\nВведи число от 1 до 365.`
     )
   })
-  bot.callbackQuery("admin:add", async (ctx) => {
-  await ctx.answerCallbackQuery()
-  if (!isAdmin(ctx)) return
-  await startAddSupplier(ctx)
-})
+    bot.callbackQuery("admin:add", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+    await startAddSupplier(ctx)
+  })
+
+  bot.callbackQuery("admin:service:add", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const keyboard = new InlineKeyboard()
+
+    for (const [name, id] of services) {
+      keyboard.text(name, `admin:service:category:${id}`).row()
+    }
+
+    keyboard.text("❌ Отмена", "admin:cancel")
+
+    await ctx.reply("🛠 Выбери категорию услуги:", {
+      reply_markup: keyboard,
+    })
+  })
 
   bot.callbackQuery("admin:business:add", async (ctx) => {
   await ctx.answerCallbackQuery()
