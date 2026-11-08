@@ -239,7 +239,16 @@ function startAutopostScheduler(bot) {
   !Array.isArray(job.posts) ||
   job.times.length === 0 ||
   job.posts.length < job.times.length ||
-  job.times.some((time) => typeof time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time))
+  job.times.some((time) => typeof time !== "string" || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) ||
+job.posts.some((post) =>
+  !post ||
+  (post.type === "photo" &&
+    (typeof post.fileId !== "string" || !post.fileId.trim() ||
+     typeof (post.caption || "") !== "string" || (post.caption || "").length > 1024)) ||
+  (post.type === "text" &&
+    (typeof post.text !== "string" || !post.text.trim() || post.text.length > 4096)) ||
+  !["photo", "text"].includes(post.type)
+)
 ) {
   job.active = false
   await saveDatabase()
