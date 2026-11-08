@@ -878,8 +878,9 @@ export async function registerCommands(bot) {
       keyboard.text(name, `pick:dairy:${prefix}${i}`).row()
     })
 
-    keyboard.text("⬅️ Назад", "product:dairy").row()
-    keyboard.text("🏠 Главное меню", "home")
+    keyboard
+  .text("⬅️ Назад", "product:dairy")
+  .text("🏠 Главное меню", "home")
 
     await ctx.editMessageText(
       `${type === "industrial" ? "🏭 Промышленное хозяйство" : "🚜 Фермерское хозяйство"}\n\nВыбери продукт:`,
