@@ -283,10 +283,17 @@ async function saveAutopostJob(state) {
 
   database.autoposts = database.autoposts || []
 
-      times: state.times,
+        const newJob = {
+    active: true,
+    chatId: state.chatId,
+    expiresAt: new Date(
+      Date.now() + state.days * 24 * 60 * 60 * 1000
+    ).toISOString(),
+    times: state.times,
     posts: state.posts,
     buttonText: state.buttonText,
     lastSentDates: {},
+  }
 
   const index = database.autoposts.findIndex(
     (job) => String(job.chatId) === String(state.chatId)
