@@ -789,10 +789,12 @@ export async function registerCommands(bot) {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
-    const keyboard = new InlineKeyboard()
+      const keyboard = new InlineKeyboard()
       .text("➕ Добавить поставщика", "admin:add")
       .row()
       .text("⚙️ Добавить оборудование", "admin:equipment")
+      .row()
+      .text("🛠 Добавить услугу", "admin:service:add")
       .row()
       .text("💼 Добавить готовый бизнес", "admin:business:add")
       .row()
