@@ -2236,7 +2236,27 @@ if (state.step === "equipmentPhoto") {
       return
     }
 
-        if (state.step === "businessPhotos") {
+            if (state.step === "servicePhotos") {
+      const photo = ctx.message.photo.at(-1)
+
+      if (!photo?.file_id) {
+        await ctx.reply("Не удалось получить фотографию. Отправь ещё раз.")
+        return
+      }
+
+      state.photos.push(photo.file_id)
+
+      const keyboard = new InlineKeyboard()
+        .text("✅ Готово", "service:photos:finish")
+
+      await ctx.reply(
+        `Фото добавлено. Всего фотографий: ${state.photos.length}. Отправь ещё или нажми «Готово».`,
+        { reply_markup: keyboard }
+      )
+      return
+    }
+
+    if (state.step === "businessPhotos") {
       const photo = ctx.message.photo.at(-1)
       state.photos.push(photo.file_id)
 
