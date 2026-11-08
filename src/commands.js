@@ -656,10 +656,29 @@ export async function registerCommands(bot) {
 
     await saveDatabase()
 
-    await ctx.reply(
-      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`,
-      { reply_markup: mainKeyboard() }
-    )
+    const menuText = `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`
+    const previousMessageId = database.startMessages[userId]
+
+    if (previousMessageId) {
+      try {
+        await ctx.api.editMessageText(
+          ctx.chat.id,
+          previousMessageId,
+          menuText,
+          { reply_markup: mainKeyboard() }
+        )
+        return
+      } catch (error) {
+        console.log("Не удалось обновить старое меню:", error.message)
+      }
+    }
+
+    const message = await ctx.reply(menuText, {
+      reply_markup: mainKeyboard(),
+    })
+
+    database.startMessages[userId] = message.message_id
+    await saveDatabase()
   })
 
   bot.command("connect_autopost", async (ctx) => {
