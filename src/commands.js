@@ -776,16 +776,79 @@ export async function registerCommands(bot) {
   })
 
     bot.command("admin", async (ctx) => {
-    if (!isAdmin(ctx)) {
-      return ctx.reply("⛔️ Доступ запрещён.")
-    }
+  if (!isAdmin(ctx)) {
+    return ctx.reply("⛔️ Доступ запрещён.")
+  }
 
-    await ctx.reply("🔐 Панель администратора", {
+  await ctx.reply("🔐 Панель администратора", {
+    reply_markup: adminKeyboard(),
+  })
+})
+
+  bot.callbackQuery("admin:add:menu", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const keyboard = new InlineKeyboard()
+      .text("➕ Добавить поставщика", "admin:add")
+      .row()
+      .text("⚙️ Добавить оборудование", "admin:equipment")
+      .row()
+      .text("💼 Добавить готовый бизнес", "admin:business:add")
+      .row()
+      .text("⬅️ Назад", "admin:back")
+
+    await ctx.editMessageText("📥 ДОБАВЛЕНИЕ\n\nЧто добавляем?", {
+      reply_markup: keyboard,
+    })
+  })
+
+  bot.callbackQuery("admin:manage:menu", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const keyboard = new InlineKeyboard()
+      .text("📋 Список поставщиков", "admin:list")
+      .row()
+      .text("⏳ Продлить размещение", "admin:extend")
+      .row()
+      .text("🗑 Удалить поставщика", "admin:delete")
+      .row()
+      .text("❌ Удалить готовый бизнес", "admin:business:delete")
+      .row()
+      .text("⬅️ Назад", "admin:back")
+
+    await ctx.editMessageText("🗂 УПРАВЛЕНИЕ\n\nВыбери действие:", {
+      reply_markup: keyboard,
+    })
+  })
+
+  bot.callbackQuery("admin:promo:menu", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const keyboard = new InlineKeyboard()
+      .text("📢 Автопостер", "admin:autopost")
+      .row()
+      .text("📊 Статистика", "admin:stats")
+      .row()
+      .text("⬅️ Назад", "admin:back")
+
+    await ctx.editMessageText("📢 ПРОДВИЖЕНИЕ\n\nВыбери действие:", {
+      reply_markup: keyboard,
+    })
+  })
+
+  bot.callbackQuery("admin:back", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    await ctx.editMessageText("🔐 Панель администратора", {
       reply_markup: adminKeyboard(),
     })
   })
 
-    bot.callbackQuery("admin:stats", async (ctx) => {
+bot.callbackQuery("admin:stats", async (ctx) => {
     await ctx.answerCallbackQuery()
 
     if (!isAdmin(ctx)) return
