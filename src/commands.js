@@ -1261,26 +1261,34 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     await showCategory(ctx, ctx.match[1], ctx.match[2])
   })
 
-  bot.callbackQuery(/^service:(repair|disinfection|cleaning|oil|accountant|automation|internet)$/, async (ctx) => {
+    bot.callbackQuery(/^service:(repair|disinfection|cleaning|oil|accountant|automation|internet)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
     const id = ctx.match[1]
-    let items = []
+    const items = (database.services || []).filter(
+      (service) => service.category === id
+    )
 
-    if (id === "repair") items = repairItems
-    if (id === "automation") items = automationItems
-
-    if (items.length) {
+    if (items.length === 0) {
       await ctx.editMessageText(
-        `${categoryNames.get(id)}\n\nВыбери оборудование:`,
-        { reply_markup: listKeyboard(items, "serviceitem") }
+        `${categoryNames.get(id)}\n\nПока нет компаний в этой категории.`,
+        { reply_markup: listKeyboard(services, "service") }
       )
       return
     }
 
+    const keyboard = new InlineKeyboard()
+
+    for (const service of items) {
+      keyboard.text(service.company, `serviceview:${service.id}`).row()
+    }
+
+    keyboard.text("⬅️ Назад к услугам", "services")
+      .text("🏠 Главное меню", "home")
+
     await ctx.editMessageText(
-      `${categoryNames.get(id)}\n\nИнформация скоро появится.`,
-      { reply_markup: backHomeKeyboard() }
+      `${categoryNames.get(id)}\n\nВыбери компанию:`,
+      { reply_markup: keyboard }
     )
   })
 
