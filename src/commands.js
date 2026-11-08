@@ -1771,14 +1771,25 @@ if (!menuId && list) {
     if (!isAdmin(ctx) || !state) return next()
 
     if (state.step === "autopostContent") {
-      state.posts = state.posts || []
-      const photo = ctx.message.photo.at(-1)
+  const photo = ctx.message.photo.at(-1)
+  const caption = ctx.message.caption || ""
 
-      state.posts.push({
-        type: "photo",
-        fileId: photo.file_id,
-        caption: ctx.message.caption || "",
-      })
+  if (!photo?.file_id) {
+    await ctx.reply("Не удалось получить фотографию. Отправь её ещё раз.")
+    return
+  }
+
+  if (caption.length > 1024) {
+    await ctx.reply("Подпись слишком длинная. Максимум 1024 символа. Отправь фотографию с более короткой подписью.")
+    return
+  }
+
+  state.posts = state.posts || []
+  state.posts.push({
+    type: "photo",
+    fileId: photo.file_id,
+    caption,
+  })
 
       if (state.posts.length < state.count) {
         await ctx.reply(`Публикация ${state.posts.length} из ${state.count} принята. Отправь следующую: текст или фото с описанием.`)
