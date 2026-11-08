@@ -932,25 +932,43 @@ bot.callbackQuery(
   await ctx.answerCallbackQuery()
 
   const cardMessageId = ctx.callbackQuery.message.message_id
-const photoMessageId = equipmentPhotoMessages.get(cardMessageId)
+  const photoMessageId = equipmentPhotoMessages.get(cardMessageId)
 
-try {
-  await ctx.api.deleteMessage(ctx.chat.id, cardMessageId)
-} catch (error) {
-  console.log("Не удалось удалить карточку оборудования")
-}
-
-if (photoMessageId) {
   try {
-    await ctx.api.deleteMessage(ctx.chat.id, photoMessageId)
+    await ctx.api.deleteMessage(ctx.chat.id, cardMessageId)
   } catch (error) {
-    console.log("Не удалось удалить фото оборудования")
+    console.log("Не удалось удалить карточку оборудования")
   }
-}
 
-equipmentPhotoMessages.delete(cardMessageId)
+  if (photoMessageId) {
+    try {
+      await ctx.api.deleteMessage(ctx.chat.id, photoMessageId)
+    } catch (error) {
+      console.log("Не удалось удалить фото оборудования")
+    }
+  }
 
-  await showEquipmentCategory(ctx, ctx.match[1])
+  equipmentPhotoMessages.delete(cardMessageId)
+
+  const category = ctx.match[1]
+  const categoryLabel =
+    equipmentCategories.find(([name, id]) => id === category)?.[0] || "Оборудование"
+
+  const items = database.equipment.filter((item) => item.category === category)
+  const keyboard = new InlineKeyboard()
+
+  for (const item of items) {
+    keyboard.text(`${item.name} — ${item.model}`, `equipment:item:${item.id}`).row()
+  }
+
+  keyboard.text("⬅️ Назад к категориям", "equipment").row()
+  keyboard.text("🏠 Главное меню", "home")
+
+  const message = items.length
+    ? `${categoryLabel}\n\nВыбери оборудование:`
+    : `${categoryLabel}\n\nВ этой категории пока нет оборудования.`
+
+  await ctx.reply(message, { reply_markup: keyboard })
 })
   bot.callbackQuery("services", async (ctx) => {
     await ctx.answerCallbackQuery()
