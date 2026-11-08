@@ -424,6 +424,8 @@ function adminKeyboard() {
   return new InlineKeyboard()
     .text("➕ Добавить поставщика", "admin:add")
     .row()
+    .text("⚙️ Добавить оборудование", "admin:equipment")
+    .row()
     .text("💼 Добавить готовый бизнес", "admin:business:add")
     .row()
     .text("📋 Список поставщиков", "admin:list")
