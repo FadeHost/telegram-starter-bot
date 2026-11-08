@@ -406,7 +406,7 @@ function listKeyboard(items, prefix, columns = 1) {
 
   for (let i = 0; i < items.length; i++) {
     const [name, id] = items[i]
-    keyboard.text(name, `${prefix}:${id}`)
+    keyboard.text(prefix === "serviceitem" ? name : name.toUpperCase(), `${prefix}:${id}`)
 
     if ((i + 1) % columns === 0) {
       keyboard.row()
