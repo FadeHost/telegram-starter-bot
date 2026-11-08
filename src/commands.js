@@ -699,7 +699,7 @@ export async function registerCommands(bot) {
     await ctx.reply("✅ Группа подключена! Настройки автопостера сохранены. Для подключения второй группы отправь /connect_autopost в ней.")
   })
 
-  bot.command("admin", async (ctx) => {
+    bot.command("admin", async (ctx) => {
     if (!isAdmin(ctx)) {
       return ctx.reply("⛔️ Доступ запрещён.")
     }
@@ -707,6 +707,23 @@ export async function registerCommands(bot) {
     await ctx.reply("🔐 Панель администратора", {
       reply_markup: adminKeyboard(),
     })
+  })
+
+  bot.callbackQuery("admin:stats", async (ctx) => {
+    await ctx.answerCallbackQuery()
+
+    if (!isAdmin(ctx)) return
+
+    const stats = database.stats || {
+      startCount: 0,
+      uniqueUsers: [],
+      catalogStarts: 0,
+    }
+
+    await ctx.editMessageText(
+      `📊 СТАТИСТИКА\n\n▶️ Всего запусков START: ${stats.startCount}\n👤 Уникальных пользователей: ${stats.uniqueUsers.length}\n🚀 Запусков по ссылке каталога: ${stats.catalogStarts}`,
+      { reply_markup: adminKeyboard() }
+    )
   })
 
   bot.callbackQuery("home", async (ctx) => {
