@@ -1995,11 +1995,16 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
       return
     }
       if (state.step === "autopostContent") {
-      state.posts = state.posts || []
-      state.posts.push({
-        type: "text",
-        text: value,
-      })
+  if (value.length > 4096) {
+    await ctx.reply("Текст слишком длинный. Максимум 4096 символов. Сократи публикацию и отправь заново.")
+    return
+  }
+
+  state.posts = state.posts || []
+  state.posts.push({
+    type: "text",
+    text: value,
+  })
 
       if (state.posts.length < state.count) {
         await ctx.reply(`Публикация ${state.posts.length} из ${state.count} принята. Отправь следующую: текст или фото с описанием.`)
