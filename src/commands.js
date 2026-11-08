@@ -2480,12 +2480,19 @@ bot.on("message:text", async (ctx, next) => {
       return
     }
 
-      if (state.step === "serviceDescription") {
-      state.description = value
-      state.step = "servicePrice"
-      await ctx.reply("Укажи стоимость услуги:")
-      return
-    }
+        if (state.step === "serviceDescription") {
+        state.description = value
+        state.step = "servicePrice"
+        await ctx.reply("Укажи стоимость услуги:")
+        return
+      }
+
+      if (state.step === "servicePrice") {
+        state.price = value
+        state.step = "servicePhone"
+        await ctx.reply("Укажи номер телефона:")
+        return
+      }
 
     if (state.step === "autopostButton") {
   if (value.length > 64) {
