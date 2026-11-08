@@ -200,9 +200,11 @@ let autopostTimer = null
 let autopostBusy = false
 
 function startAutopostScheduler(bot) {
+  if (autopostTimer) return
+
   let running = false
 
-  setInterval(async () => {
+  autopostTimer = setInterval(async () => {
     if (running) return
     running = true
 
