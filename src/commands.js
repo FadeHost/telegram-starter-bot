@@ -681,8 +681,7 @@ export async function registerCommands(bot) {
 
     console.log("START: новое меню отправлено, ID:", message.message_id)
 
-    database.startMessages[userId] = message.message_id
-    await saveDatabase()
+        startMenuMessages.set(userId, message.message_id)
     console.log("START: ID меню сохранён")
   })
 
