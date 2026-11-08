@@ -1991,6 +1991,25 @@ if (state.step === "equipmentPhoto") {
     await ctx.reply("Теперь отправь фотографии бизнеса. Можно несколько: фасад, зал, кухня.")
   })
   bot.on("message:text", async (ctx, next) => {
+  const state = userSteps.get(ctx.from.id)
+
+  if (!isAdmin(ctx) || !state || state.step !== "equipmentName") {
+    return next()
+  }
+
+  const value = ctx.message.text.trim()
+
+  if (!value) {
+    await ctx.reply("Укажи наименование оборудования:")
+    return
+  }
+
+  state.values.name = value
+  state.step = "equipmentModel"
+
+  await ctx.reply("Укажи модель оборудования:")
+})
+  bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
 if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "autopostButton", "businessFormat", "businessArea", "businessElectricity", "businessRooms"].includes(state.step)) return next()
