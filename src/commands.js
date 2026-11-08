@@ -974,7 +974,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 
   const category = ctx.match[1]
   const categoryLabel =
-    equipmentCategories.find(([name, id]) => id === category)?.[0] || "Оборудование"
+  categoryNames.get(category) || "ОБОРУДОВАНИЕ"
 
   const items = database.equipment.filter((item) => item.category === category)
   const keyboard = new InlineKeyboard()
