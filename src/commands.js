@@ -1404,6 +1404,24 @@ if (!menuId && list) {
 
   await ctx.editMessageText("Отправь фотографию оборудования:")
 })
+  bot.callbackQuery(/^equipment:warranty:(yes|no)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const state = userSteps.get(ctx.from.id)
+  if (!state) return
+
+  state.values.warranty = ctx.match[1] === "yes" ? "Есть" : "Нет"
+  state.step = "equipmentDocuments"
+
+  const keyboard = new InlineKeyboard()
+    .text("Есть", "equipment:documents:yes")
+    .text("Нет", "equipment:documents:no")
+
+  await ctx.reply("Документы на оборудование есть?", {
+    reply_markup: keyboard,
+  })
+})
   bot.callbackQuery(/^equipment:condition:(new|used)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
