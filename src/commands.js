@@ -932,17 +932,23 @@ bot.callbackQuery(
   await ctx.answerCallbackQuery()
 
   const cardMessageId = ctx.callbackQuery.message.message_id
-  const photoMessageId = equipmentPhotoMessages.get(cardMessageId)
+const photoMessageId = equipmentPhotoMessages.get(cardMessageId)
 
-  if (photoMessageId) {
-    try {
-      await ctx.api.deleteMessage(ctx.chat.id, photoMessageId)
-    } catch (error) {
-      console.log("Не удалось удалить фото оборудования")
-    }
+try {
+  await ctx.api.deleteMessage(ctx.chat.id, cardMessageId)
+} catch (error) {
+  console.log("Не удалось удалить карточку оборудования")
+}
+
+if (photoMessageId) {
+  try {
+    await ctx.api.deleteMessage(ctx.chat.id, photoMessageId)
+  } catch (error) {
+    console.log("Не удалось удалить фото оборудования")
   }
+}
 
-  equipmentPhotoMessages.delete(cardMessageId)
+equipmentPhotoMessages.delete(cardMessageId)
 
   await showEquipmentCategory(ctx, ctx.match[1])
 })
