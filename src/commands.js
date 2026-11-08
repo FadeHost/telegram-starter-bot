@@ -1873,9 +1873,8 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
         return
       }
 
-      state.step = "autopostReady"
-      await saveAutopostJob(state)
-      await ctx.reply("Все публикации собраны! Автопостер сохранён.")
+      state.step = "autopostButton"
+      await ctx.reply("Публикации приняты! Теперь напиши текст кнопки, которая будет вести в наш бот.")
       return
     }
      if (state.step === "extendDuration") {
