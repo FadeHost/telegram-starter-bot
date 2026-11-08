@@ -153,13 +153,17 @@ async function loadDatabase() {
   database.suppliers = []
 }
 
-if (!Array.isArray(database.equipment)) {
+    if (!Array.isArray(database.equipment)) {
   database.equipment = []
 }
 
-  if (!Array.isArray(database.businesses)) {
-    database.businesses = []
-  }
+    if (!Array.isArray(database.services)) {
+  database.services = []
+}
+
+    if (!Array.isArray(database.businesses)) {
+  database.businesses = []
+}
 
     if (!Array.isArray(database.autoposts)) {
     database.autoposts = database.autopost ? [database.autopost] : []
