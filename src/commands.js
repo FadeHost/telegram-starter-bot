@@ -283,11 +283,11 @@ async function saveAutopostJob(state) {
 
   database.autoposts = database.autoposts || []
 
-        const newJob = {
+    const newJob = {
     active: true,
     chatId: state.chatId,
     expiresAt: new Date(
-      Date.now() + state.days * 24 * 60 * 60 * 1000
+    Date.now() + state.days * 24 * 60 * 60 * 1000
     ).toISOString(),
     times: state.times,
     posts: state.posts,
