@@ -2494,10 +2494,18 @@ bot.on("message:text", async (ctx, next) => {
         return
       }
 
-      if (state.step === "servicePhone") {
+            if (state.step === "servicePhone") {
         state.phone = value
         state.step = "serviceWebsite"
         await ctx.reply("Укажи сайт компании или напиши /skip:")
+        return
+      }
+
+      if (state.step === "serviceWebsite") {
+        state.website = value === "/skip" ? "" : value
+        state.step = "servicePhotos"
+        state.photos = []
+        await ctx.reply("Отправь фотографии услуги. Когда закончишь, нажми «Готово».")
         return
       }
 
