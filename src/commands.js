@@ -871,7 +871,7 @@ export async function registerCommands(bot) {
 
     if (category === "fish") {
       await ctx.editMessageText(
-        "🐟 РЫБА И МОРЕПРОДУКТЫ\n\nВыбери продукт:",
+        "🐟 РЫБА\n\nВыбери продукт:",
         { reply_markup: categoryKeyboard("fish") }
       )
       return
