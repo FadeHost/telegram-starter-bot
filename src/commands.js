@@ -2452,10 +2452,10 @@ bot.on("message:text", async (ctx, next) => {
 
   await ctx.reply("Оборудование успешно сохранено!")
 })
-  bot.on("message:text", async (ctx, next) => {
+    bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "autopostButton", "businessFormat", "businessArea", "businessElectricity", "businessRooms"].includes(state.step)) return next()
+    if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "autopostButton", "businessFormat", "businessArea", "businessElectricity", "businessRooms", "serviceCompany"].includes(state.step)) return next()
     if (!isAdmin(ctx)) return
 
     const value = ctx.message.text.trim()
@@ -2472,6 +2472,14 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
       await ctx.reply("Поле не должно быть пустым. Введи значение:")
       return
     }
+
+    if (state.step === "serviceCompany") {
+      state.company = value
+      state.step = "serviceDescription"
+      await ctx.reply("Напиши описание услуги:")
+      return
+    }
+
     if (state.step === "autopostButton") {
   if (value.length > 64) {
     await ctx.reply("Текст кнопки слишком длинный. Введи не более 64 символов.")
