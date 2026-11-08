@@ -153,13 +153,21 @@ async function loadDatabase() {
     database.autopostGroups = []
   }
 
-    if (!database.stats) {
-    database.stats = {
-      startCount: 0,
-      uniqueUsers: [],
-      catalogStarts: 0,
-    }
-  }
+    if (!database.stats || typeof database.stats !== "object" || Array.isArray(database.stats)) {
+  database.stats = {}
+}
+
+if (!Number.isFinite(database.stats.startCount)) {
+  database.stats.startCount = 0
+}
+
+if (!Array.isArray(database.stats.uniqueUsers)) {
+  database.stats.uniqueUsers = []
+}
+
+if (!Number.isFinite(database.stats.catalogStarts)) {
+  database.stats.catalogStarts = 0
+}
 
   if (!database.startMessages) {
     database.startMessages = {}
