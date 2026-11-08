@@ -1806,6 +1806,18 @@ if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autop
       await ctx.reply("Поле не должно быть пустым. Введи значение:")
       return
     }
+    if (state.step === "autopostButton") {
+  if (value.length > 64) {
+    await ctx.reply("Текст кнопки слишком длинный. Введи не более 64 символов.")
+    return
+  }
+
+  state.buttonText = value
+  await saveAutopostJob(state)
+  state.step = "autopostReady"
+  await ctx.reply("Все публикации и кнопка сохранены! Автопостер запущен.")
+  return
+}
 
         if (state.step === "autopostDays") {
       const days = Number(value)
