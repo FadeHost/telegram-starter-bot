@@ -658,6 +658,7 @@ export async function registerCommands(bot) {
 
     const menuText = `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}\n\nКаталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`
     const previousMessageId = database.startMessages[userId]
+    console.log("START: пользователь", userId, "предыдущее меню:", previousMessageId)
 
     if (previousMessageId) {
       try {
