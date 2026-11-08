@@ -571,6 +571,9 @@ async function startAddSupplier(ctx) {
   })
 
   const keyboard = new InlineKeyboard()
+  keyboard
+  .text("⚙️ Оборудование для общепита", "admin:equipment")
+  .row()
 
   for (let i = 0; i < products.length; i += 2) {
   keyboard.text(products[i][0], `admin:cat:${products[i][1]}`)
