@@ -2055,6 +2055,30 @@ bot.on("message:text", async (ctx, next) => {
   })
 })
   bot.on("message:text", async (ctx, next) => {
+  const state = userSteps.get(ctx.from.id)
+
+  if (!isAdmin(ctx) || !state || state.step !== "equipmentYear") return next()
+
+  const year = Number(ctx.message.text.trim())
+  const currentYear = new Date().getFullYear()
+
+  if (!Number.isInteger(year) || year < 1900 || year > currentYear) {
+    await ctx.reply(`Укажи корректный год покупки (1900–${currentYear}):`)
+    return
+  }
+
+  state.values.purchaseYear = year
+  state.step = "equipmentWarranty"
+
+  const keyboard = new InlineKeyboard()
+    .text("Есть", "equipment:warranty:yes")
+    .text("Нет", "equipment:warranty:no")
+
+  await ctx.reply("Гарантия есть?", {
+    reply_markup: keyboard,
+  })
+})
+  bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
 if (!state || !["supplier", "duration", "extendDuration", "autopostDays", "autopostCount", "autopostTimes", "autopostContent", "autopostButton", "businessFormat", "businessArea", "businessElectricity", "businessRooms"].includes(state.step)) return next()
