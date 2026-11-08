@@ -325,11 +325,20 @@ function backHomeKeyboard() {
     .text("🏠 Главное меню", "home")
 }
 
-function listKeyboard(items, prefix) {
+function listKeyboard(items, prefix, columns = 1) {
   const keyboard = new InlineKeyboard()
 
-  for (const [name, id] of items) {
-      keyboard.text(name, `${prefix}:${id}`).row()
+  for (let i = 0; i < items.length; i++) {
+    const [name, id] = items[i]
+    keyboard.text(name, `${prefix}:${id}`)
+
+    if ((i + 1) % columns === 0) {
+      keyboard.row()
+    }
+  }
+
+  if (items.length % columns !== 0) {
+    keyboard.row()
   }
 
   keyboard.text("🏠 Главное меню", "home")
