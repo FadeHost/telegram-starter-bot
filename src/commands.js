@@ -1,24 +1,67 @@
-// Your bot's behaviour. Add commands here; grammY's docs (grammy.dev) cover
-// keyboards, sessions, files, inline queries and everything else.
 
 import { InlineKeyboard } from "grammy"
 
+const CHANNEL = "@VEXORAMOVIES"
+const films = []
+
 export function registerCommands(bot) {
   bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
+    ctx.reply(
+      "🎬 Ku soo dhowow VEXORA CINEMA!\n\nQor magaca filimka aad raadineyso."
+    )
   )
 
   bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
+    ctx.reply("🎥 Qor magaca filimka si aan kuugu raadiyo.")
   )
 
-  bot.command("ping", (ctx) => ctx.reply("pong"))
+  bot.command("ping", (ctx) => ctx.reply("Bot-ku waa shaqeynayaa ✅"))
 
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
+  // Kaydi filimada cusub ee channel-ka lagu soo geliyo
+  bot.on("channel_post", (ctx) => {
+    const msg = ctx.channelPost
+    const title = msg.caption || msg.text || ""
 
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
+    const hasMedia =
+      msg.video || msg.document || msg.photo ||
+      msg.audio || msg.animation
 
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
+    if (hasMedia && title.trim()) {
+      films.push({
+        title: title.toLowerCase(),
+        messageId: msg.message_id,
+      })
+    }
+  })
+
+  // Raadi filimka uu qofku qoray
+  bot.on("message:text", async (ctx) => {
+    const query = ctx.message.text.trim().toLowerCase()
+
+    if (query.startsWith("/")) return
+
+    const matches = films.filter((film) =>
+      film.title.includes(query)
+    )
+
+    if (matches.length === 0) {
+      return ctx.reply(
+        "😔 Filimkaas ma helin. Hubi magaca ama mar kale isku day."
+      )
+    }
+
+    await ctx.reply(`🎬 Waxaan helay ${matches.length} natiijo.`)
+
+    for (const film of matches.slice(0, 5)) {
+      try {
+        await ctx.api.copyMessage(
+          ctx.chat.id,
+          CHANNEL,
+          film.messageId
+        )
+      } catch {
+        await ctx.reply("Filimkan hadda lama soo diri karin.")
+      }
+    }
+  })
 }
