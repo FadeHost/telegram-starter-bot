@@ -2,18 +2,14 @@
 import { InlineKeyboard } from "grammy"
 
 const CHANNEL = "@VEXORAMOVIES"
-
-// Kaydinta filimada channel-ka
 const films = new Map()
 
 export function registerCommands(bot) {
   bot.command("start", async (ctx) => {
     await ctx.reply(
-      "🎬 Ku soo dhowow AMERICAN FILMS!\n\n" +
-      "Qor magaca filimka aad raadineyso.",
+      "🎬 Ku soo dhowow AMERICAN FILMS!\n\nQor magaca filimka aad raadineyso.",
       {
-        reply_markup: new InlineKeyboard()
-          .text("🔎 Raadi Filim", "search")
+        reply_markup: new InlineKeyboard().text("🔎 Raadi Filim", "search")
       }
     )
   })
@@ -33,17 +29,13 @@ export function registerCommands(bot) {
     ctx.reply(`Chat ID: ${ctx.chat.id}\nUser ID: ${ctx.from?.id}`)
   )
 
-  // Kaydi filimada cusub ee channel-ka
   bot.on("channel_post", (ctx) => {
     const msg = ctx.channelPost
     const title = (msg.caption || msg.text || "").trim()
 
     const hasMedia =
-      msg.video ||
-      msg.document ||
-      msg.photo ||
-      msg.audio ||
-      msg.animation
+      msg.video || msg.document || msg.photo ||
+      msg.audio || msg.animation
 
     if (hasMedia && title) {
       films.set(msg.message_id, {
@@ -53,31 +45,23 @@ export function registerCommands(bot) {
     }
   })
 
-  // Raadinta filimada
   bot.on("message:text", async (ctx) => {
     const query = ctx.message.text.trim().toLowerCase()
-
     if (!query || query.startsWith("/")) return
 
     const matches = [...films.values()].filter((film) =>
       film.title.includes(query)
     )
 
-    if (matches.length === 0) {
-      return ctx.reply(
-        "😔 Filimkaas lama helin. Isku day magac kale."
-      )
+    if (!matches.length) {
+      return ctx.reply("😔 Filimkaas lama helin. Isku day magac kale.")
     }
 
     await ctx.reply(`🎬 Waxaan helay ${matches.length} natiijo.`)
 
     for (const film of matches.slice(0, 5)) {
       try {
-        await ctx.api.copyMessage(
-          ctx.chat.id,
-          CHANNEL,
-          film.messageId
-        )
+        await ctx.api.copyMessage(ctx.chat.id, CHANNEL, film.messageId)
       } catch (error) {
         await ctx.reply("❌ Filimka lama soo diri karin.")
       }
