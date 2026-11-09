@@ -4,12 +4,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const CHANNEL = "@VEXORAMOVIES";
-
 const DATA_DIR = path.join(process.cwd(), "data");
 const MOVIES_DB = path.join(DATA_DIR, "movies.json");
 const LINKS_DB = path.join(DATA_DIR, "links.json");
 
-// Kaydinta iyo akhrinta xogta
 async function readDB(file) {
   try {
     return JSON.parse(await fs.readFile(file, "utf8"));
@@ -28,20 +26,27 @@ function getTitle(msg) {
     .trim().split("\n")[0];
 }
 
-// Hubinta media-ga
 function hasMedia(msg) {
   return !!(
-    msg.video ||
-    msg.document ||
-    msg.photo ||
-    msg.audio ||
-    msg.animation
+    msg.video || msg.document || msg.photo ||
+    msg.audio || msg.animation
   );
 }
 
 export function registerCommands(bot) {
 
-  // Kaydi filimada cusub ee channel-ka
+  // KEYBOARDS
+  const mainKeyboard = new InlineKeyboard()
+    .text("🔎 Raadi Filim", "search")
+    .row()
+    .text("🆕 Filimada cusub", "latest")
+    .row()
+    .text("🔗 Filimada Links", "links");
+
+  const backKeyboard = new InlineKeyboard()
+    .text("🏠 Bogga hore", "home");
+
+  // SAVE CHANNEL MOVIES
   bot.on("channel_post", async (ctx) => {
     const msg = ctx.channelPost;
 
@@ -63,28 +68,23 @@ export function registerCommands(bot) {
     await saveDB(MOVIES_DB, movies.slice(0, 1000));
   });
 
-  // Bogga bilowga
+  // START
   bot.command("start", async (ctx) => {
-    const keyboard = new InlineKeyboard()
-      .text("🔎 Raadi Filim", "search")
-      .row()
-      .text("🆕 Filimada cusub", "latest")
-      .row()
-      .text("🔗 Filimada Links", "links");
-
     await ctx.reply(
-      `🎬 KU SOO DHAWOOW VEXORA MOVIES!\n\n` +
-      `Salaan ${ctx.from?.first_name ?? "Saaxiib"}!\n\n` +
-      `Halkan waxaad ka heli kartaa filimada aad raadineyso.\n\n` +
-      `/search Avatar - Raadi filim\n` +
-      `/latest - Filimada cusub\n` +
-      `/links - Links-ka filimada\n` +
-      `/help - Caawimaad`,
-      { reply_markup: keyboard }
+      `🎬 KU SOO DHAWOOW VEXORA MOVIES!
+
+Salaan ${ctx.from?.first_name ?? "Saaxiib"}!
+
+Halkan waxaad ka raadin kartaa filimada.
+
+🔎 Raadi filim aad jeceshahay.
+🆕 Eeg filimada cusub.
+🔗 Eeg links-ka filimada.`,
+      { reply_markup: mainKeyboard }
     );
   });
 
-  // Caawimaad
+  // HELP
   bot.command("help", async (ctx) => {
     await ctx.reply(
       "🎬 VEXORA MOVIES - CAAWIMAAD\n\n" +
@@ -96,10 +96,10 @@ export function registerCommands(bot) {
     );
   });
 
-  // Raadinta filimada
+  // SEARCH MOVIES
   async function searchMovie(ctx, query) {
     if (!query) {
-      return ctx.reply("❗ Fadlan qor magaca filimka.");
+      return ctx.reply("🔎 Fadlan qor magaca filimka.");
     }
 
     const movies = await readDB(MOVIES_DB);
@@ -112,7 +112,7 @@ export function registerCommands(bot) {
 
     if (!results.length) {
       return ctx.reply(
-        "😔 Filimkaas lama helin.\n\nIsku day magac kale."
+        "😔 Filimkaas lama helin.\nIsku day magac kale."
       );
     }
 
@@ -126,7 +126,7 @@ export function registerCommands(bot) {
           movie.message_id
         );
       } catch (error) {
-        console.error("Movie error:", error);
+        console.error(error);
         await ctx.reply(`❌ ${movie.title} lama soo diri karin.`);
       }
     }
@@ -136,7 +136,7 @@ export function registerCommands(bot) {
     await searchMovie(ctx, String(ctx.match || "").trim());
   });
 
-  // Filimada cusub
+  // LATEST MOVIES
   async function sendLatest(ctx) {
     const movies = await readDB(MOVIES_DB);
 
@@ -162,7 +162,7 @@ export function registerCommands(bot) {
 
   bot.command("latest", sendLatest);
 
-  // Links-ka filimada
+  // MOVIE LINKS
   async function sendLinks(ctx) {
     const links = await readDB(LINKS_DB);
 
@@ -182,7 +182,7 @@ export function registerCommands(bot) {
 
   bot.command("links", sendLinks);
 
-  // Admin kaliya ayaa links ku dari kara
+  // ADD LINK - CHANNEL ADMIN ONLY
   bot.command("addlink", async (ctx) => {
     try {
       const member = await ctx.api.getChatMember(
@@ -206,25 +206,51 @@ export function registerCommands(bot) {
         !/^https:\/\/\S+$/i.test(url)
       ) {
         return ctx.reply(
-          "Isticmaal:\n\n/addlink Avatar | https://example.com"
+          "Isticmaal:\n/addlink Avatar | https://example.com"
         );
       }
 
       const links = await readDB(LINKS_DB);
-
       links.unshift({ title, url });
 
       await saveDB(LINKS_DB, links);
 
-      await ctx.reply("✅ Link-ga si guul leh ayaa loo daray!");
+      await ctx.reply("✅ Link-ga waa lagu daray!");
 
     } catch (error) {
       console.error(error);
-      await ctx.reply("❌ Hubinta Admin-ka ayaa fashilantay.");
+      await ctx.reply("❌ Ma awoodin inaan xaqiijiyo Admin-ka.");
     }
   });
 
-  // Qofku hadduu magaca filimka si toos ah u qoro
+  // BUTTON: SEARCH
+  bot.callbackQuery("search", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await ctx.reply("🔎 Hadda qor magaca filimka aad rabto.");
+  });
+
+  // BUTTON: LATEST
+  bot.callbackQuery("latest", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await sendLatest(ctx);
+  });
+
+  // BUTTON: LINKS
+  bot.callbackQuery("links", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await sendLinks(ctx);
+  });
+
+  // BUTTON: HOME
+  bot.callbackQuery("home", async (ctx) => {
+    await ctx.answerCallbackQuery();
+
+    await ctx.reply("🏠 Ku soo noqo bogga hore!", {
+      reply_markup: mainKeyboard
+    });
+  });
+
+  // USER TEXT SEARCH
   bot.on("message:text", async (ctx) => {
     const query = ctx.message.text.trim();
 
@@ -233,19 +259,5 @@ export function registerCommands(bot) {
     await searchMovie(ctx, query);
   });
 
-  // Badhamada
-  bot.callbackQuery("search", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await ctx.reply("🔎 Qor magaca filimka aad raadineyso.");
-  });
-
-  bot.callbackQuery("latest", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await sendLatest(ctx);
-  });
-
-  bot.callbackQuery("links", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await sendLinks(ctx);
-  });
 }
+
