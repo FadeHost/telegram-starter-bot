@@ -11,6 +11,7 @@
 import http from "node:http"
 import { Bot, webhookCallback } from "grammy"
 import { registerCommands } from "./src/commands.js"
+import { startAdminServer } from "./admin/server.js"
 
 const token = process.env.TELEGRAM_BOT_TOKEN
 if (!token) {
@@ -47,6 +48,7 @@ async function main() {
     process.exit(1)
   }
   console.log(`[bot] logged in as @${me.username} (${mode} mode)`)
+  startAdminServer()
 
   if (mode === "webhook") {
     const url = (process.env.WEBHOOK_URL || "").trim().replace(/\/$/, "")
