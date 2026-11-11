@@ -92,7 +92,9 @@ app.patch("/api/users/:id/status", auth, (req,res) => {
 })
 app.get("/api/health", (req,res)=>res.json({ok:true,service:"LION MASTER PANEL"}))
 app.get("*", (req,res)=>res.sendFile(path.join(__dirname,"public","index.html")))
-app.listen(PORT, "0.0.0.0", ()=> {
-  console.log(`[LION MASTER] dashboard listening on port ${PORT}`)
-  if(MASTER_PASS==="CHANGE-ME-NOW-2026") console.warn("[SECURITY] Set MASTER_PASSWORD and SESSION_SECRET in FadeHost environment before public use.")
-})
+export function startAdminServer() {
+  app.listen(PORT, "0.0.0.0", ()=> {
+    console.log(`[LION MASTER] dashboard listening on port ${PORT}`)
+    if(MASTER_PASS==="CHANGE-ME-NOW-2026") console.warn("[SECURITY] Set MASTER_PASSWORD and SESSION_SECRET in FadeHost environment before public use.")
+  })
+}
