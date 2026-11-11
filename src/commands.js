@@ -5,7 +5,7 @@ import { InlineKeyboard } from "grammy"
 
 export function registerCommands(bot) {
   bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
+    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive salom hosted on FadeHost. Send /help to see what I can do.`, {
       reply_markup: new InlineKeyboard().text("Ping me", "ping"),
     }),
   )
