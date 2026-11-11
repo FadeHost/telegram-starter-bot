@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
+export const adminApp = app
 const PORT = Number(process.env.PORT || 3000)
 const SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("hex")
 const MASTER_USER = process.env.MASTER_USERNAME || "master"
