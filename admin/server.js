@@ -10,8 +10,8 @@ export const adminApp = app
 const PORT = Number(process.env.PORT || 3000)
 const SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("hex")
 const MASTER_USER = process.env.MASTER_USERNAME || "master"
-const MASTER_PASS = process.env.MASTER_PASSWORD || "CHANGE-ME-NOW-2026"
-const productionCredentialsReady = process.env.NODE_ENV !== "production" || Boolean(process.env.MASTER_PASSWORD && process.env.SESSION_SECRET)
+const MASTER_PASS = process.env.MASTER_PASSWORD || ""
+const productionCredentialsReady = Boolean(process.env.MASTER_PASSWORD && process.env.SESSION_SECRET)
 const DB_FILE = path.join(__dirname, "data.json")
 
 app.use(express.json({ limit: "100kb" }))
