@@ -11,7 +11,7 @@
 import http from "node:http"
 import { Bot, webhookCallback } from "grammy"
 import { registerCommands } from "./src/commands.js"
-import { startAdminServer } from "./admin/server.js"
+import { startAdminServer, adminApp } from "./admin/server.js"
 
 const token = process.env.TELEGRAM_BOT_TOKEN
 if (!token) {
@@ -48,7 +48,6 @@ async function main() {
     process.exit(1)
   }
   console.log(`[bot] logged in as @${me.username} (${mode} mode)`)
-  startAdminServer()
 
   if (mode === "webhook") {
     const url = (process.env.WEBHOOK_URL || "").trim().replace(/\/$/, "")
@@ -58,24 +57,17 @@ async function main() {
     }
     const secret = (process.env.WEBHOOK_SECRET || "").trim() || undefined
     const port = Number(process.env.PORT || 3000)
-    const handle = webhookCallback(bot, "http", { secretToken: secret })
-
+    adminApp.post("/telegram", webhookCallback(bot, "express", { secretToken: secret }))
     http
-      .createServer((req, res) => {
-        if (req.method === "POST" && req.url === "/telegram") return handle(req, res)
-        if (req.method === "GET" && req.url === "/") {
-          res.writeHead(200, { "content-type": "text/plain" })
-          return res.end(`@${me.username} is running`)
-        }
-        res.writeHead(404)
-        res.end()
-      })
-      .listen(port, () => console.log(`[bot] webhook server listening on port ${port}`))
+      .createServer(adminApp)
+      .listen(port, () => console.log(`[bot] webhook + admin panel listening on port ${port}`))
 
     await bot.api.setWebhook(`${url}/telegram`, { secret_token: secret })
     console.log(`[bot] webhook set to ${url}/telegram`)
     return
   }
+
+  startAdminServer()
 
   // Polling: make sure no webhook is left over from an earlier webhook run.
   await bot.api.deleteWebhook().catch(() => {})
