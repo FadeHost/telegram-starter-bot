@@ -11,6 +11,7 @@ const PORT = Number(process.env.PORT || 3000)
 const SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("hex")
 const MASTER_USER = process.env.MASTER_USERNAME || "master"
 const MASTER_PASS = process.env.MASTER_PASSWORD || "CHANGE-ME-NOW-2026"
+const productionCredentialsReady = process.env.NODE_ENV !== "production" || Boolean(process.env.MASTER_PASSWORD && process.env.SESSION_SECRET)
 const DB_FILE = path.join(__dirname, "data.json")
 
 app.use(express.json({ limit: "100kb" }))
@@ -49,6 +50,7 @@ const roles = ["SUPER_MASTER", "AGENT", "CASHIER"]
 const labels = { MASTER: "المدير الرئيسي", SUPER_MASTER: "رئيس الوكلاء", AGENT: "الوكيل", CASHIER: "الكاشير", PLAYER: "لاعب" }
 
 app.post("/api/login", (req, res) => {
+  if (!productionCredentialsReady) return res.status(503).json({ error: "يلزم ضبط MASTER_PASSWORD و SESSION_SECRET في إعدادات الاستضافة قبل تسجيل الدخول" })
   const { username, password } = req.body || {}
   const a = Buffer.from(String(username || ""))
   const b = Buffer.from(String(MASTER_USER))
@@ -70,9 +72,18 @@ app.post("/api/users", auth, (req,res) => {
   const {username,password,role,parentId,phone}=req.body||{}
   if (!username || !password || String(password).length<6) return res.status(400).json({error:"أدخل اسم المستخدم وكلمة مرور من 6 أحرف على الأقل"})
   if (!roles.includes(role) && role!=="PLAYER") return res.status(400).json({error:"نوع الحساب غير صحيح"})
+  const cleanUsername=String(username).trim()
+  if(cleanUsername.length<3 || cleanUsername.length>32) return res.status(400).json({error:"اسم المستخدم يجب أن يكون بين 3 و32 حرفاً"})
   const db=readDB()
-  if(db.users.some(u=>u.username.toLowerCase()===String(username).toLowerCase())) return res.status(409).json({error:"اسم المستخدم مستخدم مسبقاً"})
-  const user={id:crypto.randomUUID(),username:String(username).trim(),passwordHash:crypto.scryptSync(String(password), "lion-panel", 32).toString("hex"),role,parentId:parentId||null,phone:String(phone||""),balance:0,createdAt:new Date().toISOString(),active:true}
+  if(db.users.some(u=>u.username.toLowerCase()===cleanUsername.toLowerCase())) return res.status(409).json({error:"اسم المستخدم مستخدم مسبقاً"})
+  const parent=parentId ? db.users.find(u=>u.id===parentId) : null
+  if(parentId && !parent) return res.status(400).json({error:"الحساب الأب غير موجود"})
+  const allowedParentRoles={SUPER_MASTER:[],AGENT:["SUPER_MASTER"],CASHIER:["AGENT"],PLAYER:["AGENT","CASHIER"]}
+  if(parent && !allowedParentRoles[role].includes(parent.role)) return res.status(400).json({error:"تسلسل الوكلاء غير صحيح"})
+  if(["AGENT","CASHIER","PLAYER"].includes(role) && !parent) return res.status(400).json({error:"يجب تحديد الحساب الأب حسب التسلسل الإداري"})
+  const salt=crypto.randomBytes(16)
+  const passwordHash=salt.toString("hex")+":"+crypto.scryptSync(String(password),salt,32).toString("hex")
+  const user={id:crypto.randomUUID(),username:cleanUsername,passwordHash,role,parentId:parentId||null,phone:String(phone||""),balance:0,createdAt:new Date().toISOString(),active:true}
   db.users.push(user); writeDB(db)
   res.json({success:true,user:{...user,passwordHash:undefined}})
 })
@@ -96,6 +107,6 @@ app.get("*", (req,res)=>res.sendFile(path.join(__dirname,"public","index.html"))
 export function startAdminServer() {
   app.listen(PORT, "0.0.0.0", ()=> {
     console.log(`[LION MASTER] dashboard listening on port ${PORT}`)
-    if(MASTER_PASS==="CHANGE-ME-NOW-2026") console.warn("[SECURITY] Set MASTER_PASSWORD and SESSION_SECRET in FadeHost environment before public use.")
+    if(!productionCredentialsReady) console.error("[SECURITY] Set MASTER_PASSWORD and SESSION_SECRET in FadeHost environment; admin login is disabled until configured.")
   })
 }
