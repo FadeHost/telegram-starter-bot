@@ -1,24 +1,181 @@
-// Your bot's behaviour. Add commands here; grammY's docs (grammy.dev) cover
-// keyboards, sessions, files, inline queries and everything else.
+// تحليل الاختيارات
+function parseOption(line) {
+  const match = line.match(
+    /^\s*(?:\(([A-Za-zأ-ي0-9٠-٩]+)\)|([A-Za-zأ-ي0-9٠-٩]+)[.)\-:])\s*(.+?)\s*$/
+  );
 
-import { InlineKeyboard } from "grammy"
+  if (!match) return null;
+
+  const raw = match[3];
+  const correct = /✅|✔️|✓/.test(raw);
+
+  return {
+    text: raw.replace(/✅|✔️|✓/g, "").trim(),
+    correct
+  };
+}
+
+// التعرف على بداية الشرح
+function isExplanation(line) {
+  return /^(explanation|explain|why|الشرح|شرح|التوضيح|التفسير|لماذا)\s*[:：\-]?\s*/i.test(line);
+}
+
+// تحليل الأسئلة
+function parseQuestions(text) {
+  const lines = text.replace(/\r/g, "").split("\n");
+  const questions = [];
+
+  let title = [];
+  let options = [];
+  let explanation = [];
+  let readingExplanation = false;
+
+  function save() {
+    if (title.length && options.length >= 2 && options.length <= 12) {
+      const correct = options.filter(o => o.correct);
+
+      if (correct.length === 1) {
+        questions.push({
+          title: title.join(" ").trim(),
+          options,
+          correct: options.findIndex(o => o.correct),
+          explanation: explanation.join(" ").trim()
+        });
+      }
+    }
+
+    title = [];
+    options = [];
+    explanation = [];
+    readingExplanation = false;
+  }
+
+  for (const original of lines) {
+    const line = original.trim();
+
+    if (!line) continue;
+
+    const option = parseOption(line);
+
+    // بداية سؤال جديد مرقم بعد اكتمال الاختيارات
+    if (
+      options.length >= 2 &&
+      /^(?:Q(?:uestion)?\s*)?[0-9٠-٩]+\s*[.)\-:]\s*/i.test(line) &&
+      !option
+    ) {
+      save();
+      title.push(line.replace(/^(?:Q(?:uestion)?\s*)?[0-9٠-٩]+\s*[.)\-:]\s*/i, ""));
+      continue;
+    }
+
+    if (option && title.length) {
+      options.push(option);
+      readingExplanation = false;
+      continue;
+    }
+
+    if (options.length === 0) {
+      title.push(line.replace(/^(?:Q(?:uestion)?\s*)?[0-9٠-٩]+\s*[.)\-:]\s*/i, ""));
+      continue;
+    }
+
+    if (isExplanation(line)) {
+      readingExplanation = true;
+      explanation.push(
+        line.replace(/^(explanation|explain|why|الشرح|شرح|التوضيح|التفسير|لماذا)\s*[:：\-]?\s*/i, "")
+      );
+      continue;
+    }
+
+    if (readingExplanation || options.length >= 2) {
+      explanation.push(line);
+      readingExplanation = true;
+    }
+  }
+
+  save();
+  return questions;
+}
 
 export function registerCommands(bot) {
-  bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
-  )
 
-  bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
-  )
+  bot.command("start", ctx =>
+    ctx.reply(
+      "مرحباً بك في بوت الاختبارات التعليمية 🤖\n\n" +
+      "أرسل الأسئلة مع الاختيارات، وضع ✅ بجانب الإجابة الصحيحة.\n" +
+      "يمكنك إضافة الشرح أسفل الاختيارات.\n\n" +
+      "أرسل /help لمعرفة طريقة الاستخدام."
+    )
+  );
 
-  bot.command("ping", (ctx) => ctx.reply("pong"))
+  bot.command("help", ctx =>
+    ctx.reply(
+      "مثال على طريقة إرسال السؤال:\n\n" +
+      "What is the powerhouse of the cell?\n\n" +
+      "A. Nucleus\n" +
+      "B. Mitochondria ✅\n" +
+      "C. Ribosome\n" +
+      "D. Golgi apparatus\n\n" +
+      "Explanation: Mitochondria produce ATP.\n\n" +
+      "يمكنك إرسال عدة أسئلة مرقمة في رسالة واحدة.\n" +
+      "كل سؤال يتحول إلى استفتاء مستقل.\n\n" +
+      "ضع ✅ بجانب إجابة واحدة صحيحة."
+    )
+  );
 
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
+  bot.command("ping", ctx => ctx.reply("البوت يعمل بنجاح ✅"));
 
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
+  bot.command("id", ctx =>
+    ctx.reply(`Chat ID: ${ctx.chat.id}`)
+  );
 
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
+  bot.on("message:text", async ctx => {
+    const message = ctx.message.text;
+
+    if (message.startsWith("/")) return;
+
+    const questions = parseQuestions(message);
+
+    if (!questions.length) {
+      return ctx.reply(
+        "لم أتمكن من استخراج الأسئلة.\n\n" +
+        "تأكد من وجود سؤال واختيارين على الأقل، " +
+        "وضع ✅ بجانب إجابة واحدة صحيحة."
+      );
+    }
+
+    await ctx.reply(`تم استخراج ${questions.length} سؤالاً. جاري إنشاء الاستفتاءات...`);
+
+    let success = 0;
+    let failed = 0;
+
+    for (const q of questions) {
+      try {
+        await ctx.api.sendPoll(
+          ctx.chat.id,
+          q.title.slice(0, 300),
+          q.options.map(o => o.text.slice(0, 100)),
+          {
+            type: "quiz",
+            correct_option_id: q.correct,
+            explanation: q.explanation.slice(0, 200) || undefined,
+            is_anonymous: true
+          }
+        );
+
+        success++;
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+      } catch (error) {
+        console.error("Poll error:", error);
+        failed++;
+      }
+    }
+
+    await ctx.reply(
+      `انتهى إنشاء الاستفتاءات ✅\n\n` +
+      `نجح: ${success}\n` +
+      `فشل: ${failed}`
+    );
+  });
 }
