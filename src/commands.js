@@ -1,104 +1,96 @@
-import { InlineKeyboard } from "grammy";
-
-// استخراج الاختيارات من صيغ ترقيم مختلفة
+// استخراج الاختيارات
 function parseOption(line) {
   const match = line.match(
-    /^\s*(?:\(([A-Za-zأ-ي0-9]+)\)|([A-Za-zأ-ي0-9]+)[.)\-:])\s*(.+?)\s*$/
+    /^\s*(?:\(([A-Za-zأ-ي0-9٠-٩]+)\)|([A-Za-zأ-ي0-9٠-٩]+)[.)\-:])\s*(.+?)\s*$/
   );
 
   if (!match) return null;
 
+  const raw = match[3];
+
   return {
-    text: match[3].trim(),
-    correct: /✅|✔️|✓/.test(match[3]),
+    text: raw.replace(/✅|✔️|✓/g, "").trim(),
+    correct: /✅|✔️|✓/.test(raw)
   };
 }
 
-// التعرف على سطر الشرح
+// التعرف على بداية الشرح
 function isExplanation(line) {
   return /^(explanation|explain|why|الشرح|شرح|التوضيح|التفسير|لماذا)\s*[:：\-]?\s*/i.test(line);
 }
 
 // تحليل الأسئلة
 function parseQuestions(text) {
-  const lines = text
-    .replace(/\r/g, "")
-    .split("\n")
-    .map(line => line.trim())
-    .filter(Boolean);
-
+  const lines = text.replace(/\r/g, "").split("\n");
   const questions = [];
 
-  let question = [];
+  let title = [];
   let options = [];
   let explanation = [];
   let readingExplanation = false;
 
   function save() {
-    if (question.length && options.length >= 2) {
+    if (title.length && options.length >= 2 && options.length <= 12) {
       const correct = options.filter(o => o.correct);
 
-      if (correct.length === 1 && options.length <= 10) {
+      if (correct.length === 1) {
         questions.push({
-          title: question.join(" "),
+          title: title.join(" ").trim(),
           options,
           correct: options.findIndex(o => o.correct),
-          explanation: explanation.join(" ").trim(),
+          explanation: explanation.join(" ").trim()
         });
       }
     }
 
-    question = [];
+    title = [];
     options = [];
     explanation = [];
     readingExplanation = false;
   }
 
-  for (const line of lines) {
+  for (const original of lines) {
+    const line = original.trim();
+
+    if (!line) continue;
+
     const option = parseOption(line);
 
-    if (option) {
-      if (readingExplanation) {
-        readingExplanation = false;
-      }
+    // بداية سؤال جديد بصيغة Q1 أو Question 1 أو سؤال 1
+    if (
+      options.length >= 2 &&
+      /^(?:Q(?:uestion)?|سؤال)\s*[0-9٠-٩]+\s*[.)\-:]/i.test(line)
+    ) {
+      save();
+      title.push(line.replace(/^(?:Q(?:uestion)?|سؤال)\s*[0-9٠-٩]+\s*[.)\-:]\s*/i, ""));
+      continue;
+    }
 
+    if (option && title.length) {
       options.push(option);
       continue;
     }
 
     if (options.length === 0) {
-      question.push(line);
+      title.push(line);
       continue;
     }
 
     if (isExplanation(line)) {
       readingExplanation = true;
       explanation.push(
-        line.replace(
-          /^(explanation|explain|why|الشرح|شرح|التوضيح|التفسير|لماذا)\s*[:：\-]?\s*/i,
-          ""
-        )
+        line.replace(/^(explanation|explain|why|الشرح|شرح|التوضيح|التفسير|لماذا)\s*[:：\-]?\s*/i, "")
       );
       continue;
     }
 
-    // بداية سؤال جديد مرقم
-    if (/^(?:Q(?:uestion)?\s*)?\d+\s*[.)\-:]/i.test(line)) {
-      save();
-      question.push(line.replace(/^(?:Q(?:uestion)?\s*)?\d+\s*[.)\-:]\s*/i, ""));
-      continue;
-    }
-
-    if (readingExplanation) {
-      explanation.push(line);
-    } else {
+    if (readingExplanation || options.length >= 2) {
       explanation.push(line);
       readingExplanation = true;
     }
   }
 
   save();
-
   return questions;
 }
 
@@ -106,7 +98,7 @@ export function registerCommands(bot) {
 
   bot.command("start", ctx =>
     ctx.reply(
-      "مرحباً بك في بوت الاستفتاءات التعليمية 🤖\n\n" +
+      "مرحباً بك في بوت الاختبارات التعليمية 🤖\n\n" +
       "أرسل الأسئلة مع الاختيارات، وضع ✅ بجانب الإجابة الصحيحة.\n" +
       "يمكنك إضافة الشرح أسفل الاختيارات.\n\n" +
       "أرسل /help لمعرفة طريقة الاستخدام."
@@ -115,19 +107,16 @@ export function registerCommands(bot) {
 
   bot.command("help", ctx =>
     ctx.reply(
-      "طريقة الاستخدام:\n\n" +
+      "مثال على طريقة إرسال السؤال:\n\n" +
       "What is the powerhouse of the cell?\n\n" +
       "A. Nucleus\n" +
       "B. Mitochondria ✅\n" +
       "C. Ribosome\n" +
       "D. Golgi apparatus\n\n" +
       "Explanation: Mitochondria produce ATP.\n\n" +
-      "يمكنك إرسال عدة أسئلة في رسالة واحدة.\n" +
+      "يمكنك إرسال عدة أسئلة مرقمة بصيغة Q1 وQ2.\n" +
       "كل سؤال يتحول إلى استفتاء مستقل.\n\n" +
-      "الشروط:\n" +
-      "• من 2 إلى 10 اختيارات.\n" +
-      "• ضع ✅ بجانب إجابة واحدة صحيحة.\n" +
-      "• يمكنك استخدام العربية أو الإنجليزية."
+      "ضع ✅ بجانب إجابة واحدة صحيحة."
     )
   );
 
@@ -138,20 +127,23 @@ export function registerCommands(bot) {
   );
 
   bot.on("message:text", async ctx => {
-    const text = ctx.message.text;
+    const message = ctx.message.text;
 
-    if (text.startsWith("/")) return;
+    if (message.startsWith("/")) return;
 
-    const questions = parseQuestions(text);
+    const questions = parseQuestions(message);
 
     if (!questions.length) {
       return ctx.reply(
         "لم أتمكن من استخراج الأسئلة.\n\n" +
-        "تأكد من وضع الاختيارات، ووضع ✅ بجانب إجابة واحدة صحيحة."
+        "تأكد من وجود اختيارين على الأقل، " +
+        "وضع ✅ بجانب إجابة واحدة صحيحة."
       );
     }
 
-    await ctx.reply(`تم استخراج ${questions.length} سؤالاً. جاري إنشاء الاستفتاءات...`);
+    await ctx.reply(
+      `تم استخراج ${questions.length} سؤالاً. جاري إنشاء الاستفتاءات...`
+    );
 
     let success = 0;
     let failed = 0;
@@ -166,13 +158,12 @@ export function registerCommands(bot) {
             type: "quiz",
             correct_option_id: q.correct,
             explanation: q.explanation.slice(0, 200) || undefined,
-            is_anonymous: true,
+            is_anonymous: true
           }
         );
 
         success++;
-
-        await new Promise(resolve => setTimeout(resolve, 400));
+        await new Promise(resolve => setTimeout(resolve, 500));
 
       } catch (error) {
         console.error("Poll error:", error);
@@ -181,9 +172,9 @@ export function registerCommands(bot) {
     }
 
     await ctx.reply(
-      `انتهى النشر! ✅\n\n` +
+      `انتهى إنشاء الاستفتاءات ✅\n\n` +
       `نجح: ${success}\n` +
       `فشل: ${failed}`
     );
   });
-      }
+}
