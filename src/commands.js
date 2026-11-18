@@ -1458,7 +1458,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
   })
   bot.callbackQuery("about", async (ctx) => {
     await ctx.answerCallbackQuery()
-    await ctx.editMessageText(
+    await editMenuMessage(ctx,
       `🏙 О ПРОЕКТЕ «ОБЩЕПИТ АСТАНА»
 
 «Общепит Астана» — это не просто группа. Это сообщество, благодаря которому более 10 000 человек уже нашли работу.
