@@ -170,6 +170,9 @@ async function loadDatabase() {
   database.equipment = []
 }
 
+  if (!Array.isArray(database.dailyAds)) {
+    database.dailyAds = []
+  }
     if (!Array.isArray(database.services)) {
   database.services = []
 }
