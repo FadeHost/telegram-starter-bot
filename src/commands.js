@@ -881,6 +881,17 @@ export async function registerCommands(bot) {
     await ctx.editMessageText("🔥 РЕКЛАМА ДНЯ\n\nВыбери действие:", {
       reply_markup: keyboard,
     })
+    })
+
+  bot.callbackQuery("admin:daily_ad:add", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    userSteps.set(ctx.from.id, {
+      step: "dailyAdPhoto",
+    })
+
+    await ctx.reply("🔥 РЕКЛАМА ДНЯ\n\nОтправь фотографию для рекламы:")
   })
 
   bot.callbackQuery("admin:back", async (ctx) => {
