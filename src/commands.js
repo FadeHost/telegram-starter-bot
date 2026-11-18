@@ -1393,10 +1393,11 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 
       keyboard.text("🏠 Главное меню", "home")
 
-    await ctx.editMessageText(
-      "💼 ГОТОВЫЙ БИЗНЕС\n\nВыбери интересующий объект:",
-      { reply_markup: keyboard }
-    )
+    await editMenuMessage(
+  ctx,
+  "💼 ГОТОВЫЙ БИЗНЕС\n\nВыбери интересующий объект:",
+  { reply_markup: keyboard }
+)
   })
 
     bot.callbackQuery(/^business:view:(.+)$/, async (ctx) => {
