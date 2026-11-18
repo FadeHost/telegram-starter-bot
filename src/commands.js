@@ -975,6 +975,44 @@ export async function registerCommands(bot) {
       { reply_markup: keyboard }
     )
   })
+    bot.callbackQuery(/^admin:daily_ad:toggle:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const adId = ctx.match[1]
+    const ad = database.dailyAds.find(item => item.id === adId)
+
+    if (!ad) {
+      await ctx.reply("Реклама не найдена.")
+      return
+    }
+
+    ad.active = ad.active === false
+
+    await saveDatabase()
+
+    const [year, month, day] = ad.date.split("-")
+    const status = ad.active ? "🟢 Активна" : "🔴 Выключена"
+
+    const keyboard = new InlineKeyboard()
+      .text("✏️ Изменить фото", `admin:daily_ad:photo:${ad.id}`)
+      .row()
+      .text("📅 Перенести дату", `admin:daily_ad:date:${ad.id}`)
+      .row()
+      .text(
+        ad.active ? "🔴 Выключить" : "🟢 Включить",
+        `admin:daily_ad:toggle:${ad.id}`
+      )
+      .row()
+      .text("❌ Удалить рекламу", `admin:daily_ad:delete:${ad.id}`)
+      .row()
+      .text("⬅️ К расписанию", "admin:daily_ad:list")
+
+    await ctx.editMessageText(
+      `🔥 РЕКЛАМА ДНЯ\n\n📅 Дата: ${day}.${month}.${year}\nСтатус: ${status}`,
+      { reply_markup: keyboard }
+    )
+  })
   bot.callbackQuery("admin:daily_ad:add", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
