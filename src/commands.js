@@ -2436,9 +2436,24 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
       bot.on("message:photo", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-  if (!isAdmin(ctx) || !state) return next()
+      if (!isAdmin(ctx) || !state) return next()
 
-  if (state.step === "equipmentPhoto") {
+    if (state.step === "dailyAdPhoto") {
+      const photo = ctx.message.photo.at(-1)
+
+      if (!photo?.file_id) {
+        await ctx.reply("Не удалось получить фото. Отправь ещё раз.")
+        return
+      }
+
+      state.photo = photo.file_id
+      state.step = "dailyAdDate"
+
+      await ctx.reply("Фото принято! Укажи дату публикации в формате ДД.ММ.ГГГГ:")
+      return
+    }
+
+    if (state.step === "equipmentPhoto") {
   const photo = ctx.message.photo.at(-1)
 
   if (!photo?.file_id) {
