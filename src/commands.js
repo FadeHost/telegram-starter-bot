@@ -2436,9 +2436,9 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
       bot.on("message:photo", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
-    if (!isAdmin(ctx) || !state) return next()
+  if (!isAdmin(ctx) || !state) return next()
 
-if (state.step === "equipmentPhoto") {
+  if (state.step === "equipmentPhoto") {
   const photo = ctx.message.photo.at(-1)
 
   if (!photo?.file_id) {
