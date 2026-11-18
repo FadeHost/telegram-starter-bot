@@ -752,9 +752,25 @@ export async function registerCommands(bot) {
       }
     }
 
-    const message = await ctx.reply(menuText, {
-      reply_markup: mainKeyboard(),
-    })
+        const today = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Almaty",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date())
+
+    const dailyAd = database.dailyAds.find(
+      ad => ad.date === today && ad.active !== false
+    )
+
+    const message = dailyAd
+      ? await ctx.replyWithPhoto(dailyAd.photo, {
+          caption: `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+          reply_markup: mainKeyboard(),
+        })
+      : await ctx.reply(menuText, {
+          reply_markup: mainKeyboard(),
+        })
 
     database.startMessages[userId] = message.message_id
     await saveDatabase()
