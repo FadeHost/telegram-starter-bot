@@ -912,7 +912,15 @@ export async function registerCommands(bot) {
       .sort((a, b) => a.date.localeCompare(b.date))
 
     const keyboard = new InlineKeyboard()
-      .text("⬅️ Назад", "admin:daily_ad")
+
+    ads.forEach(ad => {
+      const [year, month, day] = ad.date.split("-")
+      keyboard
+        .text(`📅 ${day}.${month}.${year}`, `admin:daily_ad:view:${ad.id}`)
+        .row()
+    })
+
+    keyboard.text("⬅️ Назад", "admin:daily_ad")
 
     if (ads.length === 0) {
       await ctx.editMessageText(
