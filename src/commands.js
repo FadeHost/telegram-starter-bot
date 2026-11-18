@@ -903,6 +903,36 @@ export async function registerCommands(bot) {
     })
     })
 
+    bot.callbackQuery("admin:daily_ad:list", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const ads = (database.dailyAds || [])
+      .slice()
+      .sort((a, b) => a.date.localeCompare(b.date))
+
+    const keyboard = new InlineKeyboard()
+      .text("⬅️ Назад", "admin:daily_ad")
+
+    if (ads.length === 0) {
+      await ctx.editMessageText(
+        "📅 РАСПИСАНИЕ РЕКЛАМЫ\n\nПока нет запланированной рекламы.",
+        { reply_markup: keyboard }
+      )
+      return
+    }
+
+    const schedule = ads.map(ad => {
+      const [year, month, day] = ad.date.split("-")
+      const status = ad.active === false ? " — выключена" : " — активна"
+      return `📅 ${day}.${month}.${year}${status}`
+    }).join("\n")
+
+    await ctx.editMessageText(
+      `📅 РАСПИСАНИЕ РЕКЛАМЫ\n\n${schedule}`,
+      { reply_markup: keyboard }
+    )
+  })
   bot.callbackQuery("admin:daily_ad:add", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
