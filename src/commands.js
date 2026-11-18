@@ -854,6 +854,8 @@ export async function registerCommands(bot) {
     if (!isAdmin(ctx)) return
 
     const keyboard = new InlineKeyboard()
+      .text("🔥 Реклама дня", "admin:daily_ad")
+      .row()
       .text("📢 Автопостер", "admin:autopost")
       .row()
       .text("📊 Статистика", "admin:stats")
