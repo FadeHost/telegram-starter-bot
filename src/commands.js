@@ -1013,6 +1013,25 @@ export async function registerCommands(bot) {
       { reply_markup: keyboard }
     )
   })
+    bot.callbackQuery(/^admin:daily_ad:photo:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const adId = ctx.match[1]
+    const ad = database.dailyAds.find(item => item.id === adId)
+
+    if (!ad) {
+      await ctx.reply("Реклама не найдена.")
+      return
+    }
+
+    userSteps.set(ctx.from.id, {
+      step: "dailyAdReplacePhoto",
+      adId,
+    })
+
+    await ctx.reply("📸 Отправь новую фотографию для этой рекламы:")
+  })
     bot.callbackQuery(/^admin:daily_ad:date:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
