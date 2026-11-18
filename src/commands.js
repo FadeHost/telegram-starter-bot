@@ -1374,10 +1374,11 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     const businesses = database.businesses || []
 
     if (businesses.length === 0) {
-      await ctx.editMessageText(
-        "💼 ГОТОВЫЙ БИЗНЕС\n\nПока нет объявлений.",
-        { reply_markup: backHomeKeyboard() }
-      )
+      await editMenuMessage(
+  ctx,
+  "💼 ГОТОВЫЙ БИЗНЕС\n\nПока нет объявлений.",
+  { reply_markup: backHomeKeyboard() }
+)
       return
     }
 
