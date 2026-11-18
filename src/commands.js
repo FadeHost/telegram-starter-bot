@@ -1212,7 +1212,7 @@ bot.callbackQuery("products", async (ctx) => {
 
   bot.callbackQuery("equipment", async (ctx) => {
   await ctx.answerCallbackQuery()
-  await ctx.editMessageText("⚙️ ОБОРУДОВАНИЕ ДЛЯ ОБЩЕПИТА\n\nВыбери категорию:", {
+  await editMenuMessage(ctx, "⚙️ ОБОРУДОВАНИЕ ДЛЯ ОБЩЕПИТА\n\nВыбери категорию:", {
     reply_markup: listKeyboard(equipmentCategories, "equipment", 2),
   })
 })
