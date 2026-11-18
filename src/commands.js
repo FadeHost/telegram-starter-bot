@@ -455,7 +455,7 @@ function categoryTitle(category, itemId) {
     return meatNames[index]
   }
 
-  if (category === "minced_meat") {
+  if (category === "minced_meat" || category === "minced_meat_halal") {
     return mincedMeatNames[index]
   }
 
