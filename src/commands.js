@@ -867,6 +867,24 @@ export async function registerCommands(bot) {
     })
   })
 
+    })
+
+  bot.callbackQuery("admin:daily_ad", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const keyboard = new InlineKeyboard()
+      .text("➕ Добавить рекламу", "admin:daily_ad:add")
+      .row()
+      .text("📅 Расписание рекламы", "admin:daily_ad:list")
+      .row()
+      .text("⬅️ Назад", "admin:promo:menu")
+
+    await ctx.editMessageText("🔥 РЕКЛАМА ДНЯ\n\nВыбери действие:", {
+      reply_markup: keyboard,
+    })
+  })
+
   bot.callbackQuery("admin:back", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
