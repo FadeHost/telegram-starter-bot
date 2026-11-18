@@ -1297,7 +1297,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     )
   })
 
-    bot.callbackQuery(/^pick:(meat_farm|minced_meat|meat_halal|dairy|fish):([mhpf]\d+)$/, async (ctx) => {
+    bot.callbackQuery(/^pick:(meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish):([mhpf]\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     await showCategory(ctx, ctx.match[1], ctx.match[2])
   })
