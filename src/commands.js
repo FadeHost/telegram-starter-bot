@@ -494,9 +494,11 @@ function categoryKeyboard(category) {
     })
   }
 
-  if (category === "minced_meat") {
+  if   if (category === "minced_meat" || category === "minced_meat_halal") {
+    const prefix = category
+
     mincedMeatNames.forEach((name, i) => {
-      keyboard.text(name, `pick:minced_meat:m${i}`).row()
+      keyboard.text(name, `pick:${prefix}:m${i}`).row()
     })
   }
 
