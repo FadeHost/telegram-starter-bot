@@ -1928,9 +1928,13 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
       meatNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:meat_farm:m${i}`).row()
       })
-    } else if (category === "meat_halal") {
+      } else if (category === "meat_halal") {
       halalMeatNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:meat_halal:h${i}`).row()
+      })
+    } else if (category === "minced_meat" || category === "minced_meat_halal") {
+      mincedMeatNames.forEach((name, i) => {
+        keyboard.text(name, `admin:item:${category}:m${i}`).row()
       })
     } else if (category === "dairy") {
       keyboard
