@@ -1013,6 +1013,29 @@ export async function registerCommands(bot) {
       { reply_markup: keyboard }
     )
   })
+      bot.callbackQuery(/^admin:daily_ad:delete:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const adId = ctx.match[1]
+    const index = database.dailyAds.findIndex(item => item.id === adId)
+
+    if (index === -1) {
+      await ctx.reply("Реклама не найдена.")
+      return
+    }
+
+    database.dailyAds.splice(index, 1)
+
+    await saveDatabase()
+
+    await ctx.editMessageText("🗑 Реклама удалена из расписания.", {
+      reply_markup: new InlineKeyboard()
+        .text("📅 К расписанию", "admin:daily_ad:list")
+        .row()
+        .text("⬅️ Назад", "admin:daily_ad"),
+    })
+  })
     bot.callbackQuery(/^admin:daily_ad:photo:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
