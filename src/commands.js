@@ -867,8 +867,6 @@ export async function registerCommands(bot) {
     })
   })
 
-    })
-
   bot.callbackQuery("admin:daily_ad", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
