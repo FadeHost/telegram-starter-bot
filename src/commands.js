@@ -2755,6 +2755,62 @@ bot.on("message:text", async (ctx, next) => {
       await ctx.reply("Поле не должно быть пустым. Введи значение:")
       return
     }
+        if (state.step === "dailyAdDate") {
+      const match = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/)
+
+      if (!match) {
+        await ctx.reply("Неверный формат. Укажи дату ДД.ММ.ГГГГ:")
+        return
+      }
+
+      const [, day, month, year] = match
+      const date = `${year}-${month}-${day}`
+      const parsed = new Date(`${year}-${month}-${day}T00:00:00Z`)
+
+      if (
+        parsed.getUTCFullYear() !== Number(year) ||
+        parsed.getUTCMonth() + 1 !== Number(month) ||
+        parsed.getUTCDate() !== Number(day)
+      ) {
+        await ctx.reply("Такой даты не существует. Укажи дату ещё раз:")
+        return
+      }
+
+      const todayParts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Almaty",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).formatToParts(new Date())
+
+      const today = `${todayParts.find(p => p.type === "year").value}-${todayParts.find(p => p.type === "month").value}-${todayParts.find(p => p.type === "day").value}`
+
+      if (date < today) {
+        await ctx.reply("Нельзя назначить рекламу на прошедшую дату. Укажи сегодняшнюю или будущую:")
+        return
+      }
+
+      database.dailyAds = database.dailyAds || []
+
+      if (database.dailyAds.some(ad => ad.date === date)) {
+        await ctx.reply("На эту дату реклама уже запланирована. Выбери другой день:")
+        return
+      }
+
+      database.dailyAds.push({
+        id: crypto.randomUUID(),
+        date,
+        photo: state.photo,
+        active: true,
+        createdAt: new Date().toISOString(),
+      })
+
+      await saveDatabase()
+      userSteps.delete(ctx.from.id)
+
+      await ctx.reply("✅ Реклама сохранена и добавлена в расписание!")
+      return
+    }
 
       if (state.step === "serviceCompany") {
       state.company = value
