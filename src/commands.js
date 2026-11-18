@@ -1350,11 +1350,11 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
   await ctx.reply(message, { reply_markup: keyboard })
 })
   bot.callbackQuery("services", async (ctx) => {
-    await ctx.answerCallbackQuery()
-    await ctx.editMessageText("🛠 УСЛУГИ\n\nВыбери направление:", {
-      reply_markup: listKeyboard(services, "service"),
-    })
+  await ctx.answerCallbackQuery()
+  await editMenuMessage(ctx, "🛠 УСЛУГИ\n\nВыбери направление:", {
+    reply_markup: listKeyboard(services, "service"),
   })
+})
 
       bot.callbackQuery("business", async (ctx) => {
     await ctx.answerCallbackQuery()
