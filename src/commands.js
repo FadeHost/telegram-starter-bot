@@ -8,13 +8,14 @@ const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), "data")
 const DATABASE_FILE = path.join(DATA_DIR, "obshepit-astana.json")
 
 const products = [
+  ["🥩 Мясо фермер", "meat_farm"],
   ["🥩 Мясо Халяль", "meat_halal"],
+  ["🍗 Птица фермер", "poultry_farm"],
   ["🍗 Птица Халяль", "poultry_halal"],
-  ["🥩 Мясо фермерское", "meat_farm"],
-  ["🍗 Птица фермерская", "poultry_farm"],
-  ["🥩 Фарш", "minced_meat"],
-  ["🦐 Морепродукты", "seafood"],
+  ["🥩 Фарш фермер", "minced_meat"],
+  ["🥩 Фарш Халяль", "minced_meat_halal"],
   ["🐟 Рыба", "fish"],
+  ["🦐 Морепродукты", "seafood"],
   ["🥬 Зелень и салаты", "greens_salads"],
   ["🥒 Овощи", "vegetables"],
   ["🍎 Фрукты", "fruits"],
@@ -23,6 +24,7 @@ const products = [
   ["🛒 Продукты", "food"],
   ["🥟 Полуфабрикаты", "semi_finished"],
   ["🥓 Колбасы и сосиски", "sausages"],
+  ["🔥 Копчёные продукты", "smoked_products"],
   ["❄️ Замороженная продукция", "frozen"],
   ["☕ Кофейная продукция", "bar"],
   ["🍸 Барная продукция", "bar_products"],
