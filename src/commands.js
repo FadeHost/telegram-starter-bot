@@ -1243,12 +1243,14 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     const category = ctx.match[1]
 
-     if (category === "meat_farm" || category === "meat_halal" || category === "minced_meat") {
-  const title = category === "meat_halal"
-    ? "🥩 МЯСО ХАЛЯЛЬ"
-    : category === "minced_meat"
-      ? "🥩 ФАРШ"
-      : "🥩 МЯСО ФЕРМЕРСКОЕ"
+     if (category === "meat_farm" || category === "meat_halal" || category === "minced_meat" || category === "minced_meat_halal") {
+      const title = category === "meat_halal"
+        ? "🥩 МЯСО ХАЛЯЛЬ"
+        : category === "minced_meat"
+          ? "🥩 ФАРШ ФЕРМЕР"
+          : category === "minced_meat_halal"
+            ? "🥩 ФАРШ ХАЛЯЛЬ"
+            : "🥩 МЯСО ФЕРМЕР"
 
       await ctx.editMessageText(
         `${title}\n\nВыбери продукт:`,
