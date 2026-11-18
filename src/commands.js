@@ -1013,6 +1013,27 @@ export async function registerCommands(bot) {
       { reply_markup: keyboard }
     )
   })
+    bot.callbackQuery(/^admin:daily_ad:date:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const adId = ctx.match[1]
+    const ad = database.dailyAds.find(item => item.id === adId)
+
+    if (!ad) {
+      await ctx.reply("Реклама не найдена.")
+      return
+    }
+
+    userSteps.set(ctx.from.id, {
+      step: "dailyAdRescheduleDate",
+      adId,
+    })
+
+    await ctx.reply(
+      "📅 Укажи новую дату публикации в формате ДД.ММ.ГГГГ:"
+    )
+  })
   bot.callbackQuery("admin:daily_ad:add", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
