@@ -415,6 +415,16 @@ function mainKeyboard() {
     .row()
     .text("ℹ️ О проекте", "about")
 }
+async function editMenuMessage(ctx, text, options) {
+  const message = ctx.callbackQuery.message
+
+  if (message.photo) {
+    await ctx.api.deleteMessage(ctx.chat.id, message.message_id)
+    return await ctx.reply(text, options)
+  }
+
+  return await ctx.editMessageText(text, options)
+}
 
 function backHomeKeyboard() {
   return new InlineKeyboard()
