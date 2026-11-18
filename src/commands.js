@@ -1149,7 +1149,7 @@ bot.callbackQuery("admin:stats", async (ctx) => {
       servicePhotoMessages.delete(ctx.chat.id)
     }
 
-    await ctx.editMessageText(
+    await editMenuMessage(ctx,
       `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
       { reply_markup: mainKeyboard() }
     )
