@@ -142,12 +142,12 @@ function isAdmin(ctx) {
 }
 
 function dateToday() {
-  return new Date().toLocaleDateString("ru-RU", {
+    return new Date().toLocaleDateString("ru-RU", {
     day: "numeric",
     month: "long",
     year: "numeric",
     timeZone: "Asia/Almaty",
-  })
+  }).replace(/\sг\.$/, "")
 }
 
 async function loadDatabase() {
