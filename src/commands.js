@@ -751,6 +751,14 @@ function categoryKeyboard(category) {
     }
   }
 
+    if (category === "fruits") {
+    for (let i = 0; i < fruitsNames.length; i += 2) {
+      keyboard.text(fruitsNames[i], `pick:fruits:f${i}`)
+      keyboard.text(fruitsNames[i + 1], `pick:fruits:f${i + 1}`)
+      keyboard.row()
+    }
+  }
+
   if (category === "vegetables") {
     for (let i = 0; i < vegetablesLeftNames.length; i++) {
       keyboard.text(vegetablesLeftNames[i], `pick:vegetables:v${i}`)
