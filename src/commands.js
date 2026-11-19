@@ -2200,7 +2200,7 @@ if (!state || state.step !== "equipmentDelivery" || !state.values) return
   if (!isAdmin(ctx)) return
 
   const state = userSteps.get(ctx.from.id)
-  if (!state) return
+if (!state || state.step !== "equipmentWarranty" || !state.values) return
 
   state.values.warranty = ctx.match[1] === "yes" ? "Есть" : "Нет"
   state.step = "equipmentDocuments"
