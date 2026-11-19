@@ -483,6 +483,10 @@ function listKeyboard(items, prefix, columns = 1) {
 function categoryTitle(category, itemId) {
   const index = Number(itemId.slice(1))
 
+  if (category === "poultry_farm" || category === "poultry_halal") {
+    return poultryNames[index]
+  }
+
   if (category === "meat_farm") {
     return meatNames[index]
   }
