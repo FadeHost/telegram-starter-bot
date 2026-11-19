@@ -3478,6 +3478,15 @@ bot.on("message:text", async (ctx, next) => {
       return
     }
 
+      if (state.values.length === 2) {
+      const digits = value.replace(/\D/g, "")
+
+      if (digits.length < 10 || digits.length > 15) {
+        await ctx.reply("Укажи корректный номер телефона:")
+        return
+      }
+    }
+
     state.values.push(value)
 
     const prompts = [
