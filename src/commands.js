@@ -647,7 +647,7 @@ function categoryKeyboard(category) {
     }
   }
 
-  if   if (category === "meat_farm") {
+  if (category === "meat_farm") {
     for (let i = 0; i < meatNames.length; i += 2) {
       keyboard.text(meatNames[i], `pick:meat_farm:m${i}`)
       keyboard.text(meatNames[i + 1], `pick:meat_farm:m${i + 1}`)
