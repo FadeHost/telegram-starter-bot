@@ -2172,7 +2172,6 @@ bot.callbackQuery(/^equipment:documents:(yes|no)$/, async (ctx) => {
 
   state.values.documents = ctx.match[1] === "yes" ? "Есть" : "Нет"
 
-  state.values.documents = ctx.match[1] === "yes" ? "Есть" : "Нет"
   state.step = "equipmentDelivery"
 
   const keyboard = new InlineKeyboard()
