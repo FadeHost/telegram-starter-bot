@@ -555,8 +555,12 @@ function categoryTitle(category, itemId) {
     return greensSaladsNames[index]
   }
 
-  if (category === "fish") {
+    if (category === "fish") {
     return fishNames[index]
+  }
+
+  if (category === "seafood") {
+    return seafoodNames[index]
   }
 
   return categoryNames.get(category) || category
