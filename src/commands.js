@@ -2922,7 +2922,7 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     if (!isAdmin(ctx)) return
 
     const state = userSteps.get(ctx.from.id)
-    if (!state) return
+if (!state || state.step !== "businessStatus") return
 
     state.status = ctx.match[1] === "active" ? "Действующий" : "Закрытый"
     state.step = "businessEquipment"
