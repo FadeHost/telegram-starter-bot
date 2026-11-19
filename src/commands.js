@@ -2218,7 +2218,7 @@ if (!state || state.step !== "equipmentWarranty" || !state.values) return
   if (!isAdmin(ctx)) return
 
   const state = userSteps.get(ctx.from.id)
-  if (!state) return
+if (!state || state.step !== "equipmentCondition" || !state.values) return
 
   state.values.condition = ctx.match[1] === "new" ? "Новое" : "Б/У"
 
