@@ -684,10 +684,18 @@ function categoryKeyboard(category) {
     }
   }
 
-  if (category === "greens_salads") {
+  if   if (category === "greens_salads") {
     for (let i = 0; i < greensSaladsNames.length; i += 2) {
       keyboard.text(greensSaladsNames[i], `pick:greens_salads:g${i}`)
       keyboard.text(greensSaladsNames[i + 1], `pick:greens_salads:g${i + 1}`)
+      keyboard.row()
+    }
+  }
+
+  if (category === "vegetables") {
+    for (let i = 0; i < vegetablesLeftNames.length; i++) {
+      keyboard.text(vegetablesLeftNames[i], `pick:vegetables:v${i}`)
+      keyboard.text(vegetablesRightNames[i], `pick:vegetables:w${i}`)
       keyboard.row()
     }
   }
