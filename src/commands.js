@@ -611,7 +611,19 @@ function categoryTitle(category, itemId) {
     return seafoodNames[index]
   }
 
-  return categoryNames.get(category) || category
+  if (category === "vegetables") {
+  const index = Number(itemId.slice(1))
+
+  if (itemId.startsWith("v")) {
+    return vegetablesLeftNames[index]
+  }
+
+  if (itemId.startsWith("w")) {
+    return vegetablesRightNames[index]
+  }
+}
+
+return categoryNames.get(category) || category
 }
 function supplierCategory(supplier) {
   return supplier.itemId
