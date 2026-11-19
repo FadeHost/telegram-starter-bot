@@ -1998,7 +1998,7 @@ const card = await ctx.reply(text, {
     lastSupplierCards.set(ctx.chat.id, card.message_id) 
   })
 
-   bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+|g\d+|s\d+))?$/, async (ctx) => {
+   bot.callbackQuery(/^category:([^:]+)(?::([mhpf]\d+|g\d+|s\d+|v\d+|w\d+))?$/, async (ctx) => {
        await ctx.answerCallbackQuery()
 
     const photoMessageIds = supplierPhotoMessages.get(ctx.chat.id) || []
