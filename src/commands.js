@@ -2480,6 +2480,12 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     keyboard.text(greensSaladsNames[i + 1], `admin:item:greens_salads:g${i + 1}`)
     keyboard.row()
   }
+} else if (category === "fruits") {
+  for (let i = 0; i < fruitsNames.length; i += 2) {
+    keyboard.text(fruitsNames[i], `admin:item:fruits:f${i}`)
+    keyboard.text(fruitsNames[i + 1], `admin:item:fruits:f${i + 1}`)
+    keyboard.row()
+  }
 } else if (category === "vegetables") {
   for (let i = 0; i < vegetablesLeftNames.length; i++) {
     keyboard.text(vegetablesLeftNames[i], `admin:item:vegetables:v${i}`)
