@@ -1362,26 +1362,12 @@ const keyboard = new InlineKeyboard()
   .row()
   .text("⬅️ Вернуться к списку товаров", `equipment:back:${item.category}`)
 
-  const cardMessage = await ctx.reply(
-    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nПозвонить: +${whatsappPhone}`,
+    const cardMessage = await ctx.reply(
+    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nТелефон: +${whatsappPhone}`,
     { reply_markup: keyboard }
   )
 
   equipmentPhotoMessages.set(cardMessage.message_id, photoMessage.message_id)
-})
-  bot.callbackQuery(/^equipment:call:(.+)$/, async (ctx) => {
-  await ctx.answerCallbackQuery()
-
-  const item = database.equipment.find(
-    (equipment) => equipment.id === ctx.match[1]
-  )
-
-  if (!item) {
-    await ctx.reply("Оборудование не найдено.")
-    return
-  }
-
-  await ctx.replyWithContact(item.phone, item.name)
 })
 
 bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
