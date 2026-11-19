@@ -2941,7 +2941,7 @@ if (!state || state.step !== "businessStatus") return
     if (!isAdmin(ctx)) return
 
     const state = userSteps.get(ctx.from.id)
-    if (!state) return
+if (!state || state.step !== "businessEquipment") return
 
     state.equipment = ctx.match[1] === "yes"
       ? "Входит в стоимость"
