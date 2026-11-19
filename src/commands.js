@@ -1861,29 +1861,6 @@ if (category === "vegetables") {
     await showCategory(ctx, category)
   })
 
-  bot.callbackQuery(/^dairytype:(industrial|farm)$/, async (ctx) => {
-    await ctx.answerCallbackQuery()
-
-    const type = ctx.match[1]
-    const prefix = type === "industrial" ? "p" : "f"
-    const keyboard = new InlineKeyboard()
-
-      for (let i = 0; i < dairyNames.length; i += 2) {
-      keyboard.text(dairyNames[i], `pick:dairy:${prefix}${i}`)
-      keyboard.text(dairyNames[i + 1], `pick:dairy:${prefix}${i + 1}`)
-      keyboard.row()
-    }
-
-    keyboard
-  .text("⬅️ Назад", "product:dairy")
-  .text("🏠 Главное меню", "home")
-
-    await ctx.editMessageText(
-      `${type === "industrial" ? "🏭 Промышленное хозяйство" : "🚜 Фермерское хозяйство"}\n\nВыбери продукт:`,
-      { reply_markup: keyboard }
-    )
-  })
-
     bot.callbackQuery(/^pick:(poultry_farm|poultry_halal|meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish|seafood|greens_salads|fruits|vegetables):([mhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     await showCategory(ctx, ctx.match[1], ctx.match[2])
