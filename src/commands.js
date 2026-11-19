@@ -1725,12 +1725,20 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     }
 
     if (category === "greens_salads") {
-      await ctx.editMessageText(
-        "🥬 ЗЕЛЕНЬ И САЛАТЫ\n\nВыбери продукт:",
-        { reply_markup: categoryKeyboard("greens_salads") }
-      )
-      return
-    }
+  await ctx.editMessageText(
+    "🥬 ЗЕЛЕНЬ И САЛАТЫ\n\nВыбери продукт:",
+    { reply_markup: categoryKeyboard("greens_salads") }
+  )
+  return
+}
+
+if (category === "vegetables") {
+  await ctx.editMessageText(
+    "🥒 ОВОЩИ\n\nВыбери продукт:",
+    { reply_markup: categoryKeyboard("vegetables") }
+  )
+  return
+}
 
     await showCategory(ctx, category)
   })
