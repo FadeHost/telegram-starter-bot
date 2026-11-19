@@ -1792,9 +1792,27 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     )
   })
 
-  bot.callbackQuery(/^product:(.+)$/, async (ctx) => {
+    bot.callbackQuery(/^product:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     const category = ctx.match[1]
+
+    if (category === "grocery") {
+      const keyboard = new InlineKeyboard()
+
+      for (const [name, id] of groceryCategories) {
+        keyboard.text(name, `product:${id}`).row()
+      }
+
+      keyboard
+        .text("⬅️ Назад", "products")
+        .text("🏠 Главное меню", "home")
+
+      await ctx.editMessageText(
+        "🥫 БАКАЛЕЯ\n\nВыбери подкатегорию:",
+        { reply_markup: keyboard }
+      )
+      return
+    }
 
           if (category === "poultry_farm" || category === "poultry_halal") {
       const title = category === "poultry_farm"
