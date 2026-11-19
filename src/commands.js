@@ -3234,7 +3234,14 @@ bot.on("message:text", async (ctx, next) => {
         return
       }
 
-            if (state.step === "servicePhone") {
+        if (state.step === "servicePhone") {
+        const digits = value.replace(/\D/g, "")
+
+        if (digits.length < 10 || digits.length > 15) {
+          await ctx.reply("Укажи корректный номер телефона:")
+          return
+        }
+
         state.phone = value
         state.step = "serviceWebsite"
         await ctx.reply("Укажи сайт компании или напиши /skip:")
