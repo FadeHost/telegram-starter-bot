@@ -2277,7 +2277,7 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
     })
   })
 
-  bot.callbackQuery(/^admin:item:([^:]+):([mhpf]\d+|none)$/, async (ctx) => {
+  bot.callbackQuery(/^admin:item:([^:]+):([mhpf]\d+|g\d+|none)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
