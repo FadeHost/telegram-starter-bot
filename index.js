@@ -1,121 +1,353 @@
-const http = require("http");
-const TelegramBot = require("node-telegram-bot-api");
+import { Bot, InlineKeyboard } from "grammy";
 
-const token = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
+// ================= CONFIG =================
+
+const BOT_TOKEN = process.env.BOT_TOKEN;
 const ADMIN_ID = 8987678726;
-const WELCOME_IMAGE = "https://t.me/fghhbbbnj/87";
+
+if (!BOT_TOKEN) {
+  throw new Error("BOT_TOKEN Environment Variable Missing!");
+}
+
+const bot = new Bot(BOT_TOKEN);
+
+// ================= CHANNELS =================
 
 const CHANNELS = [
-  { name: "Channel 1", url: "https://t.me/+25wehwsKm4RlNTU1", id: -1003942790406 },
-  { name: "Channel 2", url: "https://t.me/+OHBkjRv0udI4MzNl", id: -1003795704373 },
-  { name: "Channel 3", url: "https://t.me/+k31Nqng40Pc3ZThl", id: -1004478369059 },
-  { name: "Channel 4", url: "https://t.me/+RwHmeJ0mV1tiNzVl", id: -1003860473624 }
+  {
+    id: "-1003942790406",
+    link: "https://t.me/+25wehwsKm4RlNTU1",
+    name: "Channel 1"
+  },
+  {
+    id: "-1003795704373",
+    link: "https://t.me/+OHBkjRv0udI4MzNl",
+    name: "Channel 2"
+  },
+  {
+    id: "-1004478369059",
+    link: "https://t.me/+k31Nqng40Pc3ZThl",
+    name: "Channel 3"
+  },
+  {
+    id: "-1003860473624",
+    link: "https://t.me/+RwHmeJ0mV1tiNzVl",
+    name: "Channel 4"
+  }
 ];
 
-// Render Web Service को तुरंत "Live" दिखाने के लिए पोर्ट सर्वर
-const PORT = process.env.PORT || 10000;
-http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Bot is Live!");
-}).listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Image source message
+const IMAGE_CHANNEL = "@fghhbbbnj";
+const IMAGE_MESSAGE_ID = 87;
 
-const bot = new TelegramBot(token, { polling: true });
-const joinRequests = {}; // यूजर की जॉइन रिक्वेस्ट ट्रैक करने के लिए
+// ================= DATABASE =================
 
-// जब कोई यूजर 4 चैनल्स में से किसी पर Join Request भेजेगा
-bot.on("chat_join_request", (req) => {
-  const userId = req.from.id;
-  const chatId = req.chat.id;
-  if (!joinRequests[userId]) joinRequests[userId] = new Set();
-  joinRequests[userId].add(chatId);
-});
+// Temporary memory storage
+const users = new Map();
 
-function getJoinKeyboard() {
-  return {
-    inline_keyboard: [
-      [
-        { text: "📢 Channel 1", url: CHANNELS[0].url },
-        { text: "📢 Channel 2", url: CHANNELS[1].url }
-      ],
-      [
-        { text: "📢 Channel 3", url: CHANNELS[2].url },
-        { text: "📢 Channel 4", url: CHANNELS[3].url }
-      ],
-      [{ text: "🔵 Continue ➡️", callback_data: "check_join" }]
-    ]
-  };
+// ================= KEYBOARDS =================
+
+function mainMenu() {
+  return new InlineKeyboard()
+    .text("📢 JOIN CHANNELS", "join_channels")
+    .row()
+    .text("🎁 REWARDS", "rewards")
+    .row()
+    .text("👤 SUPPORT", "support");
 }
 
-function getMainMenu(userId) {
-  const keyboard = [
-    [
-      { text: "🎁 Daily Bonus", callback_data: "bonus" },
-      { text: "🔥 Offers", callback_data: "offers" }
-    ],
-    [
-      { text: "🔗 Refer & Earn", callback_data: "refer" },
-      { text: "📊 Stats", callback_data: "stats" }
-    ]
-  ];
-  if (userId === ADMIN_ID) {
-    keyboard.push([{ text: "🔴 Broadcast (Admin)", callback_data: "broadcast" }]);
+function channelKeyboard(notJoined) {
+  const keyboard = new InlineKeyboard();
+
+  for (let i = 0; i < notJoined.length; i += 2) {
+    keyboard.url("📢 Join " + notJoined[i].name, notJoined[i].link);
+
+    if (notJoined[i + 1]) {
+      keyboard.url(
+        "📢 Join " + notJoined[i + 1].name,
+        notJoined[i + 1].link
+      );
+    }
+
+    keyboard.row();
   }
-  return { inline_keyboard: keyboard };
+
+  keyboard.text("🔐 VERIFY & CLAIM", "verify");
+
+  return keyboard;
 }
 
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const caption =
-    "<b>👋 स्वागत है!</b>\n\n" +
-    "आगे बढ़ने के लिए नीचे दिए गए सभी <b>4 चैनल्स</b> पर जॉइन रिक्वेस्ट भेजें और फिर <b>Continue</b> पर क्लिक करें:";
+// ================= USER DATA =================
 
-  bot.sendPhoto(chatId, WELCOME_IMAGE, {
-    caption: caption,
-    parse_mode: "HTML",
-    reply_markup: getJoinKeyboard()
+function getUser(id) {
+  if (!users.has(id)) {
+    users.set(id, {
+      claimed: false
+    });
+  }
+
+  return users.get(id);
+}
+
+// ================= CHECK MEMBERSHIP =================
+
+async function checkChannels(userId) {
+  const notJoined = [];
+
+  for (const channel of CHANNELS) {
+    try {
+      const member = await bot.api.getChatMember(
+        channel.id,
+        userId
+      );
+
+      const joined =
+        ["creator", "administrator", "member"].includes(member.status) ||
+        (member.status === "restricted" && member.is_member);
+
+      if (!joined) {
+        notJoined.push(channel);
+      }
+
+    } catch (error) {
+      console.error(
+        "Channel check failed:",
+        channel.name,
+        error.message
+      );
+
+      notJoined.push(channel);
+    }
+  }
+
+  return notJoined;
+}
+
+// ================= START =================
+
+bot.command("start", async (ctx) => {
+  const userId = ctx.from.id;
+
+  getUser(userId);
+
+  try {
+    await bot.api.copyMessage(
+      ctx.chat.id,
+      IMAGE_CHANNEL,
+      IMAGE_MESSAGE_ID
+    );
+  } catch (error) {
+    console.log("Welcome image unavailable:", error.message);
+  }
+
+  const notJoined = await checkChannels(userId);
+
+  if (notJoined.length === 0) {
+    return ctx.reply(
+      "🎉 WELCOME!\n\n" +
+      "✅ All channels already joined.\n\n" +
+      "Choose an option below:",
+      { reply_markup: mainMenu() }
+    );
+  }
+
+  await ctx.reply(
+    "👑 <b>WELCOME TO PREMIUM REWARD BOT</b>\n\n" +
+    "🎁 Join all our Telegram channels.\n\n" +
+    "🔒 Complete verification to unlock your reward.\n\n" +
+    "👇 Join all channels below:",
+    {
+      parse_mode: "HTML",
+      reply_markup: channelKeyboard(notJoined)
+    }
+  );
+});
+
+// ================= JOIN CHANNELS =================
+
+bot.callbackQuery("join_channels", async (ctx) => {
+  const notJoined = await checkChannels(ctx.from.id);
+
+  if (notJoined.length === 0) {
+    await ctx.answerCallbackQuery("All channels joined!");
+    return ctx.editMessageText(
+      "🎉 All channels joined successfully!",
+      { reply_markup: mainMenu() }
+    );
+  }
+
+  await ctx.answerCallbackQuery("Join remaining channels.");
+
+  await ctx.editMessageReplyMarkup({
+    reply_markup: channelKeyboard(notJoined)
   });
 });
 
-bot.on("callback_query", async (query) => {
-  const userId = query.from.id;
-  const chatId = query.message.chat.id;
+// ================= VERIFY =================
 
-  if (query.data === "check_join") {
-    const userReqs = joinRequests[userId] || new Set();
-    const allRequested = CHANNELS.every((ch) => userReqs.has(ch.id));
+bot.callbackQuery("verify", async (ctx) => {
+  await ctx.answerCallbackQuery("Checking membership...");
 
-    if (!allRequested) {
-      return bot.answerCallbackQuery(query.id, {
-        text: "⚠️ पहले सभी 4 चैनल्स पर Join Request भेजें!",
-        show_alert: true
-      });
-    }
+  const notJoined = await checkChannels(ctx.from.id);
 
-    await bot.answerCallbackQuery(query.id, { text: "✅ वेरिफिकेशन पूरा हुआ!" });
-    bot.sendMessage(chatId, "<b>🎉 Main Menu</b>\n\nनीचे दिए गए विकल्पों में से चुनें:", {
-      parse_mode: "HTML",
-      reply_markup: getMainMenu(userId)
-    });
-  } else if (query.data === "bonus") {
-    bot.answerCallbackQuery(query.id, { text: "🎁 आपको आज का बोनस मिल गया है!", show_alert: true });
-  } else if (query.data === "offers") {
-    bot.answerCallbackQuery(query.id);
-    bot.sendMessage(chatId, "🔥 <b>नए ऑफर्स जल्द आ रहे हैं!</b>", { parse_mode: "HTML" });
-  } else if (query.data === "refer") {
-    bot.answerCallbackQuery(query.id);
-    const me = await bot.getMe();
-    bot.sendMessage(
-      chatId,
-      `🔗 <b>आपका रेफरल लिंक:</b>\nhttps://t.me/${me.username}?start=${userId}`,
-      { parse_mode: "HTML" }
+  if (notJoined.length > 0) {
+    return ctx.reply(
+      "❌ Verification Failed!\n\n" +
+      "Please join all remaining channels first.",
+      {
+        reply_markup: channelKeyboard(notJoined)
+      }
     );
-  } else if (query.data === "stats") {
-    bot.answerCallbackQuery(query.id);
-    bot.sendMessage(chatId, "📊 <b>आपका बैलेंस:</b> ₹0", { parse_mode: "HTML" });
-  } else if (query.data === "broadcast" && userId === ADMIN_ID) {
-    bot.answerCallbackQuery(query.id);
-    bot.sendMessage(chatId, "🔴 ब्रॉडकास्ट करने के लिए अपना मैसेज भेजें।");
+  }
+
+  await ctx.reply(
+    "✅ <b>VERIFICATION SUCCESSFUL!</b>\n\n" +
+    "🎉 You have joined all 4 channels.\n\n" +
+    "Your reward section is now unlocked.",
+    {
+      parse_mode: "HTML",
+      reply_markup: mainMenu()
+    }
+  );
+});
+
+// ================= REWARDS =================
+
+bot.callbackQuery("rewards", async (ctx) => {
+  const notJoined = await checkChannels(ctx.from.id);
+
+  if (notJoined.length > 0) {
+    await ctx.answerCallbackQuery(
+      "Join all channels first!",
+      { show_alert: true }
+    );
+    return;
+  }
+
+  const user = getUser(ctx.from.id);
+
+  if (user.claimed) {
+    return ctx.reply("🎁 Your demo reward was already claimed.");
+  }
+
+  const keyboard = new InlineKeyboard()
+    .text("🎁 CLAIM DEMO REWARD ₹10", "claim_reward");
+
+  await ctx.reply(
+    "🎉 <b>REWARD UNLOCKED!</b>\n\n" +
+    "🎁 Demo Reward: ₹10\n\n" +
+    "Press below to claim your demo reward.",
+    {
+      parse_mode: "HTML",
+      reply_markup: keyboard
+    }
+  );
+});
+
+// ================= CLAIM =================
+
+bot.callbackQuery("claim_reward", async (ctx) => {
+  const notJoined = await checkChannels(ctx.from.id);
+
+  if (notJoined.length > 0) {
+    return ctx.answerCallbackQuery({
+      text: "Join all channels first!",
+      show_alert: true
+    });
+  }
+
+  const user = getUser(ctx.from.id);
+
+  if (user.claimed) {
+    return ctx.answerCallbackQuery({
+      text: "Already claimed!",
+      show_alert: true
+    });
+  }
+
+  user.claimed = true;
+
+  await ctx.answerCallbackQuery("Demo reward claimed!");
+
+  await ctx.reply(
+    "🎉 <b>CONGRATULATIONS!</b>\n\n" +
+    "✅ Your ₹10 demo reward has been claimed.\n\n" +
+    "This is a demo confirmation, not a cash payment.",
+    {
+      parse_mode: "HTML",
+      reply_markup: mainMenu()
+    }
+  );
+});
+
+// ================= SUPPORT =================
+
+bot.callbackQuery("support", async (ctx) => {
+  await ctx.answerCallbackQuery();
+
+  await ctx.reply(
+    "👤 SUPPORT\n\n" +
+    "For help, contact the bot administrator."
+  );
+});
+
+// ================= ADMIN PANEL =================
+
+bot.command("admin", async (ctx) => {
+  if (ctx.from.id !== ADMIN_ID) {
+    return ctx.reply("⛔ Access Denied!");
+  }
+
+  const keyboard = new InlineKeyboard()
+    .text("📊 BOT STATISTICS", "admin_stats");
+
+  await ctx.reply(
+    "👑 <b>ADMIN PANEL</b>\n\n" +
+    "Welcome Administrator!",
+    {
+      parse_mode: "HTML",
+      reply_markup: keyboard
+    }
+  );
+});
+
+// ================= ADMIN STATS =================
+
+bot.callbackQuery("admin_stats", async (ctx) => {
+  if (ctx.from.id !== ADMIN_ID) {
+    return ctx.answerCallbackQuery({
+      text: "Access Denied!",
+      show_alert: true
+    });
+  }
+
+  let claimed = 0;
+
+  for (const user of users.values()) {
+    if (user.claimed) claimed++;
+  }
+
+  await ctx.answerCallbackQuery();
+
+  await ctx.reply(
+    "📊 BOT STATISTICS\n\n" +
+    "👥 Total Users: " + users.size + "\n" +
+    "🎁 Demo Claims: " + claimed
+  );
+});
+
+// ================= ERROR HANDLER =================
+
+bot.catch((error) => {
+  console.error("BOT ERROR:", error);
+});
+
+// ================= START BOT =================
+
+console.log("Premium Telegram Bot Starting...");
+
+bot.start({
+  onStart: (info) => {
+    console.log("BOT RUNNING:", info.username);
   }
 });
