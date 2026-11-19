@@ -1554,6 +1554,18 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     const category = ctx.match[1]
 
+          if (category === "poultry_farm" || category === "poultry_halal") {
+      const title = category === "poultry_farm"
+        ? "🍗 ПТИЦА ФЕРМЕР"
+        : "🍗 ПТИЦА ХАЛЯЛЬ"
+
+      await ctx.editMessageText(
+        `${title}\n\nВыбери продукт:`,
+        { reply_markup: categoryKeyboard(category) }
+      )
+      return
+    }
+
      if (category === "meat_farm" || category === "meat_halal" || category === "minced_meat" || category === "minced_meat_halal") {
       const title = category === "meat_halal"
         ? "🥩 МЯСО ХАЛЯЛЬ"
