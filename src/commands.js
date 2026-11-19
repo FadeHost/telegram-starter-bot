@@ -841,9 +841,15 @@ async function showCategory(ctx, category, itemId = null, newMessage = false, ta
     ? categoryTitle(category, itemId)
     : categoryNames.get(category) || category
 
-  const backCallback = category.startsWith("equipment_")
+    const backCallback = category.startsWith("equipment_")
     ? "equipment"
-    : "products"
+    : category.startsWith("grocery_")
+      ? "product:grocery"
+      : "products"
+
+  const backLabel = category.startsWith("grocery_")
+    ? "⬅️ Назад к бакалее"
+    : "⬅️ Назад к разделам товаров"
   if (!suppliers.length) {
   const messageText = `${title}\n\nПоставщиков пока нет.`
   const keyboard = new InlineKeyboard()
