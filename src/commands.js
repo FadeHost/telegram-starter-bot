@@ -647,10 +647,12 @@ function categoryKeyboard(category) {
     }
   }
 
-  if (category === "meat_farm") {
-    meatNames.forEach((name, i) => {
-      keyboard.text(name, `pick:meat_farm:m${i}`).row()
-    })
+  if   if (category === "meat_farm") {
+    for (let i = 0; i < meatNames.length; i += 2) {
+      keyboard.text(meatNames[i], `pick:meat_farm:m${i}`)
+      keyboard.text(meatNames[i + 1], `pick:meat_farm:m${i + 1}`)
+      keyboard.row()
+    }
   }
 
   if (category === "minced_meat" || category === "minced_meat_halal") {
