@@ -2986,7 +2986,17 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
     if (
       isAdmin(ctx) &&
       state &&
-      ["equipmentName", "equipmentModel", "equipmentYear", "equipmentPhone"].includes(state.step) &&
+            [
+        "equipmentPhoto",
+        "equipmentName",
+        "equipmentModel",
+        "equipmentCondition",
+        "equipmentYear",
+        "equipmentWarranty",
+        "equipmentDocuments",
+        "equipmentDelivery",
+        "equipmentPhone",
+      ].includes(state.step) &&
       ctx.message.text.trim() === "/cancel"
     ) {
       userSteps.delete(ctx.from.id)
