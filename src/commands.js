@@ -495,6 +495,10 @@ function categoryTitle(category, itemId) {
     return dairyNames[index]
   }
 
+    if (category === "greens_salads") {
+    return greensSaladsNames[index]
+  }
+
   if (category === "fish") {
     return fishNames[index]
   }
