@@ -762,12 +762,11 @@ function categoryKeyboard(category) {
     }
   }
 
-  if (category === "dairy") {
-    keyboard
-      .text("🏭 Промышленное хозяйство", "dairytype:industrial")
-      .row()
-      .text("🚜 Фермерское хозяйство", "dairytype:farm")
-  }
+    for (let i = 0; i < dairyNames.length; i += 2) {
+      keyboard.text(dairyNames[i], `admin:item:dairy:${prefix}${i}`)
+      keyboard.text(dairyNames[i + 1], `admin:item:dairy:${prefix}${i + 1}`)
+      keyboard.row()
+    }
 
     if (category === "fish") {
     for (let i = 0; i < fishNames.length; i += 2) {
