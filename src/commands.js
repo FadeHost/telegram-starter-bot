@@ -616,6 +616,14 @@ function categoryKeyboard(category) {
     }
   }
 
+    if (category === "seafood") {
+    for (let i = 0; i < seafoodNames.length; i += 2) {
+      keyboard.text(seafoodNames[i], `pick:seafood:s${i}`)
+      keyboard.text(seafoodNames[i + 1], `pick:seafood:s${i + 1}`)
+      keyboard.row()
+    }
+  }
+
   if (category === "greens_salads") {
     for (let i = 0; i < greensSaladsNames.length; i += 2) {
       keyboard.text(greensSaladsNames[i], `pick:greens_salads:g${i}`)
