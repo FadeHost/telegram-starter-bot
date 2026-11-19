@@ -2955,6 +2955,15 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
     }
 
     const value = ctx.message.text.trim()
+
+    if (value === "/cancel") {
+      userSteps.delete(ctx.from.id)
+      await ctx.reply("Действие отменено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
     const price = Number(value.replace(/\s/g, ""))
 
     if (!Number.isFinite(price) || price <= 0) {
