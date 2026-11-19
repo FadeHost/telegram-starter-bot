@@ -2502,7 +2502,11 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     const category = ctx.match[1]
     const keyboard = new InlineKeyboard()
 
-    if (category === "poultry_farm" || category === "poultry_halal") {
+      if (category === "grocery") {
+      for (const [name, id] of groceryCategories) {
+        keyboard.text(name, `admin:cat:${id}`).row()
+      }
+    } else if (category === "poultry_farm" || category === "poultry_halal") {
       for (let i = 0; i < poultryNames.length; i += 2) {
         keyboard.text(poultryNames[i], `admin:item:${category}:p${i}`)
         keyboard.text(poultryNames[i + 1], `admin:item:${category}:p${i + 1}`)
