@@ -877,7 +877,7 @@ return
   }
 
   keyboard
-  .text("⬅️ Назад к разделам товаров", backCallback)
+  .text(backLabel, backCallback)
   .text("🏠 Главное меню", "home")
 
   const messageText = `Раздел: ${title}\n\nВыбери поставщика:`
