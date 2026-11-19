@@ -2128,7 +2128,7 @@ if (!state || state.step !== "businessSewer") return
     if (!isAdmin(ctx)) return
 
     const state = userSteps.get(ctx.from.id)
-    if (!state) return
+if (!state || state.step !== "businessHeating") return
 
     state.heating = ctx.match[1] === "yes" ? "Есть" : "Нет"
     state.step = "businessAddress"
