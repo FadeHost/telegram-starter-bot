@@ -1181,25 +1181,38 @@ bot.callbackQuery("admin:stats", async (ctx) => {
     lastSupplierCards.delete(ctx.chat.id)
   }
 
-  const listId = lastSupplierLists.get(ctx.chat.id)
+    const listId = lastSupplierLists.get(ctx.chat.id)
 
   if (listId) {
-    await ctx.api.editMessageText(
-      ctx.chat.id,
-      listId,
-      `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
-      { reply_markup: mainKeyboard() }
-    )
+    try {
+      await ctx.api.deleteMessage(ctx.chat.id, listId)
+    } catch (error) {
+      console.log("Не удалось удалить список поставщиков")
+    }
 
     lastSupplierLists.delete(ctx.chat.id)
-    lastMainMenus.set(ctx.chat.id, listId)
-    return
   }
 
-  const menu = await ctx.reply(
-    `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
-    { reply_markup: mainKeyboard() }
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Almaty",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date())
+
+  const dailyAd = database.dailyAds.find(
+    ad => ad.date === today && ad.active !== false
   )
+
+  const menu = dailyAd
+    ? await ctx.replyWithPhoto(dailyAd.photo, {
+        caption: `Список актуален на ${dateToday()}`,
+        reply_markup: mainKeyboard(),
+      })
+    : await ctx.reply(
+        `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+        { reply_markup: mainKeyboard() }
+      )
 
   lastMainMenus.set(ctx.chat.id, menu.message_id)
 })
