@@ -664,9 +664,11 @@ function categoryKeyboard(category) {
   }
 
   if (category === "meat_halal") {
-    halalMeatNames.forEach((name, i) => {
-      keyboard.text(name, `pick:meat_halal:h${i}`).row()
-    })
+    for (let i = 0; i < halalMeatNames.length; i += 2) {
+      keyboard.text(halalMeatNames[i], `pick:meat_halal:h${i}`)
+      keyboard.text(halalMeatNames[i + 1], `pick:meat_halal:h${i + 1}`)
+      keyboard.row()
+    }
   }
 
   if (category === "dairy") {
