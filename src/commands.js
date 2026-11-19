@@ -762,23 +762,15 @@ function categoryKeyboard(category) {
     }
   }
 
-    if (category === "dairy") {
-    const rows = Math.max(dairyLeftNames.length, dairyRightNames.length)
-
-    for (let i = 0; i < rows; i++) {
-      if (dairyLeftNames[i]) {
-        const index = dairyNames.indexOf(dairyLeftNames[i])
-        keyboard.text(dairyLeftNames[i], `pick:dairy:p${index}`)
+      if (category === "dairy") {
+      for (let i = 0; i < dairyNames.length; i += 2) {
+        keyboard.text(dairyNames[i], `pick:dairy:p${i}`)
+        if (dairyNames[i + 1]) {
+          keyboard.text(dairyNames[i + 1], `pick:dairy:p${i + 1}`)
+        }
+        keyboard.row()
       }
-
-      if (dairyRightNames[i]) {
-        const index = dairyNames.indexOf(dairyRightNames[i])
-        keyboard.text(dairyRightNames[i], `pick:dairy:p${index}`)
-      }
-
-      keyboard.row()
     }
-  }
 
     if (category === "fish") {
     for (let i = 0; i < fishNames.length; i += 2) {
