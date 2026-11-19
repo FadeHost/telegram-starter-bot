@@ -2187,7 +2187,7 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
   if (!isAdmin(ctx)) return
 
   const state = userSteps.get(ctx.from.id)
-  if (!state) return
+if (!state || state.step !== "equipmentDelivery" || !state.values) return
 
   state.values.delivery = ctx.match[1] === "free" ? "Бесплатная" : "Платная"
   state.step = "equipmentPhone"
