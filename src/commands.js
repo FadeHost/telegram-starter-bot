@@ -2562,9 +2562,11 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     const prefix = ctx.match[1] === "industrial" ? "p" : "f"
     const keyboard = new InlineKeyboard()
 
-    dairyNames.forEach((name, i) => {
-      keyboard.text(name, `admin:item:dairy:${prefix}${i}`).row()
-    })
+      for (let i = 0; i < dairyNames.length; i += 2) {
+      keyboard.text(dairyNames[i], `admin:item:dairy:${prefix}${i}`)
+      keyboard.text(dairyNames[i + 1], `admin:item:dairy:${prefix}${i + 1}`)
+      keyboard.row()
+    }
 
     keyboard.text("❌ Отмена", "admin:cancel")
 
