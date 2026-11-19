@@ -2408,12 +2408,18 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
         keyboard.row()
       }
     } else if (category === "greens_salads") {
-      for (let i = 0; i < greensSaladsNames.length; i += 2) {
-        keyboard.text(greensSaladsNames[i], `admin:item:greens_salads:g${i}`)
-        keyboard.text(greensSaladsNames[i + 1], `admin:item:greens_salads:g${i + 1}`)
-        keyboard.row()
-      }
-    } else {
+  for (let i = 0; i < greensSaladsNames.length; i += 2) {
+    keyboard.text(greensSaladsNames[i], `admin:item:greens_salads:g${i}`)
+    keyboard.text(greensSaladsNames[i + 1], `admin:item:greens_salads:g${i + 1}`)
+    keyboard.row()
+  }
+} else if (category === "vegetables") {
+  for (let i = 0; i < vegetablesLeftNames.length; i++) {
+    keyboard.text(vegetablesLeftNames[i], `admin:item:vegetables:v${i}`)
+    keyboard.text(vegetablesRightNames[i], `admin:item:vegetables:w${i}`)
+    keyboard.row()
+  }
+} else {
       keyboard.text("Добавить в общий раздел", `admin:item:${category}:none`).row()
     }
 
