@@ -2509,12 +2509,12 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       mincedMeatNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:${category}:m${i}`).row()
       })
-    } else if (category === "dairy") {
-      keyboard
-        .text("🏭 Промышленное хозяйство", "admin:dairy:industrial")
-        .row()
-        .text("🚜 Фермерское хозяйство", "admin:dairy:farm")
-        .row()
+        } else if (category === "dairy") {
+      for (let i = 0; i < dairyNames.length; i += 2) {
+        keyboard.text(dairyNames[i], `admin:item:dairy:p${i}`)
+        keyboard.text(dairyNames[i + 1], `admin:item:dairy:p${i + 1}`)
+        keyboard.row()
+      }
             } else if (category === "fish") {
       fishNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:fish:f${i}`).row()
