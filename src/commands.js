@@ -1867,9 +1867,11 @@ if (category === "vegetables") {
     const prefix = type === "industrial" ? "p" : "f"
     const keyboard = new InlineKeyboard()
 
-    dairyNames.forEach((name, i) => {
-      keyboard.text(name, `pick:dairy:${prefix}${i}`).row()
-    })
+      for (let i = 0; i < dairyNames.length; i += 2) {
+      keyboard.text(dairyNames[i], `pick:dairy:${prefix}${i}`)
+      keyboard.text(dairyNames[i + 1], `pick:dairy:${prefix}${i + 1}`)
+      keyboard.row()
+    }
 
     keyboard
   .text("⬅️ Назад", "product:dairy")
