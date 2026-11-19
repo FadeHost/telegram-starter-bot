@@ -2167,8 +2167,10 @@ bot.callbackQuery(/^equipment:documents:(yes|no)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
-  const state = userSteps.get(ctx.from.id)
-  if (!state) return
+    const state = userSteps.get(ctx.from.id)
+  if (!state || state.step !== "equipmentDocuments" || !state.values) return
+
+  state.values.documents = ctx.match[1] === "yes" ? "Есть" : "Нет"
 
   state.values.documents = ctx.match[1] === "yes" ? "Есть" : "Нет"
   state.step = "equipmentDelivery"
