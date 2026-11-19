@@ -2255,11 +2255,17 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
     const category = ctx.match[1]
     const keyboard = new InlineKeyboard()
 
-        if (category === "meat_farm") {
+    if (category === "poultry_farm" || category === "poultry_halal") {
+      for (let i = 0; i < poultryNames.length; i += 2) {
+        keyboard.text(poultryNames[i], `admin:item:${category}:p${i}`)
+        keyboard.text(poultryNames[i + 1], `admin:item:${category}:p${i + 1}`)
+        keyboard.row()
+      }
+    } else if (category === "meat_farm") {
       meatNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:meat_farm:m${i}`).row()
       })
-      } else if (category === "meat_halal") {
+    } else if (category === "meat_halal") {
       halalMeatNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:meat_halal:h${i}`).row()
       })
