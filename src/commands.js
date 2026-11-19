@@ -658,9 +658,10 @@ function categoryKeyboard(category) {
 
   if (category === "minced_meat" || category === "minced_meat_halal") {
     const prefix = category
+    const suffix = category === "minced_meat_halal" ? " Халяль" : ""
 
     mincedMeatNames.forEach((name, i) => {
-      keyboard.text(name, `pick:${prefix}:m${i}`).row()
+      keyboard.text(`${name}${suffix}`, `pick:${prefix}:m${i}`).row()
     })
   }
 
