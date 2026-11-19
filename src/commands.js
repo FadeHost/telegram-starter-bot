@@ -2556,26 +2556,6 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     })
   })
 
-  bot.callbackQuery(/^admin:dairy:(industrial|farm)$/, async (ctx) => {
-    await ctx.answerCallbackQuery()
-    if (!isAdmin(ctx)) return
-
-    const prefix = ctx.match[1] === "industrial" ? "p" : "f"
-    const keyboard = new InlineKeyboard()
-
-      for (let i = 0; i < dairyNames.length; i += 2) {
-      keyboard.text(dairyNames[i], `admin:item:dairy:${prefix}${i}`)
-      keyboard.text(dairyNames[i + 1], `admin:item:dairy:${prefix}${i + 1}`)
-      keyboard.row()
-    }
-
-    keyboard.text("❌ Отмена", "admin:cancel")
-
-    await ctx.editMessageText("Выбери молочный продукт:", {
-      reply_markup: keyboard,
-    })
-  })
-
     bot.callbackQuery(/^admin:item:([^:]+):([mhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+|none)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
