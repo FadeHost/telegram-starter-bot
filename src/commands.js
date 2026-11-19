@@ -684,7 +684,7 @@ function categoryKeyboard(category) {
     }
   }
 
-  if   if (category === "greens_salads") {
+    if (category === "greens_salads") {
     for (let i = 0; i < greensSaladsNames.length; i += 2) {
       keyboard.text(greensSaladsNames[i], `pick:greens_salads:g${i}`)
       keyboard.text(greensSaladsNames[i + 1], `pick:greens_salads:g${i + 1}`)
