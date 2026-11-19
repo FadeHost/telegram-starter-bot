@@ -32,6 +32,17 @@ const products = [
   ["🔪 Инвентарь для кухни и бара", "inventory"],
 ]
 
+const groceryCategories = [
+  ["🌾 Крупы и бобовые", "grocery_grains"],
+  ["🍝 Макаронные изделия", "grocery_pasta"],
+  ["🌶 Специи и приправы", "grocery_spices"],
+  ["🥜 Сухофрукты и орехи", "grocery_dried"],
+  ["🥫 Консервы", "grocery_canned"],
+  ["🫒 Масло", "grocery_oil"],
+  ["🥫 Соусы и заправки", "grocery_sauces"],
+  ["🥡 Сухие смеси", "grocery_drymix"],
+]
+
 const equipmentCategories = [
   ["♨️ Тепловое оборудование", "equipment_heat"],
   ["❄️ Холодильное оборудование", "equipment_cold"],
