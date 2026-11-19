@@ -528,6 +528,14 @@ function supplierCategory(supplier) {
 function categoryKeyboard(category) {
   const keyboard = new InlineKeyboard()
 
+    if (category === "poultry_farm" || category === "poultry_halal") {
+    for (let i = 0; i < poultryNames.length; i += 2) {
+      keyboard.text(poultryNames[i], `pick:${category}:p${i}`)
+      keyboard.text(poultryNames[i + 1], `pick:${category}:p${i + 1}`)
+      keyboard.row()
+    }
+  }
+
   if (category === "meat_farm") {
     meatNames.forEach((name, i) => {
       keyboard.text(name, `pick:meat_farm:m${i}`).row()
