@@ -2548,9 +2548,19 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
         keyboard.text(name, `admin:item:${category}:m${i}`).row()
       })
         } else if (category === "dairy") {
-      for (let i = 0; i < dairyNames.length; i += 2) {
-        keyboard.text(dairyNames[i], `admin:item:dairy:p${i}`)
-        keyboard.text(dairyNames[i + 1], `admin:item:dairy:p${i + 1}`)
+      const rows = Math.max(dairyLeftNames.length, dairyRightNames.length)
+
+      for (let i = 0; i < rows; i++) {
+        if (dairyLeftNames[i]) {
+          const index = dairyNames.indexOf(dairyLeftNames[i])
+          keyboard.text(dairyLeftNames[i], `admin:item:dairy:p${index}`)
+        }
+
+        if (dairyRightNames[i]) {
+          const index = dairyNames.indexOf(dairyRightNames[i])
+          keyboard.text(dairyRightNames[i], `admin:item:dairy:p${index}`)
+        }
+
         keyboard.row()
       }
             } else if (category === "fish") {
