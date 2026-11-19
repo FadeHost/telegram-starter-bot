@@ -1799,6 +1799,14 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
   return
 }
 
+if (category === "fruits") {
+  await ctx.editMessageText(
+    "🍎 ФРУКТЫ\n\nВыбери продукт:",
+    { reply_markup: categoryKeyboard("fruits") }
+  )
+  return
+}
+
 if (category === "vegetables") {
   await ctx.editMessageText(
     "🥒 ОВОЩИ\n\nВыбери продукт:",
