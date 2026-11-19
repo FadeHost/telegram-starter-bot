@@ -2325,6 +2325,12 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       fishNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:fish:f${i}`).row()
       })
+    } else if (category === "seafood") {
+      for (let i = 0; i < seafoodNames.length; i += 2) {
+        keyboard.text(seafoodNames[i], `admin:item:seafood:s${i}`)
+        keyboard.text(seafoodNames[i + 1], `admin:item:seafood:s${i + 1}`)
+        keyboard.row()
+      }
     } else if (category === "greens_salads") {
       for (let i = 0; i < greensSaladsNames.length; i += 2) {
         keyboard.text(greensSaladsNames[i], `admin:item:greens_salads:g${i}`)
