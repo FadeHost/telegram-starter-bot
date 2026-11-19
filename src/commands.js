@@ -1357,23 +1357,31 @@ bot.callbackQuery(
     await ctx.deleteMessage()
   } catch (error) {}
 
-  const photoMessage = await ctx.replyWithPhoto(item.photo)
+    const photoMessage = await ctx.replyWithPhoto(item.photo)
 
-const phoneDigits = item.phone.replace(/\D/g, "")
-const whatsappPhone =
-  phoneDigits.length === 11 && phoneDigits.startsWith("8")
-    ? `7${phoneDigits.slice(1)}`
-    : phoneDigits.length === 10
-      ? `7${phoneDigits}`
-      : phoneDigits
+  const phoneDigits = String(item.phone || "").replace(/\D/g, "")
+  const hasValidPhone = phoneDigits.length >= 10 && phoneDigits.length <= 15
 
-const keyboard = new InlineKeyboard()
-  .url("WhatsApp", `https://wa.me/${whatsappPhone}`)
-  .row()
-  .text("⬅️ Вернуться к списку товаров", `equipment:back:${item.category}`)
+  const whatsappPhone =
+    phoneDigits.length === 11 && phoneDigits.startsWith("8")
+      ? `7${phoneDigits.slice(1)}`
+      : phoneDigits.length === 10
+        ? `7${phoneDigits}`
+        : phoneDigits
 
-    const cardMessage = await ctx.reply(
-    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nТелефон: +${whatsappPhone}`,
+  const keyboard = new InlineKeyboard()
+
+  if (hasValidPhone) {
+    keyboard.url("WhatsApp", `https://wa.me/${whatsappPhone}`).row()
+  }
+
+  keyboard.text(
+    "⬅️ Вернуться к списку товаров",
+    `equipment:back:${item.category}`
+  )
+
+  const cardMessage = await ctx.reply(
+    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nТелефон: ${hasValidPhone ? `+${whatsappPhone}` : "Не указан"}`,
     { reply_markup: keyboard }
   )
 
