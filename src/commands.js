@@ -2980,21 +2980,40 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
 
     await ctx.reply("Теперь отправь фотографии бизнеса. Можно несколько: фасад, зал, кухня.")
   })
+    bot.on("message:text", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (
+      isAdmin(ctx) &&
+      state &&
+      ["equipmentName", "equipmentModel", "equipmentYear", "equipmentPhone"].includes(state.step) &&
+      ctx.message.text.trim() === "/cancel"
+    ) {
+      userSteps.delete(ctx.from.id)
+      await ctx.reply("Действие отменено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    return next()
+  })
+
   bot.on("message:text", async (ctx, next) => {
-  const state = userSteps.get(ctx.from.id)
+    const state = userSteps.get(ctx.from.id)
 
-  if (!isAdmin(ctx) || !state || state.step !== "equipmentName") return next()
+    if (!isAdmin(ctx) || !state || state.step !== "equipmentName") return next()
 
-  const value = ctx.message.text.trim()
-  if (!value) {
-    await ctx.reply("Укажи наименование оборудования:")
-    return
-  }
+    const value = ctx.message.text.trim()
+    if (!value) {
+      await ctx.reply("Укажи наименование оборудования:")
+      return
+    }
 
-  state.values.name = value
-  state.step = "equipmentModel"
-  await ctx.reply("Укажи модель оборудования:")
-})
+    state.values.name = value
+    state.step = "equipmentModel"
+    await ctx.reply("Укажи модель оборудования:")
+  })
 
 bot.on("message:text", async (ctx, next) => {
   const state = userSteps.get(ctx.from.id)
