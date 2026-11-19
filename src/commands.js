@@ -1648,6 +1648,14 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       return
     }
 
+    if (category === "seafood") {
+      await ctx.editMessageText(
+        "🦐 МОРЕПРОДУКТЫ\n\nВыбери продукт:",
+        { reply_markup: categoryKeyboard("seafood") }
+      )
+      return
+    }
+
     if (category === "greens_salads") {
       await ctx.editMessageText(
         "🥬 ЗЕЛЕНЬ И САЛАТЫ\n\nВыбери продукт:",
