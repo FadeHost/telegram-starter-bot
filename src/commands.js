@@ -703,7 +703,10 @@ const supplier = {
   await saveDatabase()
   userSteps.delete(ctx.from.id)
 
-  }
+  await ctx.reply("✅ Поставщик успешно добавлен!", {
+    reply_markup: adminKeyboard(),
+  })
+}
 export async function registerCommands(bot) {
     await loadDatabase()
   databaseLoaded = true
