@@ -660,19 +660,23 @@ function categoryTitle(category, itemId) {
     return seafoodNames[index]
   }
 
+  if (category === "fruits") {
+    return fruitsNames[Number(itemId.slice(1))]
+  }
+
   if (category === "vegetables") {
-  const index = Number(itemId.slice(1))
+    const index = Number(itemId.slice(1))
 
-  if (itemId.startsWith("v")) {
-    return vegetablesLeftNames[index]
+    if (itemId.startsWith("v")) {
+      return vegetablesLeftNames[index]
+    }
+
+    if (itemId.startsWith("w")) {
+      return vegetablesRightNames[index]
+    }
   }
 
-  if (itemId.startsWith("w")) {
-    return vegetablesRightNames[index]
-  }
-}
-
-return categoryNames.get(category) || category
+  return categoryNames.get(category) || category
 }
 function supplierCategory(supplier) {
   return supplier.itemId
