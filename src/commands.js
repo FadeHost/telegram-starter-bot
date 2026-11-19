@@ -316,6 +316,7 @@ const automationItems = [
 
 const categoryNames = new Map([
   ...products.map(([name, id]) => [id, name.toUpperCase()]),
+  ...groceryCategories.map(([name, id]) => [id, name.toUpperCase()]),
   ...services.map(([name, id]) => [id, name.toUpperCase()]),
   ...equipmentCategories.map(([name, id]) => [id, name.toUpperCase()]),
 ])
