@@ -639,10 +639,11 @@ function supplierCategory(supplier) {
 function categoryKeyboard(category) {
   const keyboard = new InlineKeyboard()
 
-    if (category === "poultry_farm" || category === "poultry_halal") {
+      if (category === "poultry_farm" || category === "poultry_halal") {
     for (let i = 0; i < poultryNames.length; i += 2) {
-      keyboard.text(poultryNames[i], `pick:${category}:p${i}`)
-      keyboard.text(poultryNames[i + 1], `pick:${category}:p${i + 1}`)
+      const suffix = category === "poultry_halal" ? " Халяль" : ""
+      keyboard.text(`${poultryNames[i]}${suffix}`, `pick:${category}:p${i}`)
+      keyboard.text(`${poultryNames[i + 1]}${suffix}`, `pick:${category}:p${i + 1}`)
       keyboard.row()
     }
   }
