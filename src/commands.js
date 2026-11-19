@@ -1839,7 +1839,7 @@ if (category === "vegetables") {
     )
   })
 
-    bot.callbackQuery(/^pick:(poultry_farm|poultry_halal|meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish|seafood|greens_salads|vegetables):([mhpf]\d+|g\d+|s\d+|v\d+|w\d+)$/, async (ctx) => {
+    bot.callbackQuery(/^pick:(poultry_farm|poultry_halal|meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish|seafood|greens_salads|fruits|vegetables):([mhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     await showCategory(ctx, ctx.match[1], ctx.match[2])
   })
