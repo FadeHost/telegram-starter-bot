@@ -2230,10 +2230,16 @@ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
         .row()
         .text("🚜 Фермерское хозяйство", "admin:dairy:farm")
         .row()
-        } else if (category === "fish") {
+            } else if (category === "fish") {
       fishNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:fish:f${i}`).row()
       })
+    } else if (category === "greens_salads") {
+      for (let i = 0; i < greensSaladsNames.length; i += 2) {
+        keyboard.text(greensSaladsNames[i], `admin:item:greens_salads:g${i}`)
+        keyboard.text(greensSaladsNames[i + 1], `admin:item:greens_salads:g${i + 1}`)
+        keyboard.row()
+      }
     } else {
       keyboard.text("Добавить в общий раздел", `admin:item:${category}:none`).row()
     }
