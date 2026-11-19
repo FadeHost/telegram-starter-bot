@@ -171,9 +171,19 @@ function dateToday() {
 async function loadDatabase() {
   await mkdir(DATA_DIR, { recursive: true })
 
-  try {
+    try {
     const content = await readFile(DATABASE_FILE, "utf8")
-    database = JSON.parse(content)
+    const parsedDatabase = JSON.parse(content)
+
+    if (
+      !parsedDatabase ||
+      typeof parsedDatabase !== "object" ||
+      Array.isArray(parsedDatabase)
+    ) {
+      throw new Error("Файл базы данных содержит некорректную структуру")
+    }
+
+    database = parsedDatabase
   } catch (error) {
     if (error.code !== "ENOENT") throw error
     database = { suppliers: [], equipment: [], dailyAds: [] }
