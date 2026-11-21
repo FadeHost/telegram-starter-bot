@@ -1725,7 +1725,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 })
   bot.callbackQuery("services", async (ctx) => {
   await ctx.answerCallbackQuery()
-  await editMenuMessage(ctx, "🛠 УСЛУГИ\n\nВыбери направление:", {
+  await editMenuMessage(ctx, `🛠 Услуги\n\nСписок актуален на ${dateToday()}`, {
     reply_markup: listKeyboard(services, "service"),
   })
 })
