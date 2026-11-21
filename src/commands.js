@@ -1570,11 +1570,10 @@ bot.callbackQuery("admin:stats", async (ctx) => {
 
   const menu = dailyAd
     ? await ctx.replyWithPhoto(dailyAd.photo, {
-        caption: `список актуален на ${dateToday()}`,
         reply_markup: mainKeyboard(),
       })
     : await ctx.reply(
-        `🏙 ОБЩЕПИТ АСТАНА\n\nсписок актуален на ${dateToday()}`,
+        `🏙 ОБЩЕПИТ АСТАНА`,
         { reply_markup: mainKeyboard() }
       )
 
