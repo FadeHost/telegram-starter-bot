@@ -1589,7 +1589,7 @@ bot.callbackQuery("products", async (ctx) => {
   await editMenuMessage(ctx, `📦 Поставщики\n\nСписок актуален на ${dateToday()}`, {
     reply_markup: listKeyboard(products, "product", 2),
   })
-
+})
   bot.callbackQuery("equipment", async (ctx) => {
   await ctx.answerCallbackQuery()
   await editMenuMessage(ctx, `⚙️ ОБОРУДОВАНИЕ ДЛЯ ОБЩЕПИТА\n\nСписок актуален на ${dateToday()}`, {
