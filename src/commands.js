@@ -1674,7 +1674,7 @@ bot.callbackQuery(
   )
 
   const cardMessage = await ctx.reply(
-    `${item.name}\n\nМодель: ${item.model}\nСостояние: ${item.condition}${item.condition === "Б/У" ? `\nГод покупки: ${item.purchaseYear}` : ""}\nГарантия: ${item.warranty}\nДокументы: ${item.documents}\nДоставка: ${item.delivery}\nТелефон: ${hasValidPhone ? `+${whatsappPhone}` : "Не указан"}`,
+`🏢 Компания: ${item.name}\n\nМодель: ${item.model}
     { reply_markup: keyboard }
   )
 
