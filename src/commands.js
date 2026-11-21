@@ -1969,6 +1969,19 @@ if (category === "vegetables") {
 
     await showCategory(ctx, category, itemId)
   })
+      bot.callbackQuery(/^beef:list:(meat_farm|meat_halal)$/, async (ctx) => {
+      await ctx.answerCallbackQuery()
+
+      const category = ctx.match[1]
+      const title = category === "meat_farm"
+        ? "🥩 ГОВЯДИНА"
+        : "🥩 ГОВЯДИНА ХАЛЯЛЬ"
+
+      await ctx.editMessageText(
+        `${title}\n\nВыбери отруб:`,
+        { reply_markup: beefKeyboard(category) }
+      )
+    })
 
     bot.callbackQuery(/^service:(repair|disinfection|cleaning|oil|accountant|automation|internet)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
