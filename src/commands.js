@@ -3360,6 +3360,26 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       { reply_markup: keyboard }
     )
   })
+      bot.on("message:animation", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (!isAdmin(ctx) || !state || state.step !== "projectCardAnimation") {
+      return next()
+    }
+
+    const animation = ctx.message.animation
+
+    if (!animation?.file_id) {
+      await ctx.reply("Не удалось получить GIF. Отправь её ещё раз.")
+      return
+    }
+
+    state.animation = animation.file_id
+    state.step = "projectCardDays"
+
+    await ctx.reply("GIF принята! На сколько дней разместить визитку? Укажи число от 1 до 365.")
+  })
+
     bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
