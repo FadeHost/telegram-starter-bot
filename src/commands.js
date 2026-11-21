@@ -701,7 +701,9 @@ function categoryTitle(category, itemId) {
   }
 
   if (category === "meat_farm") {
-    return meatNames[index]
+    return itemId.startsWith("b")
+      ? beefNames[index]
+      : meatNames[index]
   }
 
   if (category === "minced_meat" || category === "minced_meat_halal") {
@@ -709,7 +711,9 @@ function categoryTitle(category, itemId) {
   }
 
   if (category === "meat_halal") {
-    return halalMeatNames[index]
+    return itemId.startsWith("b")
+      ? beefNames[index]
+      : halalMeatNames[index]
   }
 
   if (category === "meat") {
