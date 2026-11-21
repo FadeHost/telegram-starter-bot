@@ -3967,4 +3967,3 @@ bot.on("message:text", async (ctx, next) => {
     await ctx.reply("Укажи срок размещения в днях. Например, 30 — на месяц.")
     return
   })
-})
