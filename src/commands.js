@@ -1673,10 +1673,8 @@ bot.callbackQuery(
     `equipment:back:${item.category}`
   )
 
-    const cardMessage = await ctx.reply(
-    `🏢 Компания: ${item.name}
-
-Модель: ${item.model}`,
+  const cardMessage = await ctx.reply(
+    `🏢 Компания: ${item.name}\n\nМодель: ${item.model}`,
     { reply_markup: keyboard }
   )
 
