@@ -1578,7 +1578,7 @@ bot.callbackQuery("admin:stats", async (ctx) => {
         reply_markup: mainKeyboard(),
       })
     : await ctx.reply(
-        `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+        `🏙 ОБЩЕПИТ АСТАНА\n\nсписок актуален на ${dateToday()}`,
         { reply_markup: mainKeyboard() }
       )
 
