@@ -354,7 +354,6 @@ const servicePhotoMessages = new Map()
 let database = {
   suppliers: [],
   equipment: [],
-  dailyAds: [],
 }
 let databaseLoaded = false
 
