@@ -1121,7 +1121,7 @@ export async function registerCommands(bot) {
 
     const message = dailyAd
       ? await ctx.replyWithPhoto(dailyAd.photo, {
-          caption: `Список актуален на ${dateToday()}`,
+          caption: `список актуален на ${dateToday()}`,
           reply_markup: mainKeyboard(),
         })
       : await ctx.reply(menuText, {
