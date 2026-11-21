@@ -845,8 +845,24 @@ function categoryKeyboard(category) {
     }
   }
 
-      keyboard
+            keyboard
     .text("⬅️ Назад к разделам товаров", "products")
+    .text("🏠 Главное меню", "home")
+
+  return keyboard
+}
+
+function beefKeyboard(category) {
+  const keyboard = new InlineKeyboard()
+
+  for (let i = 0; i < beefNames.length; i += 2) {
+    keyboard.text(beefNames[i], `pick:${category}:b${i}`)
+    keyboard.text(beefNames[i + 1], `pick:${category}:b${i + 1}`)
+    keyboard.row()
+  }
+
+  keyboard
+    .text("⬅️ Назад", `product:${category}`)
     .text("🏠 Главное меню", "home")
 
   return keyboard
