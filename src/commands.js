@@ -2211,7 +2211,7 @@ ${service.website ? `Сайт: ${service.website}` : ""}`,
 const keyboard = new InlineKeyboard()
 
 if (whatsappPhone) {
-  keyboard.url("WhatsApp", `https://wa.me/${whatsappPhone}`).row()
+  keyboard.url("Написать WhatsApp", `https://wa.me/${whatsappPhone}`).row()
 }
 
 keyboard
