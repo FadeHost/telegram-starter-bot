@@ -2072,7 +2072,7 @@ if (category === "vegetables") {
     const card = await ctx.reply(
       `Раздел: ${service.categoryLabel}
 
-🏢 ${service.company}
+🏢 Компания: ${service.company}
 
 ${service.description || ""}
 
