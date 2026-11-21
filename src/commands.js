@@ -1870,10 +1870,10 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       return
     }
 
-          if (category === "poultry_farm" || category === "poultry_halal") {
+              if (category === "poultry_farm" || category === "poultry_halal") {
       const title = category === "poultry_farm"
-        ? "🍗 ПТИЦА ФЕРМЕР"
-        : "🍗 ПТИЦА ХАЛЯЛЬ"
+        ? "🍗 Птица фермер"
+        : "🍗 Птица халяль"
 
       await ctx.editMessageText(
         `${title}\n\nВыбери продукт:`,
@@ -1882,14 +1882,14 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       return
     }
 
-     if (category === "meat_farm" || category === "meat_halal" || category === "minced_meat" || category === "minced_meat_halal") {
+    if (category === "meat_farm" || category === "meat_halal" || category === "minced_meat" || category === "minced_meat_halal") {
       const title = category === "meat_halal"
-        ? "🥩 МЯСО ХАЛЯЛЬ"
+        ? "🥩 Мясо халяль"
         : category === "minced_meat"
-          ? "🥩 ФАРШ ФЕРМЕР"
+          ? "🥩 Фарш фермер"
           : category === "minced_meat_halal"
-            ? "🥩 ФАРШ ХАЛЯЛЬ"
-            : "🥩 МЯСО ФЕРМЕР"
+            ? "🥩 Фарш халяль"
+            : "🥩 Мясо фермер"
 
       await ctx.editMessageText(
         `${title}\n\nВыбери продукт:`,
