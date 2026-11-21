@@ -2995,52 +2995,6 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
 
       if (!isAdmin(ctx) || !state) return next()
 
-    if (state.step === "dailyAdPhoto") {
-      const photo = ctx.message.photo.at(-1)
-
-      if (!photo?.file_id) {
-        await ctx.reply("Не удалось получить фото. Отправь ещё раз.")
-        return
-      }
-
-      state.photo = photo.file_id
-      state.step = "dailyAdDate"
-
-      await ctx.reply("Фото принято! Укажи дату публикации в формате ДД.ММ.ГГГГ:")
-      return
-    }
-
-        if (state.step === "dailyAdReplacePhoto") {
-      const photo = ctx.message.photo.at(-1)
-
-      if (!photo?.file_id) {
-        await ctx.reply("Не удалось получить фото. Отправь ещё раз.")
-        return
-      }
-
-      const ad = database.dailyAds.find(item => item.id === state.adId)
-
-      if (!ad) {
-        userSteps.delete(ctx.from.id)
-        await ctx.reply("Реклама не найдена.")
-        return
-      }
-
-      ad.photo = photo.file_id
-
-      await saveDatabase()
-      userSteps.delete(ctx.from.id)
-
-      const keyboard = new InlineKeyboard()
-        .text("📋 Открыть рекламу", `admin:daily_ad:view:${ad.id}`)
-        .row()
-        .text("📅 К расписанию", "admin:daily_ad:list")
-
-      await ctx.reply("✅ Фотография рекламы успешно изменена!", {
-        reply_markup: keyboard,
-      })
-      return
-    }
     if (state.step === "equipmentPhoto") {
   const photo = ctx.message.photo.at(-1)
 
