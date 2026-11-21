@@ -967,7 +967,7 @@ async function startAddSupplier(ctx) {
 async function finishSupplier(ctx, state) {
   const [name, contact, phone, description, address, delivery, website] = state.values
 
-const supplier = {
+ const supplier = {
   id: crypto.randomUUID(),
   name,
   contact,
@@ -980,12 +980,14 @@ const supplier = {
   category: state.category,
   itemId: state.itemId || null,
   categoryLabel: state.categoryLabel,
-    createdAt: new Date().toISOString(),
-        durationDays: state.durationDays,
-    expiresAt: state.durationDays
-      ? new Date(Date.now() + state.durationDays * 24 * 60 * 60 * 1000).toISOString()
-      : null,
-  }
+  meatType: state.meatType || null,
+  createdAt: new Date().toISOString(),
+  durationDays: state.durationDays,
+  expiresAt: state.durationDays
+    ? new Date(Date.now() + state.durationDays * 24 * 60 * 60 * 1000).toISOString()
+    : null,
+}
+
 
   database.suppliers.push(supplier)
   await saveDatabase()
