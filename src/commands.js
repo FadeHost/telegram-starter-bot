@@ -1222,7 +1222,7 @@ export async function registerCommands(bot) {
     })
   })
 
-    bot.callbackQuery("admin:promo:menu", async (ctx) => {
+      bot.callbackQuery("admin:promo:menu", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
@@ -1237,6 +1237,60 @@ export async function registerCommands(bot) {
 
     await ctx.editMessageText("📢 ПРОДВИЖЕНИЕ\n\nВыбери действие:", {
       reply_markup: keyboard,
+    })
+  })
+
+  bot.callbackQuery("admin:project_card", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const card = database.projectCard
+    const keyboard = new InlineKeyboard()
+      .text(
+        card ? "🔄 Заменить GIF" : "➕ Добавить GIF",
+        "admin:project_card:add"
+      )
+
+    if (card) {
+      keyboard
+        .row()
+        .text("🗑 Удалить визитку", "admin:project_card:delete")
+    }
+
+    keyboard
+      .row()
+      .text("⬅️ Назад", "admin:promo:menu")
+
+    const status = card
+      ? `Визитка размещена до: ${new Date(card.expiresAt).toLocaleDateString("ru-RU", { timeZone: "Asia/Almaty" })}`
+      : "Визитка пока не добавлена."
+
+    await ctx.editMessageText(`🎞 ВИЗИТКА ПРОЕКТА\n\n${status}`, {
+      reply_markup: keyboard,
+    })
+  })
+
+  bot.callbackQuery("admin:project_card:add", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    userSteps.set(ctx.from.id, {
+      step: "projectCardAnimation",
+    })
+
+    await ctx.reply("🎞 Отправь GIF-анимацию для визитки проекта:")
+  })
+
+  bot.callbackQuery("admin:project_card:delete", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    database.projectCard = null
+    await saveDatabase()
+
+    await ctx.editMessageText("🗑 Визитка проекта удалена.", {
+      reply_markup: new InlineKeyboard()
+        .text("⬅️ Назад", "admin:project_card"),
     })
   })
 
