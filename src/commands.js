@@ -363,12 +363,12 @@ function isAdmin(ctx) {
 }
 
 function dateToday() {
-    return new Date().toLocaleDateString("ru-RU", {
-    day: "numeric",
-    month: "long",
+  return new Date().toLocaleDateString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
     year: "numeric",
     timeZone: "Asia/Almaty",
-  }).replace(/\sг\.$/, "")
+  })
 }
 
 async function loadDatabase() {
