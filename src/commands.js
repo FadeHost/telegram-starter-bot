@@ -1510,7 +1510,7 @@ bot.callbackQuery("admin:stats", async (ctx) => {
 
     if (dailyAd) {
       const menu = await ctx.replyWithPhoto(dailyAd.photo, {
-        caption: `Список актуален на ${dateToday()}`,
+        caption: `список актуален на ${dateToday()}`,
         reply_markup: mainKeyboard(),
       })
       lastMainMenus.set(ctx.chat.id, menu.message_id)
