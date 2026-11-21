@@ -3935,7 +3935,7 @@ bot.on("message:text", async (ctx, next) => {
       return
     }
 
-      if (state.values.length === 2) {
+    if ([2, 3].includes(state.values.length)) {
       const digits = value.replace(/\D/g, "")
 
       if (digits.length < 10 || digits.length > 15) {
@@ -3947,23 +3947,24 @@ bot.on("message:text", async (ctx, next) => {
     state.values.push(value)
 
     const prompts = [
-  "Введи контактное лицо:",
-  "Введи номер телефона:",
-  "Опиши ассортимент или продукцию:",
-  "Укажи адрес поставщика:",
-  "Укажи условия доставки:",
-  "Введи сайт компании или напиши «нет»:",
-]
+      "Введи контактное лицо:",
+      "Введи мобильный номер телефона:",
+      "Введи номер WhatsApp:",
+      "Опиши ассортимент или продукцию:",
+      "Укажи адрес поставщика:",
+      "Укажи условия доставки:",
+      "Введи сайт компании или напиши «нет»:",
+    ]
 
-if (state.values.length <= prompts.length) {
-  await ctx.reply(prompts[state.values.length - 1])
-  return
-}
+    if (state.values.length <= prompts.length) {
+      await ctx.reply(prompts[state.values.length - 1])
+      return
+    }
 
-state.values[6] = value.toLowerCase() === "нет" ? "" : value
+    state.values[7] = value.toLowerCase() === "нет" ? "" : value
 
-state.step = "duration"
-await ctx.reply("Укажи срок размещения в днях. Например, 30 — на месяц.")
-return
+    state.step = "duration"
+    await ctx.reply("Укажи срок размещения в днях. Например, 30 — на месяц.")
+    return
   })
 }
