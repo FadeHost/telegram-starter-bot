@@ -1091,9 +1091,9 @@ export async function registerCommands(bot) {
 
     await saveDatabase()
 
-    const menuText = `🏙 ОБЩЕПИТ АСТАНА
+   const menuText = `🏙 ОБЩЕПИТ АСТАНА
 
-Список актуален на ${dateToday()}
+список актуален на ${dateToday()}
 
 Каталог поставщиков и услуг для ресторанов, кафе и баров Астаны.`
 
