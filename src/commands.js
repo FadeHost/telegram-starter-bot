@@ -2597,14 +2597,22 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
         keyboard.text(poultryNames[i + 1], `admin:item:${category}:p${i + 1}`)
         keyboard.row()
       }
-    } else if (category === "meat_farm") {
-      meatNames.forEach((name, i) => {
-        keyboard.text(name, `admin:item:meat_farm:m${i}`).row()
-      })
+        } else if (category === "meat_farm") {
+      for (let i = 0; i < meatNames.length; i += 2) {
+        keyboard.text(meatNames[i], `admin:item:meat_farm:m${i}`)
+        if (meatNames[i + 1]) {
+          keyboard.text(meatNames[i + 1], `admin:item:meat_farm:m${i + 1}`)
+        }
+        keyboard.row()
+      }
     } else if (category === "meat_halal") {
-      halalMeatNames.forEach((name, i) => {
-        keyboard.text(name, `admin:item:meat_halal:h${i}`).row()
-      })
+      for (let i = 0; i < halalMeatNames.length; i += 2) {
+        keyboard.text(halalMeatNames[i], `admin:item:meat_halal:h${i}`)
+        if (halalMeatNames[i + 1]) {
+          keyboard.text(halalMeatNames[i + 1], `admin:item:meat_halal:h${i + 1}`)
+        }
+        keyboard.row()
+      }
     } else if (category === "minced_meat" || category === "minced_meat_halal") {
       mincedMeatNames.forEach((name, i) => {
         keyboard.text(name, `admin:item:${category}:m${i}`).row()
