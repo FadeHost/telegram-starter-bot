@@ -1222,12 +1222,12 @@ export async function registerCommands(bot) {
     })
   })
 
-  bot.callbackQuery("admin:promo:menu", async (ctx) => {
+    bot.callbackQuery("admin:promo:menu", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
     const keyboard = new InlineKeyboard()
-      .text("🔥 Реклама дня", "admin:daily_ad")
+      .text("🎞 Визитка проекта", "admin:project_card")
       .row()
       .text("📢 Автопостер", "admin:autopost")
       .row()
