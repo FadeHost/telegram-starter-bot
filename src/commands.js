@@ -2152,9 +2152,9 @@ ${service.website ? `Сайт: ${service.website}` : ""}`,
 
     const text = [
       `Раздел: ${supplier.categoryLabel}`,
-      supplier.meatType ? `Вид продукции: ${meatTypeLabels[supplier.meatType]}` : "",
-      "",
       `🏢 Компания: ${supplier.name}`,
+      "",
+      supplier.meatType ? `Вид продукции: ${meatTypeLabels[supplier.meatType]}` : "",
       "",
       `Контактное лицо: ${supplier.contact || "Не указано"}`,
       `Телефон: ${supplier.phone || "Не указан"}`,
