@@ -21,7 +21,7 @@ if (!token) {
 const mode = (process.env.TELEGRAM_MODE || "polling").trim().toLowerCase()
 const bot = new Bot(token)
 
-registerCommands(bot)
+await registerCommands(bot)
 
 bot.catch((err) => {
   console.error("[bot] error while handling an update:", err.error ?? err)
