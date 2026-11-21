@@ -3869,11 +3869,10 @@ bot.on("message:text", async (ctx, next) => {
   state.step = "supplierPhotos"
 
   const keyboard = new InlineKeyboard()
-    .text("✅ Готово", "photo:finish")
-    .text("⏭ Пропустить", "photo:skip")
+  .text("✅ Готово", "photo:finish")
 
   await ctx.reply(
-    "Отправь фотографии поставщика по одной. Когда закончишь, нажми «Готово». Если фото нет — нажми «Пропустить».",
+    "Отправь хотя бы одну фотографию поставщика. Можешь отправить несколько, затем нажми «Готово».",
     { reply_markup: keyboard }
   )
   return
