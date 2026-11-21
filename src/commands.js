@@ -2215,7 +2215,6 @@ if (whatsappPhone) {
 
 keyboard
   .text("⬅️ Назад к поставщикам", back)
-  .row()
   .text("🏠 Главное меню", "home:new")
 
 const card = await ctx.reply(text, {
