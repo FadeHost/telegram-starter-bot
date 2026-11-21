@@ -488,7 +488,7 @@ function startAutopostScheduler(bot) {
         hourCycle: "h23",
       }).formatToParts(now)
 
-      database = { suppliers: [], equipment: [] }
+      const get = (type) => parts.find((part) => part.type === type).value
 
       const today = `${get("year")}-${get("month")}-${get("day")}`
       const currentMinutes = Number(get("hour")) * 60 + Number(get("minute"))
