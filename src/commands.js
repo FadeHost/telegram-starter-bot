@@ -1593,25 +1593,17 @@ bot.callbackQuery("admin:stats", async (ctx) => {
     lastSupplierLists.delete(ctx.chat.id)
   }
 
-  const today = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Almaty",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date())
+  const projectCard = database.projectCard
 
-  const dailyAd = database.dailyAds.find(
-    ad => ad.date === today && ad.active !== false
-  )
-
-  const menu = dailyAd
-    ? await ctx.replyWithPhoto(dailyAd.photo, {
-        reply_markup: mainKeyboard(),
-      })
-    : await ctx.reply(
-        `🏙 ОБЩЕПИТ АСТАНА`,
-        { reply_markup: mainKeyboard() }
-      )
+  const menu =
+    projectCard && Date.now() < new Date(projectCard.expiresAt).getTime()
+      ? await ctx.replyWithAnimation(projectCard.animation, {
+          reply_markup: mainKeyboard(),
+        })
+      : await ctx.reply(
+          `🏙 ОБЩЕПИТ АСТАНА`,
+          { reply_markup: mainKeyboard() }
+        )
 
   lastMainMenus.set(ctx.chat.id, menu.message_id)
 })
