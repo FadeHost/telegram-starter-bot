@@ -1494,7 +1494,7 @@ bot.callbackQuery("admin:stats", async (ctx) => {
 
         await ctx.deleteMessage()
 
-    const today = new Intl.DateTimeFormat("en-CA", {
+        const today = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Asia/Almaty",
       year: "numeric",
       month: "2-digit",
@@ -1507,13 +1507,12 @@ bot.callbackQuery("admin:stats", async (ctx) => {
 
     if (dailyAd) {
       const menu = await ctx.replyWithPhoto(dailyAd.photo, {
-        caption: `список актуален на ${dateToday()}`,
         reply_markup: mainKeyboard(),
       })
       lastMainMenus.set(ctx.chat.id, menu.message_id)
     } else {
       const menu = await ctx.reply(
-        `🏙 ОБЩЕПИТ АСТАНА\n\nсписок актуален на ${dateToday()}`,
+        `🏙 ОБЩЕПИТ АСТАНА`,
         { reply_markup: mainKeyboard() }
       )
       lastMainMenus.set(ctx.chat.id, menu.message_id)
