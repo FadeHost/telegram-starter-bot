@@ -400,7 +400,6 @@ async function loadDatabase() {
   database.equipment = []
 }
 
-  const get = (type) => parts.find((part) => part.type === type).value
     if (!Array.isArray(database.services)) {
   database.services = []
 }
