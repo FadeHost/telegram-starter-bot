@@ -3304,8 +3304,7 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     state.photos.push(photo.file_id)
 
     const keyboard = new InlineKeyboard()
-      .text("✅ Готово", "photo:finish")
-      .text("⏭ Пропустить", "photo:skip")
+    .text("✅ Готово", "photo:finish")
 
     await ctx.reply(
       `✅ Фото добавлено. Всего фотографий: ${state.photos.length}. Отправь ещё или нажми «Готово».`,
