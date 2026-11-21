@@ -1898,9 +1898,9 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       return
     }
 
-         if (category === "dairy") {
+        if (category === "dairy") {
       await ctx.editMessageText(
-        "🧀 МОЛОЧНАЯ ПРОДУКЦИЯ\n\nВыбери продукт:",
+        "🧀 Молочная продукция\n\nВыбери продукт:",
         { reply_markup: categoryKeyboard("dairy") }
       )
       return
