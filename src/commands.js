@@ -678,7 +678,7 @@ function listKeyboard(items, prefix, columns = 1) {
     keyboard.row()
   }
 
-  keyboard.text("🏠 ГЛАВНОЕ МЕНЮ", "home")
+  keyboard.text("🏠 Главное меню", "home")
   return keyboard
 }
 
