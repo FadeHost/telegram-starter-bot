@@ -1940,9 +1940,28 @@ if (category === "vegetables") {
     await showCategory(ctx, category)
   })
 
-    bot.callbackQuery(/^pick:(poultry_farm|poultry_halal|meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish|seafood|greens_salads|fruits|vegetables):([mhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+)$/, async (ctx) => {
+        bot.callbackQuery(/^pick:(poultry_farm|poultry_halal|meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish|seafood|greens_salads|fruits|vegetables):([mhpfb]\d+|g\d+|s\d+|v\d+|w\d+|f\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
-    await showCategory(ctx, ctx.match[1], ctx.match[2])
+
+    const category = ctx.match[1]
+    const itemId = ctx.match[2]
+
+    if (
+      (category === "meat_farm" && itemId === "m0") ||
+      (category === "meat_halal" && itemId === "h0")
+    ) {
+      const title = category === "meat_farm"
+        ? "🥩 ГОВЯДИНА"
+        : "🥩 ГОВЯДИНА ХАЛЯЛЬ"
+
+      await ctx.editMessageText(
+        `${title}\n\nВыбери отруб:`,
+        { reply_markup: beefKeyboard(category) }
+      )
+      return
+    }
+
+    await showCategory(ctx, category, itemId)
   })
 
     bot.callbackQuery(/^service:(repair|disinfection|cleaning|oil|accountant|automation|internet)$/, async (ctx) => {
