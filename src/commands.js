@@ -1769,7 +1769,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 
     await editMenuMessage(
   ctx,
-  "💼 ГОТОВЫЙ БИЗНЕС\n\nВыбери интересующий объект:",
+  `💼 Готовый бизнес\n\nСписок актуален на ${dateToday()}`,
   { reply_markup: keyboard }
 )
   })
