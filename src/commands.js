@@ -1862,15 +1862,15 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       keyboard
         .text("⬅️ Назад", "products")
         .text("🏠 Главное меню", "home")
-
+      
       await ctx.editMessageText(
-        "🥫 БАКАЛЕЯ\n\nВыбери подкатегорию:",
+        "🥫 Бакалея\n\nВыбери подкатегорию:",
         { reply_markup: keyboard }
       )
       return
     }
 
-              if (category === "poultry_farm" || category === "poultry_halal") {
+    if (category === "poultry_farm" || category === "poultry_halal") {
       const title = category === "poultry_farm"
         ? "🍗 Птица фермер"
         : "🍗 Птица халяль"
@@ -1898,7 +1898,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       return
     }
 
-        if (category === "dairy") {
+    if (category === "dairy") {
       await ctx.editMessageText(
         "🧀 Молочная продукция\n\nВыбери продукт:",
         { reply_markup: categoryKeyboard("dairy") }
@@ -1906,9 +1906,9 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
       return
     }
 
-        if (category === "fish") {
+    if (category === "fish") {
       await ctx.editMessageText(
-        "🐟 РЫБА\n\nВыбери продукт:",
+        "🐟 Рыба\n\nВыбери продукт:",
         { reply_markup: categoryKeyboard("fish") }
       )
       return
@@ -1916,40 +1916,40 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 
     if (category === "seafood") {
       await ctx.editMessageText(
-        "🦐 МОРЕПРОДУКТЫ\n\nВыбери продукт:",
+        "🦐 Морепродукты\n\nВыбери продукт:",
         { reply_markup: categoryKeyboard("seafood") }
       )
       return
     }
 
     if (category === "greens_salads") {
-  await ctx.editMessageText(
-    "🥬 ЗЕЛЕНЬ И САЛАТЫ\n\nВыбери продукт:",
-    { reply_markup: categoryKeyboard("greens_salads") }
-  )
-  return
-}
+      await ctx.editMessageText(
+        "🥬 Зелень и салаты\n\nВыбери продукт:",
+        { reply_markup: categoryKeyboard("greens_salads") }
+      )
+      return
+    }
 
-if (category === "fruits") {
-  await ctx.editMessageText(
-    "🍎 ФРУКТЫ\n\nВыбери продукт:",
-    { reply_markup: categoryKeyboard("fruits") }
-  )
-  return
-}
+    if (category === "fruits") {
+      await ctx.editMessageText(
+        "🍎 Фрукты\n\nВыбери продукт:",
+        { reply_markup: categoryKeyboard("fruits") }
+      )
+      return
+    }
 
-if (category === "vegetables") {
-  await ctx.editMessageText(
-    "🥒 ОВОЩИ\n\nВыбери продукт:",
-    { reply_markup: categoryKeyboard("vegetables") }
-  )
-  return
-}
+    if (category === "vegetables") {
+      await ctx.editMessageText(
+        "🥒 Овощи\n\nВыбери продукт:",
+        { reply_markup: categoryKeyboard("vegetables") }
+      )
+      return
+    }
 
     await showCategory(ctx, category)
   })
 
-        bot.callbackQuery(/^pick:(poultry_farm|poultry_halal|meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish|seafood|greens_salads|fruits|vegetables):([mhpfb]\d+|g\d+|s\d+|v\d+|w\d+|f\d+)$/, async (ctx) => {
+  bot.callbackQuery(/^pick:(poultry_farm|poultry_halal|meat_farm|minced_meat|minced_meat_halal|meat_halal|dairy|fish|seafood|greens_salads|fruits|vegetables):([mhpfb]\d+|g\d+|s\d+|v\d+|w\d+|f\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
 
     const category = ctx.match[1]
@@ -1960,8 +1960,8 @@ if (category === "vegetables") {
       (category === "meat_halal" && itemId === "h0")
     ) {
       const title = category === "meat_farm"
-        ? "🥩 ГОВЯДИНА"
-        : "🥩 ГОВЯДИНА ХАЛЯЛЬ"
+        ? "🥩 Говядина"
+        : "🥩 Говядина халяль"
 
       await ctx.editMessageText(
         `${title}\n\nВыбери отруб:`,
@@ -1972,19 +1972,20 @@ if (category === "vegetables") {
 
     await showCategory(ctx, category, itemId)
   })
-      bot.callbackQuery(/^beef:list:(meat_farm|meat_halal)$/, async (ctx) => {
-      await ctx.answerCallbackQuery()
 
-      const category = ctx.match[1]
-      const title = category === "meat_farm"
-        ? "🥩 ГОВЯДИНА"
-        : "🥩 ГОВЯДИНА ХАЛЯЛЬ"
+  bot.callbackQuery(/^beef:list:(meat_farm|meat_halal)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
 
-      await ctx.editMessageText(
-        `${title}\n\nВыбери отруб:`,
-        { reply_markup: beefKeyboard(category) }
-      )
-    })
+    const category = ctx.match[1]
+    const title = category === "meat_farm"
+      ? "🥩 Говядина"
+      : "🥩 Говядина халяль"
+
+    await ctx.editMessageText(
+      `${title}\n\nВыбери отруб:`,
+      { reply_markup: beefKeyboard(category) }
+    )
+  })
 
     bot.callbackQuery(/^service:(repair|disinfection|cleaning|oil|accountant|automation|internet)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
