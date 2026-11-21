@@ -1106,24 +1106,16 @@ export async function registerCommands(bot) {
       }
     }
 
-        const today = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Almaty",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(new Date())
+        const projectCard = database.projectCard
 
-    const dailyAd = database.dailyAds.find(
-      ad => ad.date === today && ad.active !== false
-    )
-
-        const message = dailyAd
-      ? await ctx.replyWithPhoto(dailyAd.photo, {
-          reply_markup: mainKeyboard(),
-        })
-      : await ctx.reply(menuText, {
-          reply_markup: mainKeyboard(),
-        })
+    const message =
+      projectCard && Date.now() < new Date(projectCard.expiresAt).getTime()
+        ? await ctx.replyWithAnimation(projectCard.animation, {
+            reply_markup: mainKeyboard(),
+          })
+        : await ctx.reply(menuText, {
+            reply_markup: mainKeyboard(),
+          })
 
     database.startMessages[userId] = message.message_id
     await saveDatabase()
