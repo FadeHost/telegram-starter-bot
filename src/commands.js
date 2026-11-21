@@ -636,15 +636,15 @@ async function saveAutopostJob(state) {
 
 function mainKeyboard() {
   return new InlineKeyboard()
-    .text("📦 Поставщики", "products")
+    .text("📦 ПОСТАВЩИКИ", "products")
     .row()
-    .text("🛠 Услуги для общепита", "services")
+    .text("🛠 УСЛУГИ ДЛЯ ОБЩЕПИТА", "services")
     .row()
-    .text("⚙️ Оборудование для общепита", "equipment")
+    .text("⚙️ ОБОРУДОВАНИЕ ДЛЯ ОБЩЕПИТА", "equipment")
     .row()
-    .text("💼 Готовый бизнес", "business")
+    .text("💼 ГОТОВЫЙ БИЗНЕС", "business")
     .row()
-    .text("ℹ️ О проекте", "about")
+    .text("ℹ️ О ПРОЕКТЕ", "about")
 }
 async function editMenuMessage(ctx, text, options) {
   const message = ctx.callbackQuery.message
