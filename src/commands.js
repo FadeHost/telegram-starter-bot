@@ -2664,7 +2664,7 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     })
   })
 
-        bot.callbackQuery(/^admin:item:([^:]+):([bmhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+|none)$/, async (ctx) => {
+    bot.callbackQuery(/^admin:item:([^:]+):([bmhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+|none)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
@@ -2699,6 +2699,31 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       ? categoryNames.get(category)
       : categoryTitle(category, itemId)
 
+    if (["meat_farm", "meat_halal", "poultry_farm", "poultry_halal"].includes(category)) {
+      const isPoultry = category.startsWith("poultry_")
+      const productEmoji = isPoultry ? "🍗" : "🥩"
+
+      userSteps.set(ctx.from.id, {
+        step: "meatType",
+        category,
+        itemId: itemId === "none" ? null : itemId,
+        categoryLabel: label,
+        productEmoji,
+        values: [],
+      })
+
+      const keyboard = new InlineKeyboard()
+        .text(`${productEmoji} Свежее`, "admin:meat-type:fresh")
+        .text("❄️ Замороженное", "admin:meat-type:frozen")
+        .row()
+        .text(`${productEmoji} Свежее и ❄️ Замороженное`, "admin:meat-type:both")
+
+      await ctx.editMessageText("Выбери вид продукции:", {
+        reply_markup: keyboard,
+      })
+      return
+    }
+
     userSteps.set(ctx.from.id, {
       step: "supplier",
       category,
@@ -2711,6 +2736,23 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       "Введи название компании или поставщика:"
     )
   })
+
+    bot.callbackQuery(/^admin:meat-type:(fresh|frozen|both)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = userSteps.get(ctx.from.id)
+    if (!state || state.step !== "meatType") return
+
+    state.meatType = ctx.match[1]
+    state.step = "supplier"
+    userSteps.set(ctx.from.id, state)
+
+    await ctx.editMessageText(
+      "Введи название компании или поставщика:"
+    )
+  })
+
 
     bot.callbackQuery("admin:delete", async (ctx) => {
     await ctx.answerCallbackQuery()
