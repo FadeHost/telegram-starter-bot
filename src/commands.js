@@ -2201,13 +2201,13 @@ ${service.website ? `Сайт: ${service.website}` : ""}`,
 
     supplierPhotoMessages.set(ctx.chat.id, photoMessageIds)
 
-    const phoneDigits = (supplier.phone || "").replace(/\D/g, "")
-const whatsappPhone =
-  phoneDigits.length === 11 && phoneDigits.startsWith("8")
-    ? `7${phoneDigits.slice(1)}`
-    : phoneDigits.length === 10
-      ? `7${phoneDigits}`
-      : phoneDigits
+    const phoneDigits = (supplier.whatsappPhone || "").replace(/\D/g, "")
+    const whatsappPhone =
+      phoneDigits.length === 11 && phoneDigits.startsWith("8")
+        ? `7${phoneDigits.slice(1)}`
+        : phoneDigits.length === 10
+          ? `7${phoneDigits}`
+          : phoneDigits
 
 const keyboard = new InlineKeyboard()
 
