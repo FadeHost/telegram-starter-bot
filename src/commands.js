@@ -1666,7 +1666,7 @@ bot.callbackQuery(
   const keyboard = new InlineKeyboard()
 
   if (hasValidPhone) {
-    keyboard.url("WhatsApp", `https://wa.me/${whatsappPhone}`).row()
+    keyboard.url("Написать WhatsApp", `https://wa.me/${whatsappPhone}`).row()
   }
 
   keyboard.text(
