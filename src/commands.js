@@ -1815,7 +1815,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     businessPhotoMessages.set(ctx.chat.id, messageIds)
 
     await ctx.reply(
-      `💼 ${business.format}
+    `💼 Вид помещения: ${business.format}
 
 Площадь: ${business.area} м²
 Электричество: ${business.electricity} кВт
