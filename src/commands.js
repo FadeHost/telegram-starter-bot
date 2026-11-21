@@ -388,7 +388,7 @@ async function loadDatabase() {
     database = parsedDatabase
   } catch (error) {
     if (error.code !== "ENOENT") throw error
-    database = { suppliers: [], equipment: [], dailyAds: [] }
+    database = { suppliers: [], equipment: [] }
     await saveDatabase()
   }
 
