@@ -1516,7 +1516,7 @@ bot.callbackQuery("admin:stats", async (ctx) => {
       lastMainMenus.set(ctx.chat.id, menu.message_id)
     } else {
       const menu = await ctx.reply(
-        `🏙 ОБЩЕПИТ АСТАНА\n\nСписок актуален на ${dateToday()}`,
+        `🏙 ОБЩЕПИТ АСТАНА\n\nсписок актуален на ${dateToday()}`,
         { reply_markup: mainKeyboard() }
       )
       lastMainMenus.set(ctx.chat.id, menu.message_id)
