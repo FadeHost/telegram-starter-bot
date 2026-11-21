@@ -3000,19 +3000,14 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     const state = userSteps.get(ctx.from.id)
     if (!state || state.step !== "supplierPhotos") return
 
+    if (!state.photos || state.photos.length === 0) {
+      await ctx.reply("Сначала отправь хотя бы одну фотографию.")
+      return
+    }
+
     await finishSupplier(ctx, state)
   })
 
-  bot.callbackQuery("photo:skip", async (ctx) => {
-    await ctx.answerCallbackQuery()
-    if (!isAdmin(ctx)) return
-
-    const state = userSteps.get(ctx.from.id)
-    if (!state || state.step !== "supplierPhotos") return
-
-    state.photos = []
-    await finishSupplier(ctx, state)
-  })
       bot.callbackQuery("business:cancel", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
