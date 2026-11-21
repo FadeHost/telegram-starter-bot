@@ -1748,13 +1748,13 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     const businesses = database.businesses || []
 
     if (businesses.length === 0) {
-      await editMenuMessage(
-  ctx,
-  "💼 ГОТОВЫЙ БИЗНЕС\n\nПока нет объявлений.",
-  { reply_markup: backHomeKeyboard() }
-)
-      return
-    }
+  await editMenuMessage(
+    ctx,
+    `💼 Готовый бизнес\n\nСписок актуален на ${dateToday()}\n\nПока нет объявлений.`,
+    { reply_markup: backHomeKeyboard() }
+  )
+  return
+}
 
     const keyboard = new InlineKeyboard()
 
