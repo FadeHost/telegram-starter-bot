@@ -1586,7 +1586,7 @@ bot.callbackQuery("admin:stats", async (ctx) => {
 })
 bot.callbackQuery("products", async (ctx) => {
   await ctx.answerCallbackQuery()
-  await editMenuMessage(ctx, "📦 Поставщики\n\nВыбери категорию:", {
+  await editMenuMessage(ctx, `📦 Поставщики\n\nСписок актуален на ${dateToday()}`, {
     reply_markup: listKeyboard(products, "product", 2),
   })
 })
