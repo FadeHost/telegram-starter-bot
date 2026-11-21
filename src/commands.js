@@ -2664,12 +2664,36 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     })
   })
 
-    bot.callbackQuery(/^admin:item:([^:]+):([mhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+|none)$/, async (ctx) => {
+        bot.callbackQuery(/^admin:item:([^:]+):([bmhpf]\d+|g\d+|s\d+|v\d+|w\d+|f\d+|none)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
     const category = ctx.match[1]
     const itemId = ctx.match[2]
+
+    if (
+      (category === "meat_farm" || category === "meat_halal") &&
+      (itemId === "m0" || itemId === "h0")
+    ) {
+      const keyboard = new InlineKeyboard()
+
+      for (let i = 0; i < beefNames.length; i += 2) {
+        keyboard.text(beefNames[i], `admin:item:${category}:b${i}`)
+        if (beefNames[i + 1]) {
+          keyboard.text(beefNames[i + 1], `admin:item:${category}:b${i + 1}`)
+        }
+        keyboard.row()
+      }
+
+      keyboard
+        .text("⬅️ Назад", `admin:cat:${category}`)
+        .text("❌ Отмена", "admin:cancel")
+
+      await ctx.editMessageText("Выбери говяжий отруб:", {
+        reply_markup: keyboard,
+      })
+      return
+    }
 
     const label = itemId === "none"
       ? categoryNames.get(category)
