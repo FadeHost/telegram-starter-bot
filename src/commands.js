@@ -3626,6 +3626,28 @@ bot.on("message:text", async (ctx, next) => {
       await ctx.reply("Поле не должно быть пустым. Введи значение:")
       return
     }
+            if (state.step === "projectCardDays") {
+      const days = Number(value)
+
+      if (!Number.isInteger(days) || days < 1 || days > 365) {
+        await ctx.reply("Укажи целое число от 1 до 365 дней:")
+        return
+      }
+
+      const now = Date.now()
+
+      database.projectCard = {
+        animation: state.animation,
+        createdAt: new Date(now).toISOString(),
+        expiresAt: new Date(now + days * 24 * 60 * 60 * 1000).toISOString(),
+      }
+
+      await saveDatabase()
+      userSteps.delete(ctx.from.id)
+
+      await ctx.reply(`✅ GIF-визитка сохранена на ${days} дней!`)
+      return
+    }
         if (state.step === "dailyAdRescheduleDate") {
       const match = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/)
 
