@@ -2141,20 +2141,31 @@ ${service.website ? `Сайт: ${service.website}` : ""}`,
       return
     }
 
+    
+    const productEmoji = supplier.category.startsWith("poultry_") ? "🍗" : "🥩"
+
+    const meatTypeLabels = {
+      fresh: `${productEmoji} Свежее`,
+      frozen: "❄️ Замороженное",
+      both: `${productEmoji} Свежее и ❄️ Замороженное`,
+    }
+
     const text = [
-  `Раздел: ${supplier.categoryLabel}`,
-  "",
-  `🏢 ${supplier.name}`,
-  "",
-  `Контактное лицо: ${supplier.contact || "Не указано"}`,
-  `Телефон: ${supplier.phone || "Не указан"}`,
-  "",
-  supplier.description || "",
-  "",
-  `Адрес: ${supplier.address || "Не указан"}`,
-  `Доставка: ${supplier.delivery || "Не указано"}`,
-  supplier.website ? `Сайт: ${supplier.website}` : "",
-].filter(Boolean).join("\n")
+      `Раздел: ${supplier.categoryLabel}`,
+      supplier.meatType ? `Вид продукции: ${meatTypeLabels[supplier.meatType]}` : "",
+      "",
+      `🏢 ${supplier.name}`,
+      "",
+      `Контактное лицо: ${supplier.contact || "Не указано"}`,
+      `Телефон: ${supplier.phone || "Не указан"}`,
+      "",
+      supplier.description || "",
+      "",
+      `Адрес: ${supplier.address || "Не указан"}`,
+      `Доставка: ${supplier.delivery || "Не указано"}`,
+      supplier.website ? `Сайт: ${supplier.website}` : "",
+    ].filter(Boolean).join("\n")
+
 
     const back = supplier.itemId
       ? `category:${supplier.category}:${supplier.itemId}`
