@@ -3355,7 +3355,8 @@ bot.on("message:text", async (ctx, next) => {
     documents: state.values.documents,
     delivery: state.values.delivery,
     phone: state.values.phone,
-    photo: state.values.photo,
+    photos: state.values.photos,
+    photo: state.values.photos?.[0],
     createdAt: new Date().toISOString(),
   }
 
