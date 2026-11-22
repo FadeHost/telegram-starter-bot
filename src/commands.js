@@ -2410,17 +2410,17 @@ bot.callbackQuery(/^equipment:documents:(yes|no)$/, async (ctx) => {
     reply_markup: keyboard,
   })
 })
-bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
+ bot.callbackQuery(/^equipment:delivery:(free|paid)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
   const state = userSteps.get(ctx.from.id)
-if (!state || state.step !== "equipmentDelivery" || !state.values) return
+  if (!state || state.step !== "equipmentDelivery" || !state.values) return
 
   state.values.delivery = ctx.match[1] === "free" ? "Бесплатная" : "Платная"
-  state.step = "equipmentPhone"
+  state.step = "equipmentDescription"
 
-  await ctx.reply("Укажи номер телефона для связи:")
+  await ctx.reply("Напиши описание оборудования:")
 })
   
   bot.callbackQuery(/^equipment:warranty:(yes|no)$/, async (ctx) => {
