@@ -3286,6 +3286,7 @@ if (!state || state.step !== "businessEquipment") return
         "equipmentWarranty",
         "equipmentDocuments",
         "equipmentDelivery",
+        "equipmentDescription",
         "equipmentPhone",
       ].includes(state.step) &&
       ctx.message.text.trim() === "/cancel"
