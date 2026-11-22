@@ -1469,7 +1469,26 @@ bot.callbackQuery(
     await ctx.deleteMessage()
   } catch (error) {}
 
-    const photoMessage = await ctx.replyWithPhoto(item.photo)
+  const photos = Array.isArray(item.photos) && item.photos.length
+    ? item.photos
+    : item.photo
+      ? [item.photo]
+      : []
+
+  let photoMessages = []
+
+  if (photos.length > 1) {
+    photoMessages = await ctx.api.sendMediaGroup(
+      ctx.chat.id,
+      photos.map((photo) => ({
+        type: "photo",
+        media: photo,
+      }))
+    )
+  } else if (photos.length === 1) {
+    const photoMessage = await ctx.replyWithPhoto(photos[0])
+    photoMessages = [photoMessage]
+  }
 
   const phoneDigits = String(item.phone || "").replace(/\D/g, "")
   const hasValidPhone = phoneDigits.length >= 10 && phoneDigits.length <= 15
@@ -1487,17 +1506,19 @@ bot.callbackQuery(
     keyboard.url("Написать WhatsApp", `https://wa.me/${whatsappPhone}`).row()
   }
 
-  keyboard.text(
-    "⬅️ Вернуться к списку товаров",
-    `equipment:back:${item.category}`
-  )
+  keyboard
+    .text("⬅️ Назад", `equipment:back:${item.category}`)
+    .text("🏠 Главное меню", "home")
 
   const cardMessage = await ctx.reply(
     `🏢 Компания: ${item.name}\n\nМодель: ${item.model}`,
     { reply_markup: keyboard }
   )
 
-  equipmentPhotoMessages.set(cardMessage.message_id, photoMessage.message_id)
+  equipmentPhotoMessages.set(
+    cardMessage.message_id,
+    photoMessages.map((message) => message.message_id)
+  )
 })
 
 bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
