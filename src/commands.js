@@ -1201,6 +1201,8 @@ export async function registerCommands(bot) {
       .row()
       .text("🗑 Удалить поставщика", "admin:delete")
       .row()
+      .text("⚙️ Удалить оборудование", "admin:equipment:delete")
+      .row()
       .text("❌ Удалить готовый бизнес", "admin:business:delete")
       .row()
       .text("⬅️ Назад", "admin:back")
