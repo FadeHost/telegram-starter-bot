@@ -3381,7 +3381,7 @@ bot.on("message:text", async (ctx, next) => {
     reply_markup: keyboard,
   })
 })
-  bot.on("message:text", async (ctx, next) => {
+bot.on("message:text", async (ctx, next) => {
   const state = userSteps.get(ctx.from.id)
 
   if (!isAdmin(ctx) || !state || state.step !== "equipmentPhone") return next()
@@ -3390,11 +3390,49 @@ bot.on("message:text", async (ctx, next) => {
   const digits = phone.replace(/\D/g, "")
 
   if (digits.length < 10 || digits.length > 15) {
-    await ctx.reply("Укажи корректный номер телефона:")
+    await ctx.reply("Укажи корректный мобильный номер:")
     return
   }
 
   state.values.phone = phone
+  state.step = "equipmentWhatsApp"
+
+  await ctx.reply("Укажи отдельный номер WhatsApp:")
+})
+
+bot.on("message:text", async (ctx, next) => {
+  const state = userSteps.get(ctx.from.id)
+
+  if (!isAdmin(ctx) || !state || state.step !== "equipmentWhatsApp") return next()
+
+  const whatsappPhone = ctx.message.text.trim()
+  const digits = whatsappPhone.replace(/\D/g, "")
+
+  if (digits.length < 10 || digits.length > 15) {
+    await ctx.reply("Укажи корректный номер WhatsApp:")
+    return
+  }
+
+  state.values.whatsappPhone = whatsappPhone
+  state.step = "equipmentPrice"
+
+  await ctx.reply("Укажи цену оборудования в тенге:")
+})
+
+bot.on("message:text", async (ctx, next) => {
+  const state = userSteps.get(ctx.from.id)
+
+  if (!isAdmin(ctx) || !state || state.step !== "equipmentPrice") return next()
+
+  const value = ctx.message.text.trim()
+  const price = Number(value.replace(/\s/g, ""))
+
+  if (!Number.isFinite(price) || price <= 0) {
+    await ctx.reply("Укажи корректную цену в тенге. Например: 450000")
+    return
+  }
+
+  state.values.price = price
 
   const equipment = {
     id: crypto.randomUUID(),
@@ -3407,9 +3445,12 @@ bot.on("message:text", async (ctx, next) => {
     warranty: state.values.warranty,
     documents: state.values.documents,
     delivery: state.values.delivery,
+    description: state.values.description,
     phone: state.values.phone,
+    whatsappPhone: state.values.whatsappPhone,
     photos: state.values.photos,
     photo: state.values.photos?.[0],
+    price: state.values.price,
     createdAt: new Date().toISOString(),
   }
 
