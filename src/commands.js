@@ -1503,19 +1503,19 @@ bot.callbackQuery(
     photoMessages = [photoMessage]
   }
 
-  const phoneDigits = String(item.phone || "").replace(/\D/g, "")
-  const hasValidPhone = phoneDigits.length >= 10 && phoneDigits.length <= 15
+  const whatsappDigits = String(item.whatsappPhone || "").replace(/\D/g, "")
+  const hasValidWhatsApp = whatsappDigits.length >= 10 && whatsappDigits.length <= 15
 
   const whatsappPhone =
-    phoneDigits.length === 11 && phoneDigits.startsWith("8")
-      ? `7${phoneDigits.slice(1)}`
-      : phoneDigits.length === 10
-        ? `7${phoneDigits}`
-        : phoneDigits
+    whatsappDigits.length === 11 && whatsappDigits.startsWith("8")
+      ? `7${whatsappDigits.slice(1)}`
+      : whatsappDigits.length === 10
+        ? `7${whatsappDigits}`
+        : whatsappDigits
 
   const keyboard = new InlineKeyboard()
 
-  if (hasValidPhone) {
+  if (hasValidWhatsApp) {
     keyboard.url("Написать WhatsApp", `https://wa.me/${whatsappPhone}`).row()
   }
 
@@ -1523,10 +1523,25 @@ bot.callbackQuery(
     .text("⬅️ Назад", `equipment:back:${item.category}`)
     .text("🏠 Главное меню", "home")
 
-  const cardMessage = await ctx.reply(
-    `🏢 Компания: ${item.name}\n\nМодель: ${item.model}`,
-    { reply_markup: keyboard }
-  )
+  const cardText = [
+    `Наименование: ${item.name}`,
+    `Модель: ${item.model}`,
+    `Состояние: ${item.condition}`,
+    item.condition === "Б/У" && item.purchaseYear
+      ? `Год покупки: ${item.purchaseYear}`
+      : null,
+    `Гарантия: ${item.warranty || "—"}`,
+    `Документы: ${item.documents || "—"}`,
+    `Описание: ${item.description || "—"}`,
+    `Доставка: ${item.delivery || "—"}`,
+    `Мобильный: ${item.phone || "—"}`,
+    `WhatsApp: ${item.whatsappPhone || "—"}`,
+    `Цена: ${Number(item.price || 0).toLocaleString("ru-RU")} ₸`,
+  ].filter(Boolean).join("\n\n")
+
+  const cardMessage = await ctx.reply(cardText, {
+    reply_markup: keyboard,
+  })
 
   equipmentPhotoMessages.set(
     cardMessage.message_id,
