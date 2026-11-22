@@ -1320,6 +1320,19 @@ bot.callbackQuery("admin:stats", async (ctx) => {
     bot.callbackQuery("home", async (ctx) => {
     await ctx.answerCallbackQuery()
 
+    const equipmentCardId = ctx.callbackQuery.message.message_id
+    const equipmentPhotoIds = equipmentPhotoMessages.get(equipmentCardId) || []
+
+    for (const messageId of equipmentPhotoIds) {
+      try {
+        await ctx.api.deleteMessage(ctx.chat.id, messageId)
+      } catch (error) {
+        console.log("Не удалось удалить фото оборудования:", error)
+      }
+    }
+
+    equipmentPhotoMessages.delete(equipmentCardId)
+
     const savedService = servicePhotoMessages.get(ctx.chat.id)
 
     if (savedService) {
