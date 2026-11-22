@@ -3317,7 +3317,7 @@ if (!state || state.step !== "businessEquipment") return
     await ctx.reply("Укажи модель оборудования:")
   })
 
-bot.on("message:text", async (ctx, next) => {
+  bot.on("message:text", async (ctx, next) => {
   const state = userSteps.get(ctx.from.id)
 
   if (!isAdmin(ctx) || !state || state.step !== "equipmentModel") return next()
@@ -3335,7 +3335,12 @@ bot.on("message:text", async (ctx, next) => {
     .text("Новое", "equipment:condition:new")
     .text("Б/У", "equipment:condition:used")
 
-  bot.on("message:text", async (ctx, next) => {
+  await ctx.reply("Выбери состояние оборудования:", {
+    reply_markup: keyboard,
+  })
+})
+
+bot.on("message:text", async (ctx, next) => {
   const state = userSteps.get(ctx.from.id)
 
   if (!isAdmin(ctx) || !state || state.step !== "equipmentDescription") return next()
