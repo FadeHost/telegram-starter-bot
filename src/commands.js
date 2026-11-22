@@ -1527,12 +1527,12 @@ bot.callbackQuery(
     `Наименование: ${item.name}`,
     `Модель: ${item.model}`,
     `Состояние: ${item.condition}`,
+    `Описание: ${item.description || "—"}`,
     item.condition === "Б/У" && item.purchaseYear
       ? `Год покупки: ${item.purchaseYear}`
       : null,
     `Гарантия: ${item.warranty || "—"}`,
     `Документы: ${item.documents || "—"}`,
-    `Описание: ${item.description || "—"}`,
     `Доставка: ${item.delivery || "—"}`,
     `Мобильный: ${item.phone || "—"}`,
     `WhatsApp: ${item.whatsappPhone || "—"}`,
