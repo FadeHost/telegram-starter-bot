@@ -2324,7 +2324,7 @@ if (!state || state.step !== "businessHeating") return
     reply_markup: keyboard,
   })
 })
-  bot.callbot.callbackQuery(/^admin:equipment:cat:(.+)$/, async (ctx) => {
+  bot.callbackQuery(/^admin:equipment:cat:(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
