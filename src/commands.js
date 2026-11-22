@@ -3335,9 +3335,22 @@ bot.on("message:text", async (ctx, next) => {
     .text("Новое", "equipment:condition:new")
     .text("Б/У", "equipment:condition:used")
 
-  await ctx.reply("Выбери состояние оборудования:", {
-    reply_markup: keyboard,
-  })
+  bot.on("message:text", async (ctx, next) => {
+  const state = userSteps.get(ctx.from.id)
+
+  if (!isAdmin(ctx) || !state || state.step !== "equipmentDescription") return next()
+
+  const value = ctx.message.text.trim()
+
+  if (!value) {
+    await ctx.reply("Напиши описание оборудования:")
+    return
+  }
+
+  state.values.description = value
+  state.step = "equipmentPhone"
+
+  await ctx.reply("Укажи мобильный номер для связи:")
 })
   bot.on("message:text", async (ctx, next) => {
   const state = userSteps.get(ctx.from.id)
