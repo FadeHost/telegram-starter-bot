@@ -645,7 +645,7 @@ function mainKeyboard() {
 async function editMenuMessage(ctx, text, options) {
   const message = ctx.callbackQuery.message
 
-  if (message.photo) {
+  if (!message.text) {
     await ctx.api.deleteMessage(ctx.chat.id, message.message_id)
     return await ctx.reply(text, options)
   }
