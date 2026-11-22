@@ -2324,17 +2324,38 @@ if (!state || state.step !== "businessHeating") return
     reply_markup: keyboard,
   })
 })
-  bot.callbackQuery(/^admin:equipment:cat:(.+)$/, async (ctx) => {
+  bot.callbot.callbackQuery(/^admin:equipment:cat:(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
   userSteps.set(ctx.from.id, {
     step: "equipmentPhoto",
     category: ctx.match[1],
-    values: {},
+    values: {
+      photos: [],
+    },
   })
 
-  await ctx.editMessageText("Отправь фотографию оборудования:")
+  await ctx.editMessageText(
+    "Отправь до 3 фотографий оборудования. После загрузки нажми «Готово»."
+  )
+})
+
+bot.callbackQuery("admin:equipment:photos_done", async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const state = userSteps.get(ctx.from.id)
+
+  if (!state || state.step !== "equipmentPhoto") return
+
+  if (!state.values.photos || state.values.photos.length === 0) {
+    await ctx.reply("Сначала отправь хотя бы одну фотографию.")
+    return
+  }
+
+  state.step = "equipmentName"
+  await ctx.reply("Укажи наименование оборудования:")
 })
 bot.callbackQuery(/^equipment:documents:(yes|no)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
