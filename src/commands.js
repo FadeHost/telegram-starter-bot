@@ -3012,7 +3012,7 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
 
       if (!isAdmin(ctx) || !state) return next()
 
-    if (state.step === "equipmentPhoto") {
+      if (state.step === "equipmentPhoto") {
   const photo = ctx.message.photo.at(-1)
 
   if (!photo?.file_id) {
@@ -3020,10 +3020,24 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     return
   }
 
-  state.values.photo = photo.file_id
-  state.step = "equipmentName"
+  state.values.photos = state.values.photos || []
 
-  await ctx.reply("Укажи наименование оборудования:")
+  if (state.values.photos.length >= 3) {
+    await ctx.reply("Можно загрузить максимум 3 фотографии. Нажми «Готово».")
+    return
+  }
+
+  state.values.photos.push(photo.file_id)
+
+  const count = state.values.photos.length
+  const keyboard = new InlineKeyboard()
+    .text("Готово", "admin:equipment:photos_done")
+
+  await ctx.reply(
+    `Фото добавлено: ${count}/3. Можешь отправить ещё или нажать «Готово».`,
+    { reply_markup: keyboard }
+  )
+
   return
 }
 
