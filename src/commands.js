@@ -3277,18 +3277,20 @@ if (!state || state.step !== "businessEquipment") return
     if (
       isAdmin(ctx) &&
       state &&
-            [
-        "equipmentPhoto",
-        "equipmentName",
-        "equipmentModel",
-        "equipmentCondition",
-        "equipmentYear",
-        "equipmentWarranty",
-        "equipmentDocuments",
-        "equipmentDelivery",
-        "equipmentDescription",
-        "equipmentPhone",
-      ].includes(state.step) &&
+[
+  "equipmentPhoto",
+  "equipmentName",
+  "equipmentModel",
+  "equipmentCondition",
+  "equipmentYear",
+  "equipmentWarranty",
+  "equipmentDocuments",
+  "equipmentDelivery",
+  "equipmentDescription",
+  "equipmentPhone",
+  "equipmentWhatsApp",
+  "equipmentPrice",
+].includes(state.step) &&
       ctx.message.text.trim() === "/cancel"
     ) {
       userSteps.delete(ctx.from.id)
