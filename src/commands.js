@@ -1525,7 +1525,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
 
   const cardMessageId = ctx.callbackQuery.message.message_id
-  const photoMessageId = equipmentPhotoMessages.get(cardMessageId)
+  const photoMessageIds = equipmentPhotoMessages.get(cardMessageId) || []
 
   try {
     await ctx.api.deleteMessage(ctx.chat.id, cardMessageId)
@@ -1533,7 +1533,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     console.log("Не удалось удалить карточку оборудования")
   }
 
-  if (photoMessageId) {
+  for (const photoMessageId of photoMessageIds) {
     try {
       await ctx.api.deleteMessage(ctx.chat.id, photoMessageId)
     } catch (error) {
