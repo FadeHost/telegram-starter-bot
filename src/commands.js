@@ -2809,6 +2809,83 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       { reply_markup: adminKeyboard() }
     )
   })
+    bot.callbackQuery("admin:equipment:delete", async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    if (!database.equipment.length) {
+      await ctx.editMessageText("Оборудования пока нет.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+
+    for (const item of database.equipment) {
+      keyboard.text(
+        `${item.name} — ${item.model}`,
+        `equipment:delete:select:${item.id}`
+      ).row()
+    }
+
+    keyboard.text("⬅️ Назад", "admin:cancel")
+
+    await ctx.editMessageText(
+      "Выбери оборудование, которое нужно удалить:",
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery(/^equipment:delete:select:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const item = database.equipment.find(
+      (equipment) => equipment.id === ctx.match[1]
+    )
+
+    if (!item) {
+      await ctx.editMessageText("Оборудование не найдено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const keyboard = new InlineKeyboard()
+      .text("🗑 Да, удалить", `equipment:delete:yes:${item.id}`)
+      .row()
+      .text("❌ Отмена", "admin:cancel")
+
+    await ctx.editMessageText(
+      `⚠️ Подтверди удаление оборудования:\n\n${item.name}\nМодель: ${item.model}\n\nЭто действие нельзя отменить.`,
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery(/^equipment:delete:yes:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const index = database.equipment.findIndex(
+      (item) => item.id === ctx.match[1]
+    )
+
+    if (index === -1) {
+      await ctx.editMessageText("Оборудование уже удалено или не найдено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    const [item] = database.equipment.splice(index, 1)
+    await saveDatabase()
+
+    await ctx.editMessageText(
+      `✅ Оборудование «${item.name}» удалено.`,
+      { reply_markup: adminKeyboard() }
+    )
+  })
   bot.callbackQuery("admin:extend", async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
