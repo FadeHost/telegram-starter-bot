@@ -1663,8 +1663,18 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 
     const messageIds = []
 
+        const whatsappNumber = String(business.whatsapp || "").replace(/\D/g, "")
     const keyboard = new InlineKeyboard()
+
+    if (whatsappNumber) {
+      keyboard
+        .url("Написать в WhatsApp", `https://wa.me/${whatsappNumber}`)
+        .row()
+    }
+
+    keyboard
       .text("⬅️ Назад к списку", "business")
+      .text("🏠 Главное меню", "home")
 
     if (business.photos && business.photos.length > 0) {
       for (let i = 0; i < business.photos.length; i += 10) {
