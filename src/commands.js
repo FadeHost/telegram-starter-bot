@@ -3006,10 +3006,12 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       .row()
       .text("❌ Отменить", "business:cancel")
 
-    await ctx.reply(
+        await ctx.reply(
       `ПРОВЕРЬ КАРТОЧКУ БИЗНЕСА
 
-Формат: ${state.format}
+💼 Вид помещения: ${state.format}
+Статус: ${state.status}
+Оборудование: ${state.equipment}
 Площадь: ${state.area} м²
 Электричество: ${state.electricity} кВт
 Комнат: ${state.rooms}
@@ -3017,8 +3019,8 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
 Канализация: ${state.sewer}
 Отопление: ${state.heating}
 Адрес: ${state.address}
-Статус: ${state.status}
-Оборудование: ${state.equipment}
+Телефон: ${state.phone}
+WhatsApp: ${state.whatsapp}
 Цена: ${state.price.toLocaleString("ru-RU")} ₸
 Фотографий: ${state.photos.length}
 
