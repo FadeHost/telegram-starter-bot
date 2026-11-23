@@ -3357,35 +3357,42 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       reply_markup: keyboard,
     })
   })
-    bot.callbackQuery(/^business:status:(active|closed)$/, async (ctx) => {
+        bot.callbackQuery(/^business:status:(active|closed)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
     const state = userSteps.get(ctx.from.id)
-if (!state || state.step !== "businessStatus") return
+    if (!state || state.step !== "businessStatus") return
 
-    state.status = ctx.match[1] === "active" ? "Действующий" : "Закрытый"
+    state.status = ctx.match[1] === "active" ? "Действующий" : "Закрыто"
     state.step = "businessEquipment"
 
     const keyboard = new InlineKeyboard()
       .text("Входит в стоимость", "business:equipment:yes")
       .row()
       .text("Не входит в стоимость", "business:equipment:no")
+      .row()
+      .text("Отсутствует", "business:equipment:absent")
 
-    await ctx.reply("Оборудование входит в стоимость бизнеса?", {
+    await ctx.reply("Как обстоят дела с оборудованием?", {
       reply_markup: keyboard,
     })
   })
-    bot.callbackQuery(/^business:equipment:(yes|no)$/, async (ctx) => {
+
+    bot.callbackQuery(/^business:equipment:(yes|no|absent)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
 
     const state = userSteps.get(ctx.from.id)
-if (!state || state.step !== "businessEquipment") return
+    if (!state || state.step !== "businessEquipment") return
 
-    state.equipment = ctx.match[1] === "yes"
-      ? "Входит в стоимость"
-      : "Не входит в стоимость"
+    if (ctx.match[1] === "yes") {
+      state.equipment = "Входит в стоимость"
+    } else if (ctx.match[1] === "no") {
+      state.equipment = "Не входит в стоимость"
+    } else {
+      state.equipment = "Отсутствует"
+    }
 
     state.step = "businessPrice"
 
