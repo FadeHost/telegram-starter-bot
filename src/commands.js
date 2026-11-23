@@ -3045,6 +3045,8 @@ WhatsApp: ${state.whatsapp}
       sewer: state.sewer,
       heating: state.heating,
       address: state.address,
+      phone: state.phone,
+      whatsapp: state.whatsapp,
       status: state.status,
       equipment: state.equipment,
       price: state.price,
