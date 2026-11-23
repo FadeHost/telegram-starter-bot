@@ -1,24 +1,21 @@
-// Your bot's behaviour. Add commands here; grammY's docs (grammy.dev) cover
-// keyboards, sessions, files, inline queries and everything else.
-
-import { InlineKeyboard } from "grammy"
+import { InlineKeyboard } from "grammy";
 
 export function registerCommands(bot) {
   bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
-  )
+    ctx.reply("Привет! Я бот для обработки Load Confirmation. Отправь мне PDF-файл.")
+  );
 
   bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
-  )
+    ctx.reply("Отправь PDF-файл Load Confirmation, и я попробую обработать его.")
+  );
 
-  bot.command("ping", (ctx) => ctx.reply("pong"))
+  bot.on("message:document", async (ctx) => {
+    const file = ctx.message.document;
 
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
+    if (file.mime_type !== "application/pdf") {
+      return ctx.reply("Пожалуйста, отправляй только PDF-файлы.");
+    }
 
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
-
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
+    await ctx.reply("PDF получен! Следующим шагом настроим извлечение информации из него.");
+  });
 }
