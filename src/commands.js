@@ -1695,8 +1695,9 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
     businessPhotoMessages.set(ctx.chat.id, messageIds)
 
     await ctx.reply(
-    `💼 Вид помещения: ${business.format}
-
+      `💼 Вид помещения: ${business.format}
+Статус: ${business.status || "Не указан"}
+Оборудование: ${business.equipment || "Не указано"}
 Площадь: ${business.area} м²
 Электричество: ${business.electricity} кВт
 Комнат: ${business.rooms}
@@ -1704,8 +1705,7 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 Канализация: ${business.sewer}
 Отопление: ${business.heating}
 Адрес: ${business.address}
-Статус: ${business.status}
-Оборудование: ${business.equipment}
+Телефон: ${business.phone || "Не указан"}
 Цена: ${business.price.toLocaleString("ru-RU")} ₸`,
       { reply_markup: keyboard }
     )
