@@ -3267,7 +3267,7 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     await ctx.reply("GIF принята! На сколько дней разместить визитку? Укажи число от 1 до 365.")
   })
 
-    bot.on("message:text", async (ctx, next) => {
+        bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
     if (!isAdmin(ctx) || !state || state.step !== "businessAddress") {
@@ -3275,11 +3275,6 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
     }
 
     const address = ctx.message.text.trim()
-
-    if (!address) {
-      await ctx.reply("Укажи адрес объекта:")
-      return
-    }
 
     if (address === "/cancel") {
       userSteps.delete(ctx.from.id)
@@ -3289,13 +3284,74 @@ if (!state || state.step !== "equipmentCondition" || !state.values) return
       return
     }
 
+    if (!address) {
+      await ctx.reply("Укажи адрес объекта:")
+      return
+    }
+
     state.address = address
+    state.step = "businessPhone"
+
+    await ctx.reply("Укажи мобильный телефон для связи. Это обязательное поле:")
+  })
+
+  bot.on("message:text", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (!isAdmin(ctx) || !state || state.step !== "businessPhone") {
+      return next()
+    }
+
+    const phone = ctx.message.text.trim()
+
+    if (phone === "/cancel") {
+      userSteps.delete(ctx.from.id)
+      await ctx.reply("Действие отменено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    if (!phone) {
+      await ctx.reply("Мобильный телефон обязателен. Укажи номер:")
+      return
+    }
+
+    state.phone = phone
+    state.step = "businessWhatsapp"
+
+    await ctx.reply("Укажи номер WhatsApp. Он может отличаться от мобильного. Это обязательное поле:")
+  })
+
+  bot.on("message:text", async (ctx, next) => {
+    const state = userSteps.get(ctx.from.id)
+
+    if (!isAdmin(ctx) || !state || state.step !== "businessWhatsapp") {
+      return next()
+    }
+
+    const whatsapp = ctx.message.text.trim()
+
+    if (whatsapp === "/cancel") {
+      userSteps.delete(ctx.from.id)
+      await ctx.reply("Действие отменено.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    if (!whatsapp) {
+      await ctx.reply("Номер WhatsApp обязателен. Укажи номер:")
+      return
+    }
+
+    state.whatsapp = whatsapp
     state.step = "businessStatus"
 
     const keyboard = new InlineKeyboard()
       .text("Действующий", "business:status:active")
       .row()
-      .text("Закрытый", "business:status:closed")
+      .text("Закрыто", "business:status:closed")
 
     await ctx.reply("Какой статус у объекта?", {
       reply_markup: keyboard,
