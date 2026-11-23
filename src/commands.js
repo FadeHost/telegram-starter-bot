@@ -1675,7 +1675,14 @@ bot.callbackQuery(/^equipment:back:(.+)$/, async (ctx) => {
 
     const messageIds = []
 
-        const whatsappNumber = String(business.whatsapp || "").replace(/\D/g, "")
+            const whatsappDigits = String(business.whatsapp || "").replace(/\D/g, "")
+    const whatsappNumber =
+      whatsappDigits.length === 11 && whatsappDigits.startsWith("8")
+        ? `7${whatsappDigits.slice(1)}`
+        : whatsappDigits.length === 10
+          ? `7${whatsappDigits}`
+          : whatsappDigits
+
     const keyboard = new InlineKeyboard()
 
     if (whatsappNumber) {
