@@ -1335,7 +1335,7 @@ bot.callbackQuery("admin:stats", async (ctx) => {
 
     equipmentPhotoMessages.delete(equipmentCardId)
 
-    const savedService = servicePhotoMessages.get(ctx.chat.id)
+        const savedService = servicePhotoMessages.get(ctx.chat.id)
 
     if (savedService) {
       for (const messageId of savedService.photoIds) {
@@ -1349,7 +1349,19 @@ bot.callbackQuery("admin:stats", async (ctx) => {
       servicePhotoMessages.delete(ctx.chat.id)
     }
 
-        await ctx.deleteMessage()
+    const businessPhotos = businessPhotoMessages.get(ctx.chat.id) || []
+
+    for (const messageId of businessPhotos) {
+      try {
+        await ctx.api.deleteMessage(ctx.chat.id, messageId)
+      } catch (error) {
+        console.error("Не удалось удалить фото готового бизнеса:", error)
+      }
+    }
+
+    businessPhotoMessages.delete(ctx.chat.id)
+
+    await ctx.deleteMessage()
 
         const projectCard = database.projectCard
 
