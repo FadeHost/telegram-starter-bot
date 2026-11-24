@@ -1475,6 +1475,7 @@ export async function registerCommands(bot) {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
+  await deleteAdminUserPhotos(ctx)
   adminUserSearch.delete(ctx.from.id)
 
   const users = [...database.users].sort(
