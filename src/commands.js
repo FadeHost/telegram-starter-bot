@@ -49,7 +49,13 @@ const equipmentCategories = [
   ["🍹 Барное оборудование", "equipment_bar"],
   ["⚙️ Кухонное оборудование", "equipment_kitchen"],
   ["🧼 Моечное оборудование", "equipment_wash"],
-  ["🔧 Прочее оборудование", "equipment_other"],
+  ["🍽 Инвентарь для кухни", "equipment_inventory_kitchen"],
+  ["🍸 Инвентарь для бара", "equipment_inventory_bar"],
+  ["🍽 Посуда для кухни", "equipment_dishes_kitchen"],
+  ["🍸 Посуда для бара", "equipment_dishes_bar"],
+  ["🪑 Мебель для ресторанов", "equipment_furniture"],
+  ["🖥 Система автоматизации", "equipment_automation"],
+  ["🔧 Расходные материалы", "equipment_other"],
 ]
 
 const services = [
