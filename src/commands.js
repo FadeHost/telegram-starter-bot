@@ -1628,16 +1628,135 @@ ${history || "Пока нет записей"}`
   })
 })
 
-bot.callbackQuery("admin:users:search", async (ctx) => {
-  await ctx.answerCallbackQuery()
-  if (!isAdmin(ctx)) return
+  bot.on("message:text", async (ctx, next) => {
+    if (!isAdmin(ctx) || adminUserSearch.get(ctx.from.id) !== "input") {
+      return next()
+    }
 
-  adminUserSearch.set(ctx.from.id, true)
+    const query = ctx.message.text.trim().toLowerCase()
 
-  await ctx.reply(
-    "🔎 Введи имя, фамилию, username или Telegram ID пользователя.\n\nДля отмены напиши /cancel."
-  )
-})
+    if (query === "/cancel") {
+      adminUserSearch.delete(ctx.from.id)
+      await ctx.reply("Поиск отменён.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    if (!query) {
+      await ctx.reply("Введи имя, username или Telegram ID.")
+      return
+    }
+
+    const normalizedQuery = query.replace(/^@/, "")
+    const users = (database.users || []).filter((user) => {
+      const name = [
+        user.firstName,
+        user.lastName,
+        user.username,
+        user.id,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+
+      return name.includes(normalizedQuery)
+    })
+
+    const ids = users.map((user) => String(user.id))
+    adminUserSearch.set(ctx.from.id, {
+      mode: "results",
+      ids,
+      page: 0,
+    })
+
+    const pageSize = 8
+    const totalPages = Math.max(1, Math.ceil(users.length / pageSize))
+    const keyboard = new InlineKeyboard()
+
+    for (const user of users.slice(0, pageSize)) {
+      const name =
+        [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+        (user.username ? `@${user.username}` : String(user.id))
+
+      keyboard
+        .text(`👤 ${name}`.slice(0, 60), `admin:user:${user.id}:0`)
+        .row()
+    }
+
+    if (totalPages > 1) {
+      keyboard.text("➡️", "admin:users:search:page:1").row()
+    }
+
+    keyboard
+      .text("🔎 Новый поиск", "admin:users:search")
+      .row()
+      .text("⬅️ К списку", "admin:users")
+
+    await ctx.reply(
+      users.length
+        ? `🔎 РЕЗУЛЬТАТЫ ПОИСКА\n\nНайдено: ${users.length}\nСтраница: 1 из ${totalPages}`
+        : "По этому запросу пользователи не найдены.",
+      { reply_markup: keyboard }
+    )
+  })
+
+  bot.callbackQuery(/^admin:users:search:page:(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery()
+    if (!isAdmin(ctx)) return
+
+    const state = adminUserSearch.get(ctx.from.id)
+
+    if (!state || state.mode !== "results") {
+      await ctx.editMessageText("Результаты поиска устарели. Запусти поиск заново.")
+      return
+    }
+
+    const pageSize = 8
+    const totalPages = Math.max(1, Math.ceil(state.ids.length / pageSize))
+    const page = Math.min(Number(ctx.match[1]), totalPages - 1)
+
+    state.page = page
+
+    const users = state.ids
+      .slice(page * pageSize, (page + 1) * pageSize)
+      .map((id) => database.users.find((user) => String(user.id) === id))
+      .filter(Boolean)
+
+    const keyboard = new InlineKeyboard()
+
+    for (const user of users) {
+      const name =
+        [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+        (user.username ? `@${user.username}` : String(user.id))
+
+      keyboard
+        .text(`👤 ${name}`.slice(0, 60), `admin:user:${user.id}:${page}`)
+        .row()
+    }
+
+    if (page > 0) {
+      keyboard.text("⬅️", `admin:users:search:page:${page - 1}`)
+    }
+
+    if (page < totalPages - 1) {
+      keyboard.text("➡️", `admin:users:search:page:${page + 1}`)
+    }
+
+    if (page > 0 || page < totalPages - 1) {
+      keyboard.row()
+    }
+
+    keyboard
+      .text("🔎 Новый поиск", "admin:users:search")
+      .row()
+      .text("⬅️ К списку", "admin:users")
+
+    await ctx.editMessageText(
+      `🔎 РЕЗУЛЬТАТЫ ПОИСКА\n\nНайдено: ${state.ids.length}\nСтраница: ${page + 1} из ${totalPages}`,
+      { reply_markup: keyboard }
+    )
+  })
 
 bot.callbackQuery("admin:stats", async (ctx) => {
     await ctx.answerCallbackQuery()
