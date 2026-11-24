@@ -1545,7 +1545,10 @@ bot.callbackQuery(/^admin:users:page:(\d+)$/, async (ctx) => {
     keyboard.row()
   }
 
-  keyboard.text("⬅️ Назад", "admin:users")
+    keyboard
+    .text("🔎 Поиск пользователей", "admin:users:search")
+    .row()
+    .text("⬅️ Назад", "admin:users")
 
   await ctx.editMessageText(
     `👥 ПОЛЬЗОВАТЕЛИ
