@@ -3655,6 +3655,68 @@ WhatsApp: ${state.whatsapp}
     await ctx.reply("GIF принята! На сколько дней разместить визитку? Укажи число от 1 до 365.")
   })
 
+          bot.on("message:text", async (ctx, next) => {
+    if (!isAdmin(ctx) || !adminUserSearch.has(ctx.from.id)) {
+      return next()
+    }
+
+    const query = ctx.message.text.trim().toLowerCase()
+
+    if (query === "/cancel") {
+      adminUserSearch.delete(ctx.from.id)
+      await ctx.reply("Поиск отменён.", {
+        reply_markup: adminKeyboard(),
+      })
+      return
+    }
+
+    if (!query) {
+      await ctx.reply("Введи имя, username или Telegram ID.")
+      return
+    }
+
+    adminUserSearch.delete(ctx.from.id)
+
+    const normalizedQuery = query.replace(/^@/, "")
+    const users = (database.users || []).filter((user) => {
+      const name = [
+        user.firstName,
+        user.lastName,
+        user.username,
+        user.id,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+
+      return name.includes(normalizedQuery)
+    })
+
+    const keyboard = new InlineKeyboard()
+
+    for (const user of users.slice(0, 8)) {
+      const name =
+        [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+        (user.username ? `@${user.username}` : String(user.id))
+
+      keyboard
+        .text(
+          `👤 ${name}`.slice(0, 60),
+          `admin:user:${user.id}:0`
+        )
+        .row()
+    }
+
+    keyboard.text("⬅️ К списку", "admin:users")
+
+    await ctx.reply(
+      users.length
+        ? `🔎 РЕЗУЛЬТАТЫ ПОИСКА\n\nНайдено: ${users.length}\nПоказаны первые ${Math.min(users.length, 8)}:`
+        : "По этому запросу пользователи не найдены.",
+      { reply_markup: keyboard }
+    )
+  })
+
         bot.on("message:text", async (ctx, next) => {
     const state = userSteps.get(ctx.from.id)
 
