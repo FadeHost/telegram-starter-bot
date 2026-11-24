@@ -1730,9 +1730,16 @@ bot.callbackQuery(/^admin:user:photo:(\d+)$/, async (ctx) => {
 
     const photo = photos[photos.length - 1]
 
-    await ctx.replyWithPhoto(photo.file_id, {
+    const sentPhoto = await ctx.replyWithPhoto(photo.file_id, {
       caption: `📷 Фотография профиля\n🆔 Telegram ID: ${userId}`,
     })
+
+    const messages = adminUserPhotos.get(ctx.from.id) || []
+    messages.push({
+      chatId: sentPhoto.chat.id,
+      messageId: sentPhoto.message_id,
+    })
+    adminUserPhotos.set(ctx.from.id, messages)
   } catch (error) {
     console.error("Не удалось получить фотографию профиля:", error)
     await ctx.reply("Не удалось получить фотографию профиля.")
