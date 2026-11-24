@@ -1084,15 +1084,41 @@ export async function registerCommands(bot) {
       }
     }
 
-    database.stats.startCount += 1
+        database.stats.startCount += 1
 
     const userId = ctx.from.id
     if (!database.stats.uniqueUsers.includes(userId)) {
       database.stats.uniqueUsers.push(userId)
     }
 
-    if (ctx.match === "catalog") {
+    const source = String(ctx.match || "")
+
+    if (source === "catalog") {
       database.stats.catalogStarts += 1
+    }
+
+    if (source === "autopost_obshepit") {
+      database.stats.autopostObshepitStarts =
+        (database.stats.autopostObshepitStarts || 0) + 1
+
+      database.stats.autopostObshepitUsers =
+        database.stats.autopostObshepitUsers || []
+
+      if (!database.stats.autopostObshepitUsers.includes(userId)) {
+        database.stats.autopostObshepitUsers.push(userId)
+      }
+    }
+
+    if (source === "autopost_barista") {
+      database.stats.autopostBaristaStarts =
+        (database.stats.autopostBaristaStarts || 0) + 1
+
+      database.stats.autopostBaristaUsers =
+        database.stats.autopostBaristaUsers || []
+
+      if (!database.stats.autopostBaristaUsers.includes(userId)) {
+        database.stats.autopostBaristaUsers.push(userId)
+      }
     }
 
     await saveDatabase()
