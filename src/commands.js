@@ -1112,6 +1112,50 @@ export async function registerCommands(bot) {
     }
 
     const source = String(ctx.match || "")
+    const now = new Date().toISOString()
+
+    let user = database.users.find((item) => item.id === userId)
+
+    if (!user) {
+      user = {
+        id: userId,
+        firstName: ctx.from.first_name || "",
+        lastName: ctx.from.last_name || "",
+        username: ctx.from.username || "",
+        languageCode: ctx.from.language_code || "",
+        isPremium: Boolean(ctx.from.is_premium),
+        firstRecordedAt: now,
+        lastStartAt: now,
+        startCount: 0,
+        source: source,
+        sourceHistory: [],
+        actions: [],
+      }
+      database.users.push(user)
+    }
+
+    user.firstName = ctx.from.first_name || user.firstName || ""
+    user.lastName = ctx.from.last_name || user.lastName || ""
+    user.username = ctx.from.username || user.username || ""
+    user.languageCode = ctx.from.language_code || user.languageCode || ""
+    if (typeof ctx.from.is_premium === "boolean") {
+      user.isPremium = ctx.from.is_premium
+    }
+    user.lastStartAt = now
+    user.startCount = (user.startCount || 0) + 1
+
+    if (source) {
+      user.source = source
+      user.sourceHistory = Array.isArray(user.sourceHistory)
+        ? user.sourceHistory
+        : []
+      user.sourceHistory.push({ source, at: now })
+      user.sourceHistory = user.sourceHistory.slice(-100)
+    }
+
+    if (!Array.isArray(user.actions)) {
+      user.actions = []
+    }
 
     if (source === "catalog") {
       database.stats.catalogStarts += 1
