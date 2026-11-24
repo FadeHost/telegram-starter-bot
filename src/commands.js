@@ -1571,11 +1571,18 @@ bot.callbackQuery(/^admin:user:(\d+):(\d+)$/, async (ctx) => {
     (item) => String(item.id) === userId
   )
 
+  const searchState = adminUserSearch.get(ctx.from.id)
+  const backCallback =
+    searchState?.mode === "results" &&
+    searchState.ids.includes(String(userId))
+      ? `admin:users:search:page:${searchState.page || 0}`
+      : `admin:users:page:${page}`
+
   if (!user) {
     return ctx.editMessageText("Пользователь не найден.", {
       reply_markup: new InlineKeyboard().text(
         "⬅️ К списку",
-        `admin:users:page:${page}`
+        backCallback
       ),
     })
   }
@@ -1623,7 +1630,7 @@ ${history || "Пока нет записей"}`
   await ctx.editMessageText(profileText.slice(0, 4000), {
     reply_markup: new InlineKeyboard().text(
       "⬅️ К списку",
-      `admin:users:page:${page}`
+      backCallback
     ),
   })
 })
