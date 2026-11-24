@@ -1589,7 +1589,55 @@ bot.callbackQuery(/^admin:user:(\d+):(\d+)$/, async (ctx) => {
     })
   }
 
-  const actions = Array.isArray(user.actions) ? user.actions : []
+    const actions = Array.isArray(user.actions) ? user.actions : []
+
+  const categoryNames = {
+    meat_farm: "Мясо фермер",
+    meat_halal: "Мясо халяль",
+    poultry_farm: "Птица фермер",
+    poultry_halal: "Птица халяль",
+    fish: "Рыба",
+    seafood: "Морепродукты",
+    vegetables: "Овощи",
+    fruits: "Фрукты",
+    dairy: "Молочная продукция",
+    grocery: "Бакалея",
+  }
+
+  const getActionName = (data) => {
+    if (data === "home") return "Открыл главное меню"
+    if (data === "products") return "Открыл раздел поставщиков"
+    if (data === "business") return "Открыл раздел готового бизнеса"
+
+    if (data.startsWith("supplier:")) {
+      return "Открыл карточку поставщика"
+    }
+
+    if (data.startsWith("business:view:")) {
+      return "Открыл карточку готового бизнеса"
+    }
+
+    if (data.startsWith("category:")) {
+      const category = data.split(":")[1]
+      return `Открыл категорию «${categoryNames[category] || "Товары"}»`
+    }
+
+    if (data.startsWith("product:")) {
+      const category = data.split(":")[1]
+      return `Выбрал раздел «${categoryNames[category] || "Товары"}»`
+    }
+
+    if (data.startsWith("pick:")) {
+      return "Выбрал товар"
+    }
+
+    if (data.startsWith("beef:list:")) {
+      return "Открыл список говядины"
+    }
+
+    return "Нажал кнопку в боте"
+  }
+
   const history = actions
     .slice(-15)
     .reverse()
@@ -1597,7 +1645,8 @@ bot.callbackQuery(/^admin:user:(\d+):(\d+)$/, async (ctx) => {
       const date = new Date(item.at).toLocaleString("ru-RU", {
         timeZone: "Asia/Almaty",
       })
-      return `• ${date}: ${item.data || item.type || "Действие"}`
+      const action = getActionName(String(item.data || item.type || ""))
+      return `• ${date}: ${action}`
     })
     .join("\n")
 
