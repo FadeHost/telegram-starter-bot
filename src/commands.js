@@ -397,8 +397,12 @@ async function loadDatabase() {
 }
 
     if (!Array.isArray(database.equipment)) {
-  database.equipment = []
-}
+      database.equipment = []
+    }
+
+    if (!Array.isArray(database.users)) {
+      database.users = []
+    }
 
     if (!Array.isArray(database.services)) {
   database.services = []
