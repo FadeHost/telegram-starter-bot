@@ -545,25 +545,35 @@ if (now >= new Date(job.expiresAt)) {
           job.lastSentDates[key] = today
           await saveDatabase()
 
-          try {
-          if (post.type === "photo") {
-  await bot.api.sendPhoto(job.chatId, post.fileId, {
-    caption: post.caption || undefined,
-    reply_markup: {
-      inline_keyboard: [[
-        { text: job.buttonText, url: "https://t.me/ObshepitAstanaBot" }
-      ]]
-    }
-  })
-} else {
-  await bot.api.sendMessage(job.chatId, post.text, {
-    reply_markup: {
-      inline_keyboard: [[
-        { text: job.buttonText, url: "https://t.me/ObshepitAstanaBot" }
-      ]]
-    }
-  })
-}
+                    try {
+            const group = (database.autopostGroups || []).find(
+              (item) => String(item.chatId) === String(job.chatId)
+            )
+
+            const source = (group?.title || "").toLowerCase().includes("бариста")
+              ? "autopost_barista"
+              : "autopost_obshepit"
+
+            const catalogUrl = `https://t.me/ObshepitAstanaBot?start=${source}`
+
+            if (post.type === "photo") {
+              await bot.api.sendPhoto(job.chatId, post.fileId, {
+                caption: post.caption || undefined,
+                reply_markup: {
+                  inline_keyboard: [[
+                    { text: job.buttonText, url: catalogUrl }
+                  ]]
+                }
+              })
+            } else {
+              await bot.api.sendMessage(job.chatId, post.text, {
+                reply_markup: {
+                  inline_keyboard: [[
+                    { text: job.buttonText, url: catalogUrl }
+                  ]]
+                }
+              })
+            }
                  } catch (error) {
             delete job.lastSentDates[key]
 
