@@ -3008,8 +3008,20 @@ if (!state || state.step !== "businessHeating") return
 
   const keyboard = new InlineKeyboard()
 
-  for (const [name, id] of equipmentCategories) {
-    keyboard.text(name, `admin:equipment:cat:${id}`).row()
+  for (let i = 0; i < equipmentCategories.length; i += 2) {
+    keyboard.text(
+      equipmentCategories[i][0],
+      `admin:equipment:cat:${equipmentCategories[i][1]}`
+    )
+
+    if (equipmentCategories[i + 1]) {
+      keyboard.text(
+        equipmentCategories[i + 1][0],
+        `admin:equipment:cat:${equipmentCategories[i + 1][1]}`
+      )
+    }
+
+    keyboard.row()
   }
 
   keyboard.text("❌ Отмена", "admin:cancel")
