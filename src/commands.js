@@ -1343,14 +1343,23 @@ bot.callbackQuery("admin:stats", async (ctx) => {
       return
     }
 
-    const stats = database.stats || {
-      startCount: 0,
-      uniqueUsers: [],
-      catalogStarts: 0,
-    }
+    const stats = database.stats || {}
 
     await ctx.editMessageText(
-      `📊 СТАТИСТИКА\n\n▶️ Всего запусков START: ${stats.startCount}\n👤 Уникальных пользователей: ${stats.uniqueUsers.length}\n🚀 Запусков по ссылке каталога: ${stats.catalogStarts}`,
+      `📊 СТАТИСТИКА
+
+▶️ Всего запусков START: ${stats.startCount || 0}
+👤 Уникальных пользователей: ${stats.uniqueUsers?.length || 0}
+
+🚀 ПЕРЕХОДЫ ИЗ ОБЩЕПИТ АСТАНА
+Всего переходов: ${stats.autopostObshepitStarts || 0}
+Уникальных пользователей: ${stats.autopostObshepitUsers?.length || 0}
+
+☕ ПЕРЕХОДЫ ИЗ БАРИСТА АСТАНА
+Всего переходов: ${stats.autopostBaristaStarts || 0}
+Уникальных пользователей: ${stats.autopostBaristaUsers?.length || 0}
+
+🔗 Запусков по старой ссылке каталога: ${stats.catalogStarts || 0}`,
       { reply_markup: adminKeyboard() }
     )
   })
