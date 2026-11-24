@@ -1488,7 +1488,10 @@ export async function registerCommands(bot) {
     keyboard.text("➡️", "admin:users:page:1").row()
   }
 
-  keyboard.text("⬅️ Назад", "admin:back")
+    keyboard
+    .text("🔎 Поиск пользователей", "admin:users:search")
+    .row()
+    .text("⬅️ Назад", "admin:back")
 
   await ctx.editMessageText(
     `👥 ПОЛЬЗОВАТЕЛИ
