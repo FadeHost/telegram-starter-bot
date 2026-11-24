@@ -1628,6 +1628,17 @@ ${history || "Пока нет записей"}`
   })
 })
 
+bot.callbackQuery("admin:users:search", async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  adminUserSearch.set(ctx.from.id, true)
+
+  await ctx.reply(
+    "🔎 Введи имя, фамилию, username или Telegram ID пользователя.\n\nДля отмены напиши /cancel."
+  )
+})
+
 bot.callbackQuery("admin:stats", async (ctx) => {
     await ctx.answerCallbackQuery()
 
