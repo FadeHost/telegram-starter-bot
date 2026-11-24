@@ -416,21 +416,37 @@ async function loadDatabase() {
     database.autopostGroups = []
   }
 
-    if (!database.stats || typeof database.stats !== "object" || Array.isArray(database.stats)) {
-  database.stats = {}
-}
+  if (!database.stats || typeof database.stats !== "object" || Array.isArray(database.stats)) {
+    database.stats = {}
+  }
 
-if (!Number.isFinite(database.stats.startCount)) {
-  database.stats.startCount = 0
-}
+  if (!Number.isFinite(database.stats.startCount)) {
+    database.stats.startCount = 0
+  }
 
-if (!Array.isArray(database.stats.uniqueUsers)) {
-  database.stats.uniqueUsers = []
-}
+  if (!Array.isArray(database.stats.uniqueUsers)) {
+    database.stats.uniqueUsers = []
+  }
 
-if (!Number.isFinite(database.stats.catalogStarts)) {
-  database.stats.catalogStarts = 0
-}
+  if (!Number.isFinite(database.stats.catalogStarts)) {
+    database.stats.catalogStarts = 0
+  }
+
+  if (!Number.isFinite(database.stats.autopostObshepitStarts)) {
+    database.stats.autopostObshepitStarts = 0
+  }
+
+  if (!Array.isArray(database.stats.autopostObshepitUsers)) {
+    database.stats.autopostObshepitUsers = []
+  }
+
+  if (!Number.isFinite(database.stats.autopostBaristaStarts)) {
+    database.stats.autopostBaristaStarts = 0
+  }
+
+  if (!Array.isArray(database.stats.autopostBaristaUsers)) {
+    database.stats.autopostBaristaUsers = []
+  }
 
   if (!database.startMessages) {
     database.startMessages = {}
