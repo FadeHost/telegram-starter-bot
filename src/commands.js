@@ -1629,11 +1629,20 @@ ${sources || user.source || "Неизвестно"}
 🖱 ПОСЛЕДНИЕ ДЕЙСТВИЯ
 ${history || "Пока нет записей"}`
 
+    const keyboard = new InlineKeyboard()
+    .text("📷 Посмотреть фото профиля", `admin:user:photo:${user.id}`)
+    .row()
+
+  if (user.username) {
+    keyboard
+      .url("👤 Открыть профиль", `https://t.me/${user.username}`)
+      .row()
+  }
+
+  keyboard.text("⬅️ К списку", backCallback)
+
   await ctx.editMessageText(profileText.slice(0, 4000), {
-    reply_markup: new InlineKeyboard().text(
-      "⬅️ К списку",
-      backCallback
-    ),
+    reply_markup: keyboard,
   })
 })
 
