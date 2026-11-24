@@ -1085,12 +1085,71 @@ export async function registerCommands(bot) {
     ],
     { scope: { type: "chat", chat_id: ADMIN_ID } }
   )
-  bot.use(async (ctx, next) => {
+    bot.use(async (ctx, next) => {
     if (!databaseLoaded) {
-  await loadDatabase()
-  databaseLoaded = true
-}
+      await loadDatabase()
+      databaseLoaded = true
+    }
+
+    const userId = ctx.from?.id
+    const callbackData = ctx.callbackQuery?.data
+
+    if (
+      ctx.chat?.type === "private" &&
+      userId &&
+      callbackData &&
+      Number(userId) !== ADMIN_ID
+    ) {
+      let user = database.users.find((item) => item.id === userId)
+
+      if (!user) {
+        const now = new Date().toISOString()
+
+        user = {
+          id: userId,
+          firstName: ctx.from.first_name || "",
+          lastName: ctx.from.last_name || "",
+          username: ctx.from.username || "",
+          languageCode: ctx.from.language_code || "",
+          isPremium: Boolean(ctx.from.is_premium),
+          firstRecordedAt: now,
+          lastStartAt: "",
+          lastActiveAt: now,
+          startCount: 0,
+          source: "",
+          sourceHistory: [],
+          actions: [],
+        }
+
+        database.users.push(user)
+      }
+
+      user.lastActiveAt = new Date().toISOString()
+      user.actions = Array.isArray(user.actions) ? user.actions : []
+
+      user.actions.push({
+        type: "button",
+        data: callbackData,
+        at: user.lastActiveAt,
+      })
+
+      user.actions = user.actions.slice(-200)
+
+      user.firstName = ctx.from.first_name || user.firstName || ""
+      user.lastName = ctx.from.last_name || user.lastName || ""
+      user.username = ctx.from.username || user.username || ""
+      user.languageCode = ctx.from.language_code || user.languageCode || ""
+
+      if (typeof ctx.from.is_premium === "boolean") {
+        user.isPremium = ctx.from.is_premium
+      }
+    }
+
     await next()
+
+    if (callbackData && userId && Number(userId) !== ADMIN_ID) {
+      await saveDatabase()
+    }
   })
 
         bot.command("start", async (ctx) => {
