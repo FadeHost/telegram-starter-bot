@@ -1454,6 +1454,173 @@ export async function registerCommands(bot) {
     })
   })
 
+  bot.callbackQuery("admin:users", async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const users = [...database.users].sort(
+    (a, b) =>
+      new Date(b.lastActiveAt || b.lastStartAt || 0) -
+      new Date(a.lastActiveAt || a.lastStartAt || 0)
+  )
+
+  const pageSize = 8
+  const page = 0
+  const totalPages = Math.max(1, Math.ceil(users.length / pageSize))
+  const keyboard = new InlineKeyboard()
+
+  for (const user of users.slice(0, pageSize)) {
+    const name =
+      [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+      user.username ||
+      String(user.id)
+
+    keyboard
+      .text(
+        `👤 ${name}`.slice(0, 60),
+        `admin:user:${user.id}:0`
+      )
+      .row()
+  }
+
+  if (totalPages > 1) {
+    keyboard.text("➡️", "admin:users:page:1").row()
+  }
+
+  keyboard.text("⬅️ Назад", "admin:back")
+
+  await ctx.editMessageText(
+    `👥 ПОЛЬЗОВАТЕЛИ
+
+Всего записей: ${users.length}
+Страница: 1 из ${totalPages}
+
+Выбери пользователя:`,
+    { reply_markup: keyboard }
+  )
+})
+
+bot.callbackQuery(/^admin:users:page:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const users = [...database.users].sort(
+    (a, b) =>
+      new Date(b.lastActiveAt || b.lastStartAt || 0) -
+      new Date(a.lastActiveAt || a.lastStartAt || 0)
+  )
+
+  const pageSize = 8
+  const totalPages = Math.max(1, Math.ceil(users.length / pageSize))
+  const page = Math.min(Number(ctx.match[1]), totalPages - 1)
+  const keyboard = new InlineKeyboard()
+
+  for (const user of users.slice(page * pageSize, (page + 1) * pageSize)) {
+    const name =
+      [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+      user.username ||
+      String(user.id)
+
+    keyboard
+      .text(
+        `👤 ${name}`.slice(0, 60),
+        `admin:user:${user.id}:${page}`
+      )
+      .row()
+  }
+
+  if (page > 0) {
+    keyboard.text("⬅️", `admin:users:page:${page - 1}`)
+  }
+
+  if (page < totalPages - 1) {
+    keyboard.text("➡️", `admin:users:page:${page + 1}`)
+  }
+
+  if (page > 0 || page < totalPages - 1) {
+    keyboard.row()
+  }
+
+  keyboard.text("⬅️ Назад", "admin:users")
+
+  await ctx.editMessageText(
+    `👥 ПОЛЬЗОВАТЕЛИ
+
+Всего записей: ${users.length}
+Страница: ${page + 1} из ${totalPages}
+
+Выбери пользователя:`,
+    { reply_markup: keyboard }
+  )
+})
+
+bot.callbackQuery(/^admin:user:(\d+):(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const userId = ctx.match[1]
+  const page = Number(ctx.match[2])
+  const user = database.users.find(
+    (item) => String(item.id) === userId
+  )
+
+  if (!user) {
+    return ctx.editMessageText("Пользователь не найден.", {
+      reply_markup: new InlineKeyboard().text(
+        "⬅️ К списку",
+        `admin:users:page:${page}`
+      ),
+    })
+  }
+
+  const actions = Array.isArray(user.actions) ? user.actions : []
+  const history = actions
+    .slice(-15)
+    .reverse()
+    .map((item) => {
+      const date = new Date(item.at).toLocaleString("ru-RU", {
+        timeZone: "Asia/Almaty",
+      })
+      return `• ${date}: ${item.data || item.type || "Действие"}`
+    })
+    .join("\n")
+
+  const sources = Array.isArray(user.sourceHistory)
+    ? user.sourceHistory
+        .slice(-10)
+        .map((item) => `• ${item.source}`)
+        .join("\n")
+    : ""
+
+  const profileText = `👤 КАРТОЧКА ПОЛЬЗОВАТЕЛЯ
+
+🆔 Telegram ID: ${user.id}
+Имя: ${user.firstName || "—"}
+Фамилия: ${user.lastName || "—"}
+Username: ${user.username ? "@" + user.username : "—"}
+Язык: ${user.languageCode || "—"}
+Premium: ${user.isPremium ? "Да" : "Нет"}
+
+📊 АКТИВНОСТЬ
+Запусков START: ${user.startCount || 0}
+Первый учёт: ${user.firstRecordedAt || "—"}
+Последний START: ${user.lastStartAt || "—"}
+Последняя активность: ${user.lastActiveAt || "—"}
+
+🔗 ИСТОЧНИКИ
+${sources || user.source || "Неизвестно"}
+
+🖱 ПОСЛЕДНИЕ ДЕЙСТВИЯ
+${history || "Пока нет записей"}`
+
+  await ctx.editMessageText(profileText.slice(0, 4000), {
+    reply_markup: new InlineKeyboard().text(
+      "⬅️ К списку",
+      `admin:users:page:${page}`
+    ),
+  })
+})
+
 bot.callbackQuery("admin:stats", async (ctx) => {
     await ctx.answerCallbackQuery()
 
