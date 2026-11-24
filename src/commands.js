@@ -1459,6 +1459,8 @@ export async function registerCommands(bot) {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
+  adminUserSearch.delete(ctx.from.id)
+
   const users = [...database.users].sort(
     (a, b) =>
       new Date(b.lastActiveAt || b.lastStartAt || 0) -
