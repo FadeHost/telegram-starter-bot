@@ -1527,6 +1527,8 @@ bot.callbackQuery(/^admin:users:page:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
 
+  await deleteAdminUserPhotos(ctx)
+
   const users = [...database.users].sort(
     (a, b) =>
       new Date(b.lastActiveAt || b.lastStartAt || 0) -
