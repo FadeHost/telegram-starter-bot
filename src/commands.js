@@ -1833,9 +1833,11 @@ bot.on("message:text", async (ctx, next) => {
     )
   })
 
-  bot.callbackQuery(/^admin:users:search:page:(\d+)$/, async (ctx) => {
+    bot.callbackQuery(/^admin:users:search:page:(\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery()
     if (!isAdmin(ctx)) return
+
+    await deleteAdminUserPhotos(ctx)
 
     const state = adminUserSearch.get(ctx.from.id)
 
