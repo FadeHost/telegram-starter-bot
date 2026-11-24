@@ -344,6 +344,22 @@ const categoryNames = new Map([
 
 const userSteps = new Map()
 const adminUserSearch = new Map()
+const adminUserPhotos = new Map()
+
+const deleteAdminUserPhotos = async (ctx) => {
+  const messages = adminUserPhotos.get(ctx.from.id) || []
+
+  for (const message of messages) {
+    try {
+      await ctx.api.deleteMessage(message.chatId, message.messageId)
+    } catch (error) {
+      console.error("Не удалось удалить фотографию пользователя:", error)
+    }
+  }
+
+  adminUserPhotos.delete(ctx.from.id)
+}
+
 const lastSupplierCards = new Map()
 const lastMainMenus = new Map()
 const lastSupplierLists = new Map()
