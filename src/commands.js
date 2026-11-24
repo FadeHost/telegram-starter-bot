@@ -2087,7 +2087,7 @@ bot.callbackQuery("products", async (ctx) => {
 }
 
 bot.callbackQuery(
-  /^equipment:(equipment_(?:heat|cold|bar|kitchen|wash|other))$/,
+  /^equipment:(equipment_[a-z_]+)$/,
   async (ctx) => {
     await ctx.answerCallbackQuery()
     await showEquipmentCategory(ctx, ctx.match[1])
