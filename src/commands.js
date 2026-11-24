@@ -1637,6 +1637,34 @@ ${history || "Пока нет записей"}`
   })
 })
 
+bot.callbackQuery(/^admin:user:photo:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+  if (!isAdmin(ctx)) return
+
+  const userId = Number(ctx.match[1])
+
+  try {
+    const profilePhotos = await ctx.api.getUserProfilePhotos(userId, {
+      limit: 1,
+    })
+
+    const photos = profilePhotos.photos?.[0]
+
+    if (!photos || photos.length === 0) {
+      return ctx.reply("У пользователя нет доступной фотографии профиля.")
+    }
+
+    const photo = photos[photos.length - 1]
+
+    await ctx.replyWithPhoto(photo.file_id, {
+      caption: `📷 Фотография профиля\n🆔 Telegram ID: ${userId}`,
+    })
+  } catch (error) {
+    console.error("Не удалось получить фотографию профиля:", error)
+    await ctx.reply("Не удалось получить фотографию профиля.")
+  }
+})
+
 bot.callbackQuery("admin:users:search", async (ctx) => {
   await ctx.answerCallbackQuery()
   if (!isAdmin(ctx)) return
