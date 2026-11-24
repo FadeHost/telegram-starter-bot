@@ -708,13 +708,15 @@ function listKeyboard(items, prefix, columns = 1) {
   return keyboard
 }
 
-  function adminKeyboard() {
+    function adminKeyboard() {
   return new InlineKeyboard()
     .text("📥 Добавление", "admin:add:menu")
     .row()
     .text("🗂 Управление", "admin:manage:menu")
     .row()
     .text("📢 Продвижение", "admin:promo:menu")
+    .row()
+    .text("👥 Пользователи", "admin:users")
     .row()
     .text("🏠 Главное меню", "home")
 }
